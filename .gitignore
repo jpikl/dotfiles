@@ -1,0 +1,5 @@
+# Blacklist all in HOME directory by default.
+/*
+
+# Whitelist files that are part of the dotfiles.git repo.
+!Bash
