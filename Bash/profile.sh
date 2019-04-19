@@ -27,7 +27,7 @@ fi
 [[ -z $WORKSPACE_DIR ]] && export VIDEOS_DIR=~/Workspace
 
 # Library directories
-[[ -z $MAVEN_DIR ]] && export MAVEN_DIR=$LIBRARIES_DIR/npm
+[[ -z $MAVEN_DIR ]] && export MAVEN_DIR=$LIBRARIES_DIR/maven
 [[ -z $NPM_DIR ]] && export NPM_DIR=$LIBRARIES_DIR/npm
 
 # Prompt options
