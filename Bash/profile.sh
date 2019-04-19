@@ -2,8 +2,7 @@
 # shellcheck source=/dev/null
 
 # Root directory for all Bash scripts
-readonly BASH_DIR=~/Bash
-export BASH_DIR
+export BASH_DIR=~/Bash
 
 # Local override not commited in git
 if [[ -f $BASH_DIR/profile_local.sh ]]; then
