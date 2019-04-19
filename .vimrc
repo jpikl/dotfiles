@@ -1,1 +1,1 @@
-syn on
+syntax on
