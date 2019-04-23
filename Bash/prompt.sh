@@ -84,7 +84,7 @@ function __build_prompt() {
     local prompt=""
 
     # Git info
-    if [[ $ENABLE_PROMPT_GIT == true ]]; then
+    if [[ $PROMPT_GIT_ENABLED == true ]]; then
         local -r current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
         if [[ -n $current_commit_hash ]]; then local -r is_a_git_repo=true; fi
     else
