@@ -2,4 +2,7 @@
 /*
 
 # Whitelist files that are part of the dotfiles.git repo.
-!Bash
+!/Bash
+
+# Blacklist local only files.
+/Bash/*_local.*
