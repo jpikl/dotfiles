@@ -7,6 +7,8 @@ files=(
   ../.profile
   ../.xprofile
   *.sh
+  bin/*
+  lib/*.sh
 )
 
 echo "Checking the following files:"

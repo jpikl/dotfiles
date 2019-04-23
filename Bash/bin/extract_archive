@@ -1,0 +1,259 @@
+#!/usr/bin/env bash
+
+# shellcheck source=lib/common.sh
+source "$BASH_DIR/lib/common.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+  echo "Extract archive in nearly any format."
+  echo
+  echo "Usage:"
+  echo "  $self [options] [--] <file>..."
+  echo
+  echo "Options:"
+  echo "  -o, --overwrite    Overwrite existing files without prompting."
+  echo "  -q, --quiet        Quiet mode, minimal output."
+  echo "  -s, --skip-errors  Skip extraction errors of input files."
+  echo "  -h, --help         Display this help."
+}
+
+process_args() {
+  require_gnu_getopt
+
+  local -r short_opts=oqsh
+  local -r long_opts=overwrite,quiet,skip-errors,help
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -o|--overwrite)    overwrite=true; shift ;;
+      -q|--quiet)        quiet=true; shift ;;
+      -s|--skip-errors)  skip_errors=true; shift ;;
+      -h|--help)         help=true; exit ;;
+      --)                shift; break ;;
+      *)                 die "Unable to process arguments!" ;;
+    esac
+  done
+
+  files=("$@")
+}
+
+confirm_overwrite() {
+  local answer
+  read -r -n 1 -p "Overwrite '$1'? [y/n]: " answer
+  echo
+  if [[ $answer =~ ^[Yy]$ ]]; then
+    return 0
+  fi
+  return 1
+}
+
+handle_error() {
+  [[ $1 ]] && echo_error "$1"
+  [[ $skip_errors = true ]] || die
+}
+
+extract_tar() {
+  local -r input=$1
+  local -r compression=$2
+
+  local opts=(
+    "--extract"     # Do extraction.
+    "--file=$input" # Use the input file.
+  )
+
+  if [[ $compression ]]; then
+    opts+=("--$compression") # Filter data through a compression program.
+  fi
+
+  if [[ $overwrite = true ]]; then
+    opts+=("--overwrite") # Overwrite existing files.
+  else
+    opts+=("--keep-old-files") # Don't replace existing files, treat them as errors.
+  fi
+
+  if [[ $quiet = false ]]; then
+    opts+=("--verbose") # Verbose output.
+  fi
+
+  tar "${opts[@]}" || handle_error
+}
+
+extract_gz() {
+  local -r input=$1
+  local opts=("--keep") # Don't delete the input file.
+
+  if [[ $overwrite = true ]]; then
+    opts+=("--force") # Overwrite an existing output file without prompting.
+  fi
+
+  if [[ $quiet = true ]]; then
+    opts+=("--quiet") # Quiet mode.
+  else
+    opts+=("--verbose") # Verbose output.
+  fi
+
+  gunzip "${opts[@]}" "$input" || handle_error
+}
+
+extract_bz2() {
+  local -r input=$1
+  local -r output=${input%.*} # Remove .bz2 extension.
+  local opts=("--keep") # Don't delete the input file.
+
+  # bunzip2 does not prompt for overwrite, we have to do it ourselves.
+  if [[ -f "$output" && $overwrite = false ]] && ! confirm_overwrite "$output"; then
+     return # User canceled overwrite.
+  else
+    opts+=("--force") # Overwrite an existing output file.
+  fi
+
+  if [[ $quiet = true ]]; then
+    opts+=("--quiet") # Quiet mode.
+  else
+    opts+=("--verbose") # Verbose output.
+  fi
+
+  bunzip2 "${opts[@]}" "$input" || handle_error
+}
+
+extract_xz() {
+  local -r input=$1
+  local -r output=${input%.*} # Remove .xz extension.
+  local opts=("--keep") # Don't delete the input file.
+
+  # unxz does not prompt for overwrite, we have to do it ourselves.
+  if [[ -f "$output" && $overwrite = false ]] && ! confirm_overwrite "$output"; then
+     return # User canceled overwrite.
+  else
+    opts+=("--force") # Overwrite an existing output file.
+  fi
+
+  if [[ $quiet = true ]]; then
+    opts+=("--quiet") # Quiet mode.
+  else
+    opts+=("--verbose") # Verbose output.
+  fi
+
+  unxz "${opts[@]}" "$input" || handle_error
+}
+
+extract_z() {
+  local -r input=$1
+  local -r output=${input%.*} # Remove .z extension.
+  local opts=("-c") # Write to standard output, don't delete the input file.
+
+  # uncompress cannot prompt for overwrite, we have to do it ourselves.
+  if [[ -f "$output" && $overwrite = false ]] && ! confirm_overwrite "$output"; then
+     return # User canceled overwrite.
+  fi
+
+  if [[ $quiet = false ]]; then
+    opts+=("-v") # Verbose output.
+  fi
+
+  # This might actually call gzip/gunzip on some Linux distros, but we
+  # rather use only the options described by the uncompress(1) man page.
+  uncompress "${opts[@]}" "$input" > "$output" || handle_error
+}
+
+extract_zip() {
+  local -r input=$1
+  local opts=()
+
+  if [[ $overwrite = true ]]; then
+    opts+=("-o") # Overwrite existing files without prompting.
+  fi
+
+  if [[ $quiet = true ]]; then
+    opts+=("-qq") # Very quiet mode.
+  fi
+
+  unzip "${opts[@]}" "$input" || handle_error
+}
+
+extract_rar() {
+  local -r input=$1
+  local opts=()
+
+  if [[ $overwrite = true ]]; then
+    opts+=("-o+") # Overwrite existing files without prompting.
+  fi
+
+  if [[ $quiet = true ]]; then
+    opts+=("-idq") # Quiet mode.
+  fi
+
+  unrar x "${opts[@]}" "$input" || handle_error
+}
+
+extract_7z() {
+  local -r input=$1
+  local opts=()
+
+  if [[ $overwrite = true ]]; then
+    opts+=("-aoa") # Overwrite existing files without prompting.
+  fi
+
+  if [[ $quiet = true ]]; then
+    # 7z does not have an option to be completely silent.
+    # We would have to redirect its output to /dev/null, however
+    # there is no way to redirect confirmation messages to stderr.
+    opts+=("-bb0" "-bd") # Disable log and progress indicator.
+  else
+    opts+=("-bb3") # Log everyting
+  fi
+
+  7z x "${opts[@]}" "$input" || handle_error
+}
+
+extract_archive() {
+  local -r file=$1
+
+  echo "Extracting '$file'"
+
+  if [[ ! -f "$file" ]]; then
+    handle_error "'$file' is not a file!"
+    return
+  fi
+
+  case "${1,,}" in # To lower case
+    *.tar)            extract_tar "$file" ;;
+    *.tar.gz|*.tgz)   extract_tar "$file" "gzip" ;;
+    *.tar.bz2|*.tbz2) extract_tar "$file" "bzip2" ;;
+    *.tar.xz|*.txz)   extract_tar "$file" "xz" ;;
+    *.tar.z|*.tz)     extract_tar "$file" "uncompress" ;;
+    *.gz)             extract_gz  "$file" ;;
+    *.bz2)            extract_bz2 "$file" ;;
+    *.xz)             extract_xz  "$file" ;;
+    *.z)              extract_z   "$file" ;;
+    *.zip|*.jar)      extract_zip "$file" ;;
+    *.rar)            extract_rar "$file" ;;
+    *.7z)             extract_7z  "$file" ;;
+    *)                handle_error "'$file' has unsupported archive extension!" ;;
+  esac
+}
+
+function main() {
+  local overwrite=false
+  local quiet=false
+  local skip_errors=false
+  local help=false
+  local files
+
+  process_args "$@"
+
+  if [[ $help = true || "${#files}" -eq 0 ]]; then
+    print_help
+    exit
+  fi
+
+  for file in "${files[@]}"; do
+    extract_archive "$file"
+  done
+}
+
+main "$@"
