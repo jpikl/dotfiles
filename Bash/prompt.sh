@@ -267,6 +267,10 @@ function __custom_build_prompt() {
 
 function __bash_prompt() {
     PS1="$(__build_prompt)"
+
+    # Set CWD for ConEmu or cmder
+    # https://conemu.github.io/en/ShellWorkDir.html#bash_and_other_cygwin_shells
+    [[ "${ConEmuPID}" ]] && ConEmuC -StoreCWD
 }
 
 PROMPT_COMMAND="__bash_prompt"
