@@ -17,7 +17,7 @@ source "$BASH_DIR/aliases.sh"
 source "$BASH_DIR/prompt.sh"
 
 # Binaries
-[[ -f /usr/bin/thefuck ]] && eval "$(thefuck --alias)"
+command thefuck 2>/dev/null && eval "$(thefuck --alias)"
 
 # Local override not commited in git
 if [[ -f $BASH_DIR/rc_local.sh ]]; then
