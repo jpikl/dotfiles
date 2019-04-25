@@ -270,6 +270,7 @@ function __bash_prompt() {
 
     # Set CWD for ConEmu or cmder
     # https://conemu.github.io/en/ShellWorkDir.html#bash_and_other_cygwin_shells
+    # shellcheck disable=SC2154
     [[ "${ConEmuPID}" ]] && ConEmuC -StoreCWD
 }
 
