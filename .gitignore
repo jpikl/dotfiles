@@ -6,3 +6,6 @@
 
 # Blacklist local only files.
 /Bash/*_local.*
+
+# Blacklist IDE config files
+/Bash/.vscode
