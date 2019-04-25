@@ -34,7 +34,5 @@ alias mvnsv='mvn_set_version'
 alias rndebug='adb shell input keyevent 82'
 
 # Custom scripts
-alias of=open_file
-alias ea=extract_archive
-alias pacfind=find_package
+alias unpack='extract-archive'
 alias upfind='find-upwards'
