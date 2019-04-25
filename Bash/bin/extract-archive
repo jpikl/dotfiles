@@ -156,8 +156,8 @@ extract_z() {
     opts+=("-v") # Verbose output.
   fi
 
-  # This might actually call gzip/gunzip on some Linux distros, but we
-  # rather use only the options described by the uncompress(1) man page.
+  # This might actually call gzip/gunzip on some Linux distributions, but
+  # we rather use only the options described by the uncompress(1) man page.
   uncompress "${opts[@]}" "$input" > "$output" || handle_error
 }
 
@@ -205,7 +205,7 @@ extract_7z() {
     # there is no way to redirect confirmation messages to stderr.
     opts+=("-bb0" "-bd") # Disable log and progress indicator.
   else
-    opts+=("-bb3") # Log everyting
+    opts+=("-bb3") # Log everything.
   fi
 
   7z x "${opts[@]}" "$input" || handle_error
@@ -221,7 +221,7 @@ extract_archive() {
     return
   fi
 
-  case "${1,,}" in # To lower case
+  case "${1,,}" in # To lower case.
     *.tar)            extract_tar "$file" ;;
     *.tar.gz|*.tgz)   extract_tar "$file" "gzip" ;;
     *.tar.bz2|*.tbz2) extract_tar "$file" "bzip2" ;;
