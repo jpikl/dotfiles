@@ -5,6 +5,7 @@ source "$BASH_DIR/lib/common.sh"
 
 print_help() {
   local -r self=$(basename "$0")
+
   echo "Extract archive in nearly any format."
   echo
   echo "Usage:"
@@ -32,7 +33,7 @@ process_args() {
       -o|--overwrite)    overwrite=true; shift ;;
       -q|--quiet)        quiet=true; shift ;;
       -s|--skip-errors)  skip_errors=true; shift ;;
-      -h|--help)         help=true; exit ;;
+      -h|--help)         help=true; shift ;;
       --)                shift; break ;;
       *)                 die "Unable to process arguments!" ;;
     esac
