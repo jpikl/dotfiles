@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+# shellcheck source=lib/common.sh
+source "$BASH_DIR/lib/common.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+
+  echo "Find root directory of a maven project."
+  echo
+  echo "Usage:"
+  echo "  $self [options]"
+  echo
+  echo "Options:"
+  echo "  -h, --help  Display this help."
+}
+
+process_args() {
+  require_gnu_getopt
+
+  local -r short_opts=h
+  local -r long_opts=help
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -h|--help)  help=true; break ;;
+      --)         shift; break ;;
+      *)          die "Unable to process arguments!" ;;
+    esac
+  done
+}
+
+find_maven_root() {
+  local path
+
+  while true; do
+    if [[ -f pom.xml ]]; then
+      path=$PWD
+    fi
+    if [[ $PWD == / ]]; then
+      break;
+    else
+      cd .. || die "Unable to change directory to parent!"
+    fi
+  done
+
+  [[ $path ]] && echo "$path"
+}
+
+function main() {
+  local help=false
+
+  process_args "$@"
+
+  if [[ $help = true ]]; then
+    print_help
+    exit
+  fi
+
+  find_maven_root
+}
+
+main "$@"
