@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# shellcheck source=lib/common.sh
+source "$BASH_DIR/lib/common.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+
+  echo "Search upwards in directory tree."
+  echo
+  echo "Usage:"
+  echo "  $self [path] [expression]"
+  echo
+  echo "Path:"
+  echo "  Search starting point."
+  echo "  Default path is the current working directory."
+  echo
+  echo "Expression:"
+  echo "  Any expression accepted by the find command."
+  echo "  See 'find -help' or 'man find' for more details."
+  echo "  Use of -maxdepth is discouraged since it's set internally to 1 by default."
+}
+
+process_args() {
+  for arg in "$@"; do
+    if [[ $arg == '-h' || $arg == '-help' || $arg == '--help' ]]; then
+      print_help
+      exit
+    fi
+  done
+
+  if [[ $# -gt 0 && $1 != -* ]]; then
+    path=$1
+    shift
+  fi
+
+  expression+=("$@")
+}
+
+find_upwards() {
+  [[ -d $path ]] || die "Path is not a directory!"
+  cd "$path" || die
+
+  while true; do
+    find "$PWD" "${expression[@]}"
+    if [[ $PWD == / ]]; then
+      break;
+    else
+      cd .. || die
+    fi
+  done
+}
+
+function main() {
+  local path=$PWD
+  local expression=(-maxdepth 1)
+
+  process_args "$@"
+  find_upwards
+}
+
+main "$@"

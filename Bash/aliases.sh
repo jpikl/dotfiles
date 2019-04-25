@@ -37,3 +37,4 @@ alias rndebug='adb shell input keyevent 82'
 alias of=open_file
 alias ea=extract_archive
 alias pacfind=find_package
+alias upfind='find-upwards'
