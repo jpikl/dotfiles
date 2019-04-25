@@ -30,12 +30,12 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -o|--overwrite)    overwrite=true; shift ;;
-      -q|--quiet)        quiet=true; shift ;;
-      -s|--skip-errors)  skip_errors=true; shift ;;
-      -h|--help)         help=true; shift ;;
-      --)                shift; break ;;
-      *)                 die "Unable to process arguments!" ;;
+      -o|--overwrite)   overwrite=true; shift ;;
+      -q|--quiet)       quiet=true; shift ;;
+      -s|--skip-errors) skip_errors=true; shift ;;
+      -h|--help)        print_help; exit ;;
+      --)               shift; break ;;
+      *)                die "Unable to process arguments!" ;;
     esac
   done
 
@@ -242,12 +242,11 @@ function main() {
   local overwrite=false
   local quiet=false
   local skip_errors=false
-  local help=false
   local files
 
   process_args "$@"
 
-  if [[ $help = true || "${#files}" -eq 0 ]]; then
+  if [[ ${#files} -eq 0 ]]; then
     print_help
     exit
   fi
