@@ -43,10 +43,10 @@ process_args() {
 }
 
 confirm_overwrite() {
-  local answer
-  read -r -n 1 -p "Overwrite '$1'? [y/n]: " answer
+  local reply
+  read -r -n 1 -p "Overwrite '$1'? [y/n]: " reply
   echo
-  if [[ $answer =~ ^[Yy]$ ]]; then
+  if [[ $reply =~ ^[Yy]$ ]]; then
     return 0
   fi
   return 1
