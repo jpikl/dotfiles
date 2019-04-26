@@ -4,7 +4,7 @@
 alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
 # Colors
-eval "$(dircolors -b)"
+eval "$(dircolors --bourne-shell)"
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 
@@ -21,9 +21,10 @@ alias rclip='xclip -out -selection clipboard'
 alias npmg='npm --global'
 alias npmgl='npm --global --depth=0 list'
 alias npmi='npm install'
-alias npmfi='rm --force ./package-lock.json && npmi'
-alias npmffi='rm --recursive --force ./node_modules && npmfi'
-alias npmd='npm_run_dev'
+alias npmfi='rm --force package-lock.json && npmi'
+alias npmffi='rm --recursive --force node_modules && npmfi'
+alias npmls='npm-list-scripts'
+alias npmd='npmls | egrep --line-regexp "dev|webpack-dev" | head --lines=1 | xargs --no-run-if-empty npm run'
 
 # Maven
 alias mvnci='mvn clean install'
