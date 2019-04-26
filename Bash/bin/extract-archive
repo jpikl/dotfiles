@@ -16,6 +16,9 @@ print_help() {
   echo "  -q, --quiet        Quiet mode, minimal output."
   echo "  -s, --skip-errors  Skip extraction errors of input files."
   echo "  -h, --help         Display this help."
+  echo
+  echo "File:"
+  echo "  One or more files to extract."
 }
 
 process_args() {
