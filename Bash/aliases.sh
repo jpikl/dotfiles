@@ -29,7 +29,7 @@ alias npmd='npmls | egrep --line-regexp "dev|webpack-dev" | head --lines=1 | xar
 # Maven
 alias mvnci='mvn clean install'
 alias mvncist='mvn clean install -Dmaven.test.skip=true'
-alias mvnsv='mvn_set_version'
+alias mvnsv='mvn-set-version'
 
 # React Native
 alias rndebug='adb shell input keyevent 82'
