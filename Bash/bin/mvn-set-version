@@ -12,7 +12,8 @@ print_help() {
   echo "  $self [options] [version]"
   echo
   echo "Options:"
-  echo "  -h, --help  Display this help."
+  echo "  -b, --backup  Create backup of original pom.xml files."
+  echo "  -h, --help    Display this help."
   echo
   echo "Version:"
   echo "  New version to set."
@@ -22,8 +23,8 @@ print_help() {
 process_args() {
   require_gnu_getopt
 
-  local -r short_opts=h
-  local -r long_opts=help
+  local -r short_opts=bh
+  local -r long_opts=backup,help
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die
@@ -31,9 +32,10 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -h|--help) print_help; exit ;;
-      --)        shift; break ;;
-      *)         die "Unable to process arguments!" ;;
+      -b|--backup) backup=true; shift ;;
+      -h|--help)   print_help; exit ;;
+      --)          shift; break ;;
+      *)           die "Unable to process arguments!" ;;
     esac
   done
 
@@ -41,7 +43,7 @@ process_args() {
 }
 
 mvn_set_version() {
-  local args=()
+  local args=("-DgenerateBackupPoms=$backup")
 
   if [[ $version ]]; then
     args+=("-DnewVersion=$version")
@@ -51,6 +53,7 @@ mvn_set_version() {
 }
 
 function main() {
+  local backup=false
   local version
 
   process_args "$@"
