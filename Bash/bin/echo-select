@@ -48,8 +48,13 @@ process_args() {
 }
 
 echo_select() {
-  if [[ ${#words} -eq 0 ]]; then
+  if [[ ${#words[@]} -eq 0 ]]; then
     [[ $default ]] && echo "$default"
+    exit
+  fi
+
+  if [[ ${#words[@]} -eq 1 ]]; then
+    echo "${words[0]}"
     exit
   fi
 
