@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+
+# shellcheck source=utils.sh
+source "$BASH_DIR/utils.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+
+  echo "Synchronize two directories using rsync."
+  echo
+  echo "Usage:"
+  echo "  $self [options] <source> <destination>"
+  echo
+  echo "Options:"
+  echo "  -t, --times-only  Preserve only modification times."
+  echo "  -e, --exfat       Optimize for exFAT filesystem."
+  echo "  -f, --force       Skip dry run. Perform sync without confirmation."
+  echo "  -h, --help        Display this help."
+  echo
+  echo "Source:"
+  echo "  Source directory."
+  echo
+  echo "Destination:"
+  echo "  Destination directory."
+}
+
+set_source() {
+  [[ -d $1 ]] || die "'$1' is not a directory."
+
+  if [[ $1 == */ ]]; then
+    source=$1
+  else
+    source=$1/ # Source directory MUST end with /.
+  fi
+}
+
+set_destination() {
+  [[ -d $1 ]] || die "'$1' is not a directory."
+  destination=$1
+}
+
+process_args() {
+  require_gnu_getopt
+
+  local -r short_opts=tefh
+  local -r long_opts=times-only,exfat,force,help
+  local help=false
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -t|--times-only) times_only=true; shift ;;
+      -e|--exfat)      exfat=true; shift ;;
+      -f|--force)      force=true; shift ;;
+      -h|--help)       help=true; shift ;;
+      --)              shift; break ;;
+      *)               die "Unable to process arguments!" ;;
+    esac
+  done
+
+  if [[ $# -lt 2 || $help = true ]]; then
+    print_help
+    exit
+  fi
+
+  set_source "$1"
+  set_destination "$2"
+}
+
+sync_dirs() {
+  require_cmd rsync
+
+  local opts=("--delete" "--human-readable")
+
+  if [[ $times_only = true ]]; then
+      opts+=("--recursive" "--times")
+  else
+      opts+=("--archive")
+  fi
+
+  if [[ $exfat == true ]]; then
+      opts+=("--modify-window=1" "--exclude='System Volume Information'")
+  fi
+
+  local -r opts_info=("--itemize-changes" "--stats")
+  local -r opts_progress=("--info=progress2")
+
+  if [[ $force = true ]]; then
+    echo "Synchronizing '$source' to '$destination'"
+    rsync "${opts[@]}" "${opts_info[@]}" "${opts_progress[@]}" -- "$source" "$destination"
+  else
+    echo "Detecting differences from '$source' to '$destination'"
+    rsync "${opts[@]}" "${opts_info[@]}" --dry-run -- "$source" "$destination"
+    echo
+
+    if confirm "Continue with synchronization?"; then
+        echo "Synchronizing '$source' to '$destination'"
+        rsync "${opts[@]}" "${opts_progress[@]}" -- "$source" "$destination"
+    fi
+  fi
+}
+
+function main() {
+  local times_only=false
+  local exfat=false
+  local force=false
+  local source
+  local destination
+
+  process_args "$@"
+  sync_dirs
+}
+
+main "$@"
