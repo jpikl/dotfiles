@@ -9,6 +9,13 @@ die() {
     exit 1
 }
 
+confirm() {
+  local reply
+  read -n 1 -r -p "$1 [y/n]: " reply
+  echo
+  [[ $reply =~ [y/Y] ]]
+}
+
 cmd_exists() {
   command -v "$1" >/dev/null
 }
