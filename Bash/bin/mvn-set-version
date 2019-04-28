@@ -25,6 +25,7 @@ process_args() {
 
   local -r short_opts=bh
   local -r long_opts=backup,help
+  local help=false
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die
@@ -33,11 +34,16 @@ process_args() {
   while true ; do
     case "$1" in
       -b|--backup) backup=true; shift ;;
-      -h|--help)   print_help; exit ;;
+      -h|--help)   help=true; shift ;;
       --)          shift; break ;;
       *)           die "Unable to process arguments!" ;;
     esac
   done
+
+  if [[ $help = true ]]; then
+    print_help
+    exit
+  fi
 
   version=$1
 }

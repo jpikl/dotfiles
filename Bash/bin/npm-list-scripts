@@ -20,6 +20,7 @@ process_args() {
 
   local -r short_opts=h
   local -r long_opts=help
+  local help=false
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die
@@ -27,11 +28,16 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -h|--help) print_help; exit ;;
+      -h|--help) help=true; shift ;;
       --)        shift; break ;;
       *)         die "Unable to process arguments!" ;;
     esac
   done
+
+  if [[ $help = true ]]; then
+    print_help
+    exit
+  fi
 }
 
 npm_list_scripts() {

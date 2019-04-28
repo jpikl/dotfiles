@@ -37,6 +37,7 @@ process_args() {
 
   local -r short_opts=t:h
   local -r long_opts=timeout:,help
+  local help=false
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die
@@ -45,13 +46,13 @@ process_args() {
   while true ; do
     case "$1" in
       -t|--timeout) set_timeout "$2"; shift 2 ;;
-      -h|--help)    print_help; exit ;;
+      -h|--help)    help=true; shift ;;
       --)           shift; break ;;
       *)            die "Unable to process arguments!" ;;
     esac
   done
 
-  if [[ -z $1 ]]; then
+  if [[ $help = true || $# -eq 0 ]]; then
     print_help
     exit
   fi

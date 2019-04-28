@@ -61,7 +61,7 @@ process_args() {
     esac
   done
 
-  if [[ $# -lt 2 || $help = true ]]; then
+  if [[ $help = true || $# -lt 2 ]]; then
     print_help
     exit
   fi

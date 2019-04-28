@@ -26,6 +26,7 @@ process_args() {
 
   local -r short_opts=oqsh
   local -r long_opts=overwrite,quiet,skip-errors,help
+  local help=false
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die
@@ -36,13 +37,13 @@ process_args() {
       -o|--overwrite)   overwrite=true; shift ;;
       -q|--quiet)       quiet=true; shift ;;
       -s|--skip-errors) skip_errors=true; shift ;;
-      -h|--help)        print_help; exit ;;
+      -h|--help)        help=true; shift ;;
       --)               shift; break ;;
       *)                die "Unable to process arguments!" ;;
     esac
   done
 
-  if [[ $# -eq 0 ]]; then
+  if [[ $help = true || $# -eq 0 ]]; then
     print_help
     exit
   fi
