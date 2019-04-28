@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# shellcheck source=utils.sh
+source "$BASH_DIR/utils.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+
+  echo "Opens a file or URL in the user's preferred application."
+  echo
+  echo "Usage:"
+  echo "  $self [options] <item>..."
+  echo
+  echo "Options:"
+  echo "  -s, --skip-errors  Skip opening errors."
+  echo "  -h, --help         Display this help."
+  echo
+  echo "Item:"
+  echo "  One or more files or URLs to open."
+}
+
+process_args() {
+  require_gnu_getopt
+
+  local -r short_opts=sh
+  local -r long_opts=skip-errors,help
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -s|--skip-errors) skip_errors=true; shift ;;
+      -h|--help)        print_help; exit ;;
+      --)               shift; break ;;
+      *)                die "Unable to process arguments!" ;;
+    esac
+  done
+
+  items=("$@")
+}
+
+open() {
+  local -r item=$1
+
+  echo "Opening '$item'"
+  xdg-open "$item" || [[ $skip_errors = true ]] || die
+}
+
+function main() {
+  local skip_errors=false
+  local items
+
+  process_args "$@"
+
+  if [[ ${#items} -eq 0 ]]; then
+    print_help
+    exit
+  fi
+
+  require_cmd xdg-open
+
+  for item in "${items[@]}"; do
+    open "$item"
+  done
+}
+
+main "$@"
