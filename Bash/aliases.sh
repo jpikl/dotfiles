@@ -40,3 +40,4 @@ alias rndebug='adb shell input keyevent 82'
 # Custom scripts
 alias unpack='extract'
 alias upfind='find-upwards'
+alias srcfind='get-find-expression --ignore-non-sources | xargs find'

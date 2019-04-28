@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+# shellcheck source=utils.sh
+source "$BASH_DIR/utils.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+
+  echo "Generate expression for the find command."
+  echo
+  echo "Usage:"
+  echo "  $self [options]"
+  echo
+  echo "Options:"
+  echo "  -G, --ignore-git          Ignore .git directories."
+  echo "  -P, --ignore-project      Ignore project metadata."
+  echo "  -L, --ignore-libs         Ignore libraries."
+  echo "  -O, --ignore-compiled     Ignore compilation output."
+  echo "  -s, --ignore-non-sources  Same as --ignore-{git,project,libs,compiled}."
+  echo "  -h, --help                Display this help."
+  echo
+  echo "Examples:"
+  echo "  # Find HEAD files outside .git directory."
+  echo "  $self -G | xargs find . -name HEAD"
+  echo
+  echo "  # Find *.xml files between source files."
+  echo "  $self -s | xargs find . -name '*.xml'"
+
+}
+
+process_args() {
+  require_gnu_getopt
+
+  local -r short_opts=GPLOsh
+  local -r long_opts=ignore-git,ignore-project,ignore-libs,ignore-compiled,ignore-non-sources,help
+  local help=false
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -G|--ignore-git)         ignore_git=true; shift; ;;
+      -P|--ignore-project)     ignore_project=true; shift; ;;
+      -L|--ignore-libs)        ignore_libs=true; shift; ;;
+      -O|--ignore-compiled)    ignore_compiled=true; shift; ;;
+      -s|--ignore-non-sources) ignore_git=true
+                               ignore_project=true
+                               ignore_libs=true
+                               ignore_compiled=true
+                               shift ;;
+      -h|--help)               help=true; shift ;;
+      --)                      shift; break ;;
+      *)                       die "Unable to process arguments!" ;;
+    esac
+  done
+
+  if [[ $help = true ]]; then
+    print_help
+    exit
+  fi
+}
+
+get_find_expression() {
+  local ignored_dirs=()
+
+  if [[ $ignore_git = true ]]; then
+    ignored_dirs+=(".git")
+  fi
+
+  if [[ $ignore_project = true ]]; then
+    ignored_dirs+=(".idea")
+  fi
+
+  if [[ $ignore_libs = true ]]; then
+    ignored_dirs+=("node_modules" "!dependsrc")
+  fi
+
+  if [[ $ignore_compiled = true ]]; then
+    ignored_dirs+=("target" ".happypack")
+  fi
+
+  local expression=()
+
+  for dir in "${ignored_dirs[@]}"; do
+    expression+=("-not" "(" "-path" "*/$dir/*" "-prune" ")")
+  done
+
+  if [[ ${#expression[@]} -gt 0 ]]; then
+    echo "${expression[@]}"
+  fi
+}
+
+function main() {
+  ignore_git=false
+  ignore_project=false
+  ignore_libs=false
+  ignore_compiled=false
+
+  process_args "$@"
+  get_find_expression
+}
+
+main "$@"
