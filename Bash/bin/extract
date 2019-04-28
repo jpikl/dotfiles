@@ -13,8 +13,8 @@ print_help() {
   echo
   echo "Options:"
   echo "  -o, --overwrite    Overwrite existing files without prompting."
-  echo "  -q, --quiet        Quiet mode, minimal output."
-  echo "  -s, --skip-errors  Skip extraction errors of input files."
+  echo "  -q, --quiet        Quiet mode with minimal output."
+  echo "  -s, --skip-errors  Skip extraction errors."
   echo "  -h, --help         Display this help."
   echo
   echo "File:"
@@ -214,7 +214,7 @@ extract_7z() {
   7z x "${opts[@]}" "$input" || handle_error
 }
 
-extract_archive() {
+extract() {
   local -r file=$1
 
   echo "Extracting '$file'"
@@ -255,7 +255,7 @@ function main() {
   fi
 
   for file in "${files[@]}"; do
-    extract_archive "$file"
+    extract "$file"
   done
 }
 
