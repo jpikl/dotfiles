@@ -13,6 +13,9 @@ alias la='ls --all'
 alias ll='ls -l --human-readable'
 alias lla='ls -l --all --human-readable'
 
+# Cd
+alias cdmvnroot='cd $(find-mvn-root || pwd)'
+
 # Clipboard
 alias wclip='xclip -in -selection clipboard'
 alias rclip='xclip -out -selection clipboard'

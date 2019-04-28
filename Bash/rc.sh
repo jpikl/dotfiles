@@ -14,7 +14,6 @@ fi
 
 # Sources
 source "$BASH_DIR/aliases.sh"
-source "$BASH_DIR/functions.sh"
 source "$BASH_DIR/prompt.sh"
 
 # Binaries
