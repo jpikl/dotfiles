@@ -53,7 +53,7 @@ find_upwards() {
 
 function main() {
   local path=$PWD
-  local expression=(-maxdepth 1)
+  local expression=("-maxdepth" "1")
 
   process_args "$@"
   find_upwards
