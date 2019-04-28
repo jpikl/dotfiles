@@ -12,6 +12,7 @@ print_help() {
   echo "  $self [options]"
   echo
   echo "Options:"
+  echo "  -l, --lines               Print expressions on a separate lines."
   echo "  -G, --ignore-git          Ignore .git directories."
   echo "  -P, --ignore-project      Ignore project metadata."
   echo "  -L, --ignore-libs         Ignore libraries."
@@ -21,18 +22,18 @@ print_help() {
   echo
   echo "Examples:"
   echo "  # Find HEAD files outside .git directory."
-  echo "  $self -G | xargs find . -name HEAD"
+  echo "  $self -G | xargs -t find . -name HEAD"
   echo
   echo "  # Find *.xml files between source files."
-  echo "  $self -s | xargs find . -name '*.xml'"
+  echo "  $self -s | xargs -t find . -name '*.xml'"
 
 }
 
 process_args() {
   require_gnu_getopt
 
-  local -r short_opts=GPLOsh
-  local -r long_opts=ignore-git,ignore-project,ignore-libs,ignore-compiled,ignore-non-sources,help
+  local -r short_opts=lGPLOsh
+  local -r long_opts=lines,ignore-git,ignore-project,ignore-libs,ignore-compiled,ignore-non-sources,help
   local help=false
   local args
 
@@ -41,6 +42,7 @@ process_args() {
 
   while true ; do
     case "$1" in
+      -l|--lines)              lines=true; shift; ;;
       -G|--ignore-git)         ignore_git=true; shift; ;;
       -P|--ignore-project)     ignore_project=true; shift; ;;
       -L|--ignore-libs)        ignore_libs=true; shift; ;;
@@ -87,12 +89,18 @@ get_find_expression() {
     expression+=("-not" "(" "-path" "*/$dir/*" "-prune" ")")
   done
 
+
   if [[ ${#expression[@]} -gt 0 ]]; then
-    echo "${expression[@]}"
+    if [[ $lines = true ]]; then
+      printf "%s\n" "${expression[@]}"
+    else
+      echo "${expression[@]}"
+    fi
   fi
 }
 
 function main() {
+  lines=false
   ignore_git=false
   ignore_project=false
   ignore_libs=false

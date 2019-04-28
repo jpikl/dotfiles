@@ -15,6 +15,7 @@ alias lla='ls -l --all --human-readable'
 
 # Cd
 alias cdmvnroot='cd $(find-mvn-root || pwd)'
+alias cdnpmdir='cd $(find-npm-dirs --select-one || pwd)'
 
 # Clipboard
 alias wclip='xclip -in -selection clipboard'
