@@ -38,6 +38,11 @@ process_args() {
     esac
   done
 
+  if [[ $# -eq 0 ]]; then
+    print_help
+    exit
+  fi
+
   items=("$@")
 }
 
@@ -53,12 +58,6 @@ function main() {
   local items
 
   process_args "$@"
-
-  if [[ ${#items} -eq 0 ]]; then
-    print_help
-    exit
-  fi
-
   require_cmd xdg-open
 
   for item in "${items[@]}"; do

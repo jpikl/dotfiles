@@ -51,12 +51,12 @@ process_args() {
     esac
   done
 
-  if [[ $1 ]]; then
-    set_mode "$1"
-  else
+  if [[ -z $1 ]]; then
     print_help
     exit
   fi
+
+  set_mode "$1"
 }
 
 display_power() {

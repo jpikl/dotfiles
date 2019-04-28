@@ -42,6 +42,11 @@ process_args() {
     esac
   done
 
+  if [[ $# -eq 0 ]]; then
+    print_help
+    exit
+  fi
+
   files=("$@")
 }
 
@@ -248,11 +253,6 @@ function main() {
   local files
 
   process_args "$@"
-
-  if [[ ${#files} -eq 0 ]]; then
-    print_help
-    exit
-  fi
 
   for file in "${files[@]}"; do
     extract "$file"
