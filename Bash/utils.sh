@@ -10,11 +10,11 @@ die() {
 }
 
 cmd_exists() {
-  command "$1" 2>/dev/null
+  command -v "$1" >/dev/null
 }
 
 require_cmd() {
-  cmd_exists "$1" || die "'$1' is required!"
+  cmd_exists "$1" || die "Command '$1' is required!"
 }
 
 require_gnu_getopt() {
