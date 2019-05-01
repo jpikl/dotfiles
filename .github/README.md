@@ -48,8 +48,8 @@ can be used for machine-specific or user-specific configuration.
 
 ## Changes
 
-Git commands for the `~/.dotfiles.git` repository are done using
-`dotfiles` command.
+Git commands for the `~/.dotfiles.git` repository have to be executed
+using `dotfiles` command.
 
 ```bash
 dotfiles add ~/Bash/bin/foo-bar
