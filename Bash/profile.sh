@@ -17,6 +17,7 @@ fi
 [[ -z $LIBRARIES_DIR ]] && export LIBRARIES_DIR=~/Libraries
 [[ -z $MUSIC_DIR ]] && export MUSIC_DIR=~/Music
 [[ -z $PICTURES_DIR ]] && export PICTURES_DIR=~/Pictures
+[[ -z $PLAYLISTS_DIR ]] && export PLAYLISTS_DIR=~/Playlists
 [[ -z $PRIVATE_DECRYPTED_DIR ]] && export PRIVATE_DECRYPTED_DIR=~/Private
 [[ -z $PRIVATE_ENCRYPTED_DIR ]] && export PRIVATE_ENCRYPTED_DIR=~/.private
 [[ -z $PUBLIC_DIR ]] && export PUBLIC_DIR=~/Public
