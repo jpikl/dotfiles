@@ -16,6 +16,7 @@ print_help() {
   echo "  -m, --max-value=<value>    Maximum progress value (default: 100)."
   echo "  -f, --fg-char=<character>  Character used to draw foreground (default: '#')."
   echo "  -b, --bg-char=<character>  Character used to draw Background (default: '-')."
+  echo "  -h, --help                 Display this help."
   echo
   echo "Value:"
   echo "  Progress value between 0 and maximum value (default: 100)."
