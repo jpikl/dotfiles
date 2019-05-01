@@ -1,5 +1,13 @@
 # shellcheck shell=bash
 
+is_integer() {
+  [[ $1 =~ ^[0-9]+$ ]]
+}
+
+is_character() {
+  [[ ${#1} == 1 ]]
+}
+
 echo_error() {
   >&2 echo "$@"
 }

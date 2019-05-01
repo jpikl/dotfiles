@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+# shellcheck source=utils.sh
+source "$BASH_DIR/utils.sh"
+
+print_help() {
+  local -r self=$(basename "$0")
+
+  echo "Print progress bar."
+  echo
+  echo "Usage:"
+  echo "  $self [options] <value>"
+  echo
+  echo "Options:"
+  echo "  -w, --width=<value>        Progress bar width (default: 10)."
+  echo "  -m, --max-value=<value>    Maximum progress value (default: 100)."
+  echo "  -f, --fg-char=<character>  Character used to draw foreground (default: '#')."
+  echo "  -b, --bg-char=<character>  Character used to draw Background (default: '-')."
+  echo
+  echo "Value:"
+  echo "  Progress value between 0 and maximum value (default: 100)."
+}
+
+set_value() {
+  # shellcheck disable=SC2015
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid value '$1'!"
+  value=$1
+}
+
+set_max_value() {
+  # shellcheck disable=SC2015
+  is_integer "$1" && [[ $1 -ge 1 ]] || die "Invalid max value '$1'!"
+  max_value=$1
+}
+
+set_width() {
+  # shellcheck disable=SC2015
+  is_integer "$1" && [[ $1 -ge 1 ]] || die "Invalid width '$1'!"
+  width=$1
+}
+
+set_fg_char() {
+  # shellcheck disable=SC2015
+  is_character "$1" || die "Invalid foreground character '$1'!"
+  fg_char=$1
+}
+
+set_bg_char() {
+  is_character "$1" || die "Invalid background character '$1'!"
+  bg_char=$1
+}
+
+process_args() {
+  require_gnu_getopt
+
+  local -r short_opts=w:m:f:b:h
+  local -r long_opts=width:,max-value:,fg-char:,bg-char:,help
+  local help=false
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -w|--width)     set_width "$2"; shift 2 ;;
+      -m|--max-value) set_max_value "$2"; shift 2 ;;
+      -f|--fg-char)   set_fg_char "$2"; shift 2 ;;
+      -b|--bg-char)   set_bg_char "$2"; shift 2 ;;
+      -h|--help)      help=true; shift ;;
+      --)             shift; break ;;
+      *)              die "Unable to process arguments!" ;;
+    esac
+  done
+
+  if [[ $help = true || $# -eq 0 ]]; then
+    print_help
+    exit
+  fi
+
+  set_value "$1"
+}
+
+progress_bar() {
+  local -r fg_width=$(( width * value / max_value ))
+  local -r bg_width=$(( width - fg_width ))
+
+  for (( i = 0; i < fg_width; i++ )); do
+    echo -n "$fg_char"
+  done
+
+  for (( i = 0; i < bg_width; i++ )); do
+    echo -n "$bg_char"
+  done
+}
+
+function main() {
+  local value
+  local max_value=100
+  local width=80
+  local fg_char="#"
+  local bg_char="-"
+
+  process_args "$@"
+  progress_bar
+}
+
+main "$@"

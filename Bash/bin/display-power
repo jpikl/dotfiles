@@ -23,7 +23,8 @@ print_help() {
 }
 
 set_timeout() {
-  [[ $1 =~ ^(0|[1-9][0-9]*)$ ]] || die "Invalid timeout '$1'!"
+  # shellcheck disable=SC2015
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid timeout '$1'!"
   timeout=$1
 }
 
