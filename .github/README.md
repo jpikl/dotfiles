@@ -22,7 +22,8 @@ Checkout `master` branch to initialize dotfiles in home directory.
 git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME checkout
 ```
 
-Possibly use `-f, --force` option to override existing files if there were any conflicts.
+Possibly use `-f, --force` option to override existing files if there were
+any conflicts.
 
 ```bash
 git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME checkout -f
@@ -32,7 +33,8 @@ Logout and login to reload Bash environment.
 
 ## Configuration
 
-The following files are not part of the `~/.dotfiles.git` repository and can be used for machine-specific or user-specific configuration.
+The following files are not part of the `~/.dotfiles.git` repository and
+can be used for machine-specific or user-specific configuration.
 
 `~/Bash/profile_local.sh`
 
@@ -46,7 +48,8 @@ The following files are not part of the `~/.dotfiles.git` repository and can be 
 
 ## Changes
 
-Git commands for the `~/.dotfiles.git` repository are done using `dotfiles` command.
+Git commands for the `~/.dotfiles.git` repository are done using
+`dotfiles` command.
 
 ```bash
 dotfiles add ~/Bash/bin/foo-bar
@@ -54,7 +57,8 @@ dotfiles commit -m "Add foo-bar command"
 dotfiles push
 ```
 
-Everything outside the `~/Bash` directory is ignored by default and needs to be forcibly added using the `-f, --force` option.
+Everything outside the `~/Bash` directory is ignored by default and
+needs to be forcibly added using the `-f, --force` option.
 
 ```bash
 dotfiles add -f ~/.foo-bar
