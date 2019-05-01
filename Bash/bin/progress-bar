@@ -86,13 +86,8 @@ progress_bar() {
   local -r fg_width=$(( width * value / max_value ))
   local -r bg_width=$(( width - fg_width ))
 
-  for (( i = 0; i < fg_width; i++ )); do
-    echo -n "$fg_char"
-  done
-
-  for (( i = 0; i < bg_width; i++ )); do
-    echo -n "$bg_char"
-  done
+  echo_times "$fg_width" "$fg_char"
+  echo_times "$bg_width" "$bg_char"
 }
 
 function main() {

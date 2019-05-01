@@ -12,6 +12,18 @@ echo_error() {
   >&2 echo "$@"
 }
 
+echo_times() {
+  for (( i = 0; i < $1; i++ )); do
+    echo -n "$2"
+  done
+}
+
+clear_line() {
+  echo -ne "\r"
+  echo_times "$1" " "
+  echo -ne "\r"
+}
+
 die() {
     [[ "$1" ]] && echo_error "$1"
     exit 1
