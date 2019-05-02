@@ -10,8 +10,8 @@ print_help() {
   echo "  $(self) [options] <mode>"
   echo
   echo "Options:"
-  echo "  -t, --timeout=<seconds>  Change mode after a timeout."
-  echo "  -h, --help               Display this help."
+  echo "  -d, --delay=<seconds>  Change mode after a delay."
+  echo "  -h, --help             Display this help."
   echo
   echo "Mode:"
   echo "  on       Turn on display."
@@ -20,10 +20,10 @@ print_help() {
   echo "  off      Turn off display."
 }
 
-set_timeout() {
+set_delay() {
   # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid timeout '$1'!"
-  timeout=$1
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid delay '$1'!"
+  delay=$1
 }
 
 set_mode() {
@@ -34,8 +34,8 @@ set_mode() {
 process_args() {
   require_gnu_getopt
 
-  local -r short_opts=t:h
-  local -r long_opts=timeout:,help
+  local -r short_opts=d:h
+  local -r long_opts=delay:,help
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
@@ -43,7 +43,7 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -t|--timeout) set_timeout "$2"; shift 2 ;;
+      -d|--delay) set_delay "$2"; shift 2 ;;
       -h|--help)    print_help; exit ;;
       --)           shift; break ;;
       *)            die_unprocessable_args ;;
@@ -59,12 +59,12 @@ process_args() {
 
 display_power() {
   require_cmd xset
-  [[ $timeout ]] && sleep "$timeout"
+  [[ $delay ]] && sleep "$delay"
   xset dpms force "$mode"
 }
 
 function main() {
-  local timeout
+  local delay
   local mode
 
   process_args "$@"
