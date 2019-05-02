@@ -40,7 +40,7 @@ find_upwards() {
   cd "$path" || die_unable_cd
 
   while true; do
-    find "$PWD" "${expression[@]}"
+    find "$PWD" "${expression[@]}" || die
     if [[ $PWD == / ]]; then
       break;
     else
