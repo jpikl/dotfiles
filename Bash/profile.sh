@@ -4,31 +4,62 @@
 # Root directory for all Bash scripts
 export BASH_DIR=~/Bash
 
-# Local override not commited in git
+# Local override not committed in git
 if [[ -f $BASH_DIR/profile_local.sh ]]; then
   source "$BASH_DIR/profile_local.sh"
 fi
 
-# Core directories
-export BACKUP_DIR=${BACKUP_DIR:-~/Backup}
-export DESKTOP_DIR=${DESKTOP_DIR:-~/Desktop}
-export DOCUMENTS_DIR=${DOCUMENTS_DIR:-~/Documents}
-export DOWNLOADS_DIR=${DOWNLOADS_DIR:-~/Downloads}
-export LIBRARIES_DIR=${LIBRARIES_DIR:-~/Libraries}
-export MUSIC_DIR=${MUSIC_DIR:-~/Music}
-export PICTURES_DIR=${PICTURES_DIR:-~/Pictures}
-export PLAYLISTS_DIR=${PLAYLISTS_DIR:-~/Playlists}
-export PRIVATE_DECRYPTED_DIR=${PRIVATE_DECRYPTED_DIR:-~/Private}
-export PRIVATE_ENCRYPTED_DIR=${PRIVATE_ENCRYPTED_DIR:-~/.private}
-export PUBLIC_DIR=${PUBLIC_DIR:-~/Public}
-export TEMP_DIR=${TEMP_DIR:-~/Temp}
-export TEMPLATES_DIR=${TEMPLATES_DIR:-~/Templates}
-export VIDEOS_DIR=${VIDEOS_DIR:-~/Videos}
-export WORKSPACE_DIR=${WORKSPACE_DIR:-~/Workspace}
+normalize_path() {
+  local path=$1
 
-# Library directories
-export MAVEN_DIR=${MAVEN_DIR:-$LIBRARIES_DIR/maven}
-export NPM_DIR=${NPM_DIR:-$LIBRARIES_DIR/npm}
+  if [[ $path =~ ^[a-zA-Z]: ]]; then
+    # Convert paths like 'C:\Dir\SubDir' to '/c/Dir/SubDir' 
+    # that will work with MSYS environment on Windows.
+    path=${path,}       # Make first character lowercase.
+    path=${path/:/}     # Remove ':' character.
+    path=/${path//\\//} # Convert '\' separators to '/'.
+  fi
+
+  echo "$path"
+}
+
+# Directories init
+BACKUP_DIR=$(normalize_path "${BACKUP_DIR:-"$HOME/Backup"}")
+DESKTOP_DIR=$(normalize_path "${DESKTOP_DIR:-"$HOME/Desktop"}")
+DOCUMENTS_DIR=$(normalize_path "${DOCUMENTS_DIR:-"$HOME/Documents"}")
+DOWNLOADS_DIR=$(normalize_path "${DOWNLOADS_DIR:-"$HOME/Downloads"}")
+LIBRARIES_DIR=$(normalize_path "${LIBRARIES_DIR:-"$HOME/Libraries"}")
+MUSIC_DIR=$(normalize_path "${MUSIC_DIR:-"$HOME/Music"}")
+PICTURES_DIR=$(normalize_path "${PICTURES_DIR:-"$HOME/Pictures"}")
+PLAYLISTS_DIR=$(normalize_path "${PLAYLISTS_DIR:-"$HOME/Playlists"}")
+PRIVATE_DECRYPTED_DIR=$(normalize_path "${PRIVATE_DECRYPTED_DIR:-"$HOME/Private"}")
+PRIVATE_ENCRYPTED_DIR=$(normalize_path "${PRIVATE_ENCRYPTED_DIR:-"$HOME.private"}")
+PUBLIC_DIR=$(normalize_path "${PUBLIC_DIR:-"$HOME/Public"}")
+TEMP_DIR=$(normalize_path "${TEMP_DIR:-"$HOME/Temp"}")
+TEMPLATES_DIR=$(normalize_path "${TEMPLATES_DIR:-"$HOME/Templates"}")
+VIDEOS_DIR=$(normalize_path "${VIDEOS_DIR:-"$HOME/Videos"}")
+WORKSPACE_DIR=$(normalize_path "${WORKSPACE_DIR:-"$HOME/Workspace"}")
+MAVEN_DIR=$(normalize_path "${MAVEN_DIR:-"$LIBRARIES_DIR/maven"}")
+NPM_DIR=$(normalize_path "${NPM_DIR:-"$LIBRARIES_DIR/npm"}")
+
+# Directories export
+export BACKUP_DIR
+export DESKTOP_DIR
+export DOCUMENTS_DIR
+export DOWNLOADS_DIR
+export LIBRARIES_DIR
+export MUSIC_DIR
+export PICTURES_DIR
+export PLAYLISTS_DIR
+export PRIVATE_DECRYPTED_DIR
+export PRIVATE_ENCRYPTED_DIR
+export PUBLIC_DIR
+export TEMP_DIR
+export TEMPLATES_DIR
+export VIDEOS_DIR
+export WORKSPACE_DIR
+export MAVEN_DIR
+export NPM_DIR
 
 # Prompt options
 export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
@@ -40,3 +71,6 @@ export PATH=$PATH:$NPM_DIR     # Windows
 
 # Other
 export EDITOR=vim
+
+# Cleanup
+unset normalize_path
