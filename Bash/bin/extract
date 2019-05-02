@@ -13,7 +13,7 @@ print_help() {
   echo
   echo "Options:"
   echo "  -o, --overwrite    Overwrite existing files without prompting."
-  echo "  -q, --quiet        Quiet mode with minimal output."
+  echo "  -v, --verbose      Verbose mode with additional output."
   echo "  -s, --skip-errors  Skip extraction errors."
   echo "  -h, --help         Display this help."
   echo
@@ -24,8 +24,8 @@ print_help() {
 process_args() {
   require_gnu_getopt
 
-  local -r short_opts=oqsh
-  local -r long_opts=overwrite,quiet,skip-errors,help
+  local -r short_opts=ovsh
+  local -r long_opts=overwrite,verbose,skip-errors,help
   local help=false
   local args
 
@@ -35,7 +35,7 @@ process_args() {
   while true ; do
     case "$1" in
       -o|--overwrite)   overwrite=true; shift ;;
-      -q|--quiet)       quiet=true; shift ;;
+      -v|--verbose)     verbose=true; shift ;;
       -s|--skip-errors) skip_errors=true; shift ;;
       -h|--help)        help=true; shift ;;
       --)               shift; break ;;
@@ -79,7 +79,7 @@ extract_tar() {
     opts+=("--keep-old-files") # Don't replace existing files, treat them as errors.
   fi
 
-  if [[ $quiet = false ]]; then
+  if [[ $verbose = true ]]; then
     opts+=("--verbose") # Verbose output.
   fi
 
@@ -94,10 +94,10 @@ extract_gz() {
     opts+=("--force") # Overwrite an existing output file without prompting.
   fi
 
-  if [[ $quiet = true ]]; then
-    opts+=("--quiet") # Quiet mode.
-  else
+  if [[ $verbose = true ]]; then
     opts+=("--verbose") # Verbose output.
+  else
+    opts+=("--quiet") # Quiet mode.
   fi
 
   gunzip "${opts[@]}" "$input" || handle_error
@@ -115,10 +115,10 @@ extract_bz2() {
     opts+=("--force") # Overwrite an existing output file.
   fi
 
-  if [[ $quiet = true ]]; then
-    opts+=("--quiet") # Quiet mode.
-  else
+  if [[ $verbose = true ]]; then
     opts+=("--verbose") # Verbose output.
+  else
+    opts+=("--quiet") # Quiet mode.
   fi
 
   bunzip2 "${opts[@]}" "$input" || handle_error
@@ -136,10 +136,10 @@ extract_xz() {
     opts+=("--force") # Overwrite an existing output file.
   fi
 
-  if [[ $quiet = true ]]; then
-    opts+=("--quiet") # Quiet mode.
-  else
+  if [[ $verbose = true ]]; then
     opts+=("--verbose") # Verbose output.
+  else
+    opts+=("--quiet") # Quiet mode.
   fi
 
   unxz "${opts[@]}" "$input" || handle_error
@@ -155,7 +155,7 @@ extract_z() {
      return # User canceled overwrite.
   fi
 
-  if [[ $quiet = false ]]; then
+  if [[ $verbose = true ]]; then
     opts+=("-v") # Verbose output.
   fi
 
@@ -172,7 +172,7 @@ extract_zip() {
     opts+=("-o") # Overwrite existing files without prompting.
   fi
 
-  if [[ $quiet = true ]]; then
+  if [[ $verbose = false ]]; then
     opts+=("-qq") # Very quiet mode.
   fi
 
@@ -187,7 +187,7 @@ extract_rar() {
     opts+=("-o+") # Overwrite existing files without prompting.
   fi
 
-  if [[ $quiet = true ]]; then
+  if [[ $verbose = false ]]; then
     opts+=("-idq") # Quiet mode.
   fi
 
@@ -202,7 +202,7 @@ extract_7z() {
     opts+=("-aoa") # Overwrite existing files without prompting.
   fi
 
-  if [[ $quiet = true ]]; then
+  if [[ $verbose = false ]]; then
     # 7z does not have an option to be completely silent.
     # We would have to redirect its output to /dev/null, however
     # there is no way to redirect confirmation messages to stderr.
@@ -243,7 +243,7 @@ extract() {
 
 function main() {
   local overwrite=false
-  local quiet=false
+  local verbose=false
   local skip_errors=false
   local files
 
