@@ -69,6 +69,10 @@ process_args() {
 sync_dirs() {
   require_cmd rsync
 
+  if [[ $source -ef $destination ]]; then
+    die "'$source' and '$destination' point to the same directory!"
+  fi
+
   local opts=("--delete" "--human-readable")
 
   if [[ $times_only = true ]]; then
