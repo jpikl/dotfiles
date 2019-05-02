@@ -8,6 +8,10 @@ is_character() {
   [[ ${#1} == 1 ]]
 }
 
+is_printable() {
+  [[ $1 =~ [^[:space:]] ]]
+}
+
 echo_error() {
   >&2 echo "$@"
 }

@@ -9,22 +9,27 @@ print_help() {
   echo "Set version of a maven project."
   echo
   echo "Usage:"
-  echo "  $self [options] [version]"
+  echo "  $self [options] <version>"
   echo
   echo "Options:"
-  echo "  -b, --backup  Create backup of original pom.xml files."
-  echo "  -h, --help    Display this help."
+  echo "  -b, --backup   Create backup of original pom.xml files."
+  echo "  -v, --verbose  Verbose mode with additional output."
+  echo "  -h, --help     Display this help."
   echo
   echo "Version:"
   echo "  New version to set."
-  echo "  User will be prompted to enter a version if omitted."
+}
+
+set_version() {
+  is_printable "$1" || die "Version must not be blank!"
+  version=$1
 }
 
 process_args() {
   require_gnu_getopt
 
-  local -r short_opts=bh
-  local -r long_opts=backup,help
+  local -r short_opts=bvh
+  local -r long_opts=backup,verbose,help
   local help=false
   local args
 
@@ -33,33 +38,41 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -b|--backup) backup=true; shift ;;
-      -h|--help)   help=true; shift ;;
-      --)          shift; break ;;
-      *)           die "Unable to process arguments!" ;;
+      -b|--backup)  backup=true; shift ;;
+      -v|--verbose) verbose=true; shift ;;
+      -h|--help)    help=true; shift ;;
+      --)           shift; break ;;
+      *)            die "Unable to process arguments!" ;;
     esac
   done
 
-  if [[ $help = true ]]; then
+  if [[ $help = true || $# -eq 0 ]]; then
     print_help
     exit
   fi
 
-  version=$1
+  set_version "$1"
 }
 
 mvn_set_version() {
-  local args=("-DgenerateBackupPoms=$backup")
+  local args=()
+
+  if [[ $verbose = false ]]; then
+    args+=("--quiet")
+  fi
+
+  args+=("versions:set" "-DgenerateBackupPoms=$backup")
 
   if [[ $version ]]; then
     args+=("-DnewVersion=$version")
   fi
 
-  mvn versions:set "${args[@]}"
+  mvn "${args[@]}"
 }
 
 function main() {
   local backup=false
+  local verbose=false
   local version
 
   process_args "$@"
