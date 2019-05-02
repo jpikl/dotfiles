@@ -18,6 +18,11 @@ print_help() {
   echo "  Default path is the current working directory."
 }
 
+set_path() {
+  [[ -d $1 ]] || die "'$1' is not a directory!"
+  path=$1
+}
+
 process_args() {
   require_gnu_getopt
 
@@ -38,12 +43,11 @@ process_args() {
   done
 
   if [[ $# -ge 1 ]]; then
-    path=$1
+    set_path "$1"
   fi
 }
 
 find_npm_dirs() {
-  [[ -d $path ]] || die "Path is not a directory!"
   cd "$path" || die
 
   local expression

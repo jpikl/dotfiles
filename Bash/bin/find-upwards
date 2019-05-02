@@ -36,7 +36,7 @@ process_args() {
 }
 
 find_upwards() {
-  [[ -d $path ]] || die "Path is not a directory!"
+  [[ -d $path ]] || die "'$path' is not a directory!"
   cd "$path" || die
 
   while true; do
