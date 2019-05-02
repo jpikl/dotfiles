@@ -33,6 +33,8 @@ process_args() {
 }
 
 npm_list_scripts() {
+  [[ -f package.json ]] || die "No package.json in the current directory!"
+
   # Lines with script names start with 2 spaces which we need to cut off.
   npm run | grep '^  [a-z]' | cut --characters=3-
 }

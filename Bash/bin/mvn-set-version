@@ -51,6 +51,8 @@ process_args() {
 }
 
 mvn_set_version() {
+  [[ -f pom.xml ]] || die "No pom.xml in the current directory!"
+
   local args=()
 
   if [[ $verbose = false ]]; then
