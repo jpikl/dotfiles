@@ -41,7 +41,7 @@ process_args() {
   local help=false
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_usage
   eval set -- "$args"
 
   while true ; do

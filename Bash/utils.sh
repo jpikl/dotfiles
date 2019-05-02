@@ -33,6 +33,10 @@ die() {
     exit 1
 }
 
+die_invalid_usage() {
+  die "Try '$(basename "$0") --help' for more information."
+}
+
 confirm() {
   local reply
   read -n 1 -r -p "$1 [y/n]: " reply
