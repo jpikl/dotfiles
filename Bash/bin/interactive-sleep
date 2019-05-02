@@ -69,9 +69,9 @@ interactive_sleep() {
 
     line="$line [Press any key to cancel]"
 
-    echo -n "$line"
+    echo -ne "\r"
+    echo -n "$line " # Clearing space at the end for case the previous line was 1 char longer.
     read -rs -n1 -t 1 && break
-    clear_line "${#line}"
 
     (( time_left-- ))
   done
