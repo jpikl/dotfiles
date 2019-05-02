@@ -1,5 +1,12 @@
 # shellcheck shell=bash
 
+# Exit error codes
+ERR_UNPROCESSABLE_ARGS=255
+ERR_INVALID_ARGS=254
+ERR_MISSING_ARGS=253
+ERR_UNABLE_CD=252
+ERR_GENERIC=1
+
 is_integer() {
   [[ $1 =~ ^[0-9]+$ ]]
 }
@@ -38,27 +45,27 @@ print_usage_hint() {
 
 die() {
   [[ "$1" ]] && echo_error "$(self): $1"
-  exit 1
+  exit "${2:-$ERR_GENERIC}"
 }
 
 die_invalid_args() {
   print_usage_hint
-  exit 255
+  exit $ERR_INVALID_ARGS
 }
 
 die_unprocessable_args() {
   echo_error "$(self): Internal error: Unable to process arguments!"
-  exit 254
+  exit $ERR_UNPROCESSABLE_ARGS
 }
 
 die_missing_args() {
   echo_error "$(self): Missing required argument!"
   print_usage_hint
-  exit 253
+  exit $ERR_MISSING_ARGS
 }
 
 die_unable_cd() {
-  exit 252
+  exit $ERR_UNABLE_CD
 }
 
 confirm() {
