@@ -4,12 +4,10 @@
 source "$BASH_DIR/utils.sh"
 
 print_help() {
-  local -r self=$(basename "$0")
-
   echo "Generate expression for the find command."
   echo
   echo "Usage:"
-  echo "  $self [options]"
+  echo "  $(self) [options]"
   echo
   echo "Options:"
   echo "  -l, --lines               Print expressions on a separate lines."
@@ -22,10 +20,10 @@ print_help() {
   echo
   echo "Examples:"
   echo "  # Find HEAD files outside .git directory."
-  echo "  $self -G | xargs -t find . -name HEAD"
+  echo "  $(self) -G | xargs -t find . -name HEAD"
   echo
   echo "  # Find *.xml files between source files."
-  echo "  $self -s | xargs -t find . -name '*.xml'"
+  echo "  $(self) -s | xargs -t find . -name '*.xml'"
 
 }
 
@@ -34,10 +32,9 @@ process_args() {
 
   local -r short_opts=lGPLOsh
   local -r long_opts=lines,ignore-git,ignore-project,ignore-libs,ignore-compiled,ignore-non-sources,help
-  local help=false
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_usage
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
   eval set -- "$args"
 
   while true ; do
@@ -52,16 +49,11 @@ process_args() {
                                ignore_libs=true
                                ignore_compiled=true
                                shift ;;
-      -h|--help)               help=true; shift ;;
+      -h|--help)               print_help; exit ;;
       --)                      shift; break ;;
-      *)                       die "Unable to process arguments!" ;;
+      *)                       die_unprocessable_args ;;
     esac
   done
-
-  if [[ $help = true ]]; then
-    print_help
-    exit
-  fi
 }
 
 get_find_expression() {

@@ -4,12 +4,10 @@
 source "$BASH_DIR/utils.sh"
 
 print_help() {
-  local -r self=$(basename "$0")
-
   echo "Synchronize two directories using rsync."
   echo
   echo "Usage:"
-  echo "  $self [options] <source> <destination>"
+  echo "  $(self) [options] <source> <destination>"
   echo
   echo "Options:"
   echo "  -t, --times-only  Preserve only modification times."
@@ -44,10 +42,9 @@ process_args() {
 
   local -r short_opts=tefh
   local -r long_opts=times-only,exfat,force,help
-  local help=false
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_usage
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
   eval set -- "$args"
 
   while true ; do
@@ -55,19 +52,18 @@ process_args() {
       -t|--times-only) times_only=true; shift ;;
       -e|--exfat)      exfat=true; shift ;;
       -f|--force)      force=true; shift ;;
-      -h|--help)       help=true; shift ;;
+      -h|--help)       print_help; exit ;;
       --)              shift; break ;;
-      *)               die "Unable to process arguments!" ;;
+      *)               die_unprocessable_args ;;
     esac
   done
 
-  if [[ $help = true || $# -lt 2 ]]; then
-    print_help
-    exit
+  if [[ $# -ge 2 ]]; then
+    set_source "$1"
+    set_destination "$2"
+  else
+    die_missing_args
   fi
-
-  set_source "$1"
-  set_destination "$2"
 }
 
 sync_dirs() {

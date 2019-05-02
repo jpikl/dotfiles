@@ -4,12 +4,10 @@
 source "$BASH_DIR/utils.sh"
 
 print_help() {
-  local -r self=$(basename "$0")
-
   echo "Change display power mode."
   echo
   echo "Usage:"
-  echo "  $self [options] <mode>"
+  echo "  $(self) [options] <mode>"
   echo
   echo "Options:"
   echo "  -t, --timeout=<seconds>  Change mode after a timeout."
@@ -38,27 +36,25 @@ process_args() {
 
   local -r short_opts=t:h
   local -r long_opts=timeout:,help
-  local help=false
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_usage
+  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
   eval set -- "$args"
 
   while true ; do
     case "$1" in
       -t|--timeout) set_timeout "$2"; shift 2 ;;
-      -h|--help)    help=true; shift ;;
+      -h|--help)    print_help; exit ;;
       --)           shift; break ;;
-      *)            die "Unable to process arguments!" ;;
+      *)            die_unprocessable_args ;;
     esac
   done
 
-  if [[ $help = true || $# -eq 0 ]]; then
-    print_help
-    exit
+  if [[ $# -ge 1 ]]; then
+    set_mode "$1"
+  else
+    die_missing_args
   fi
-
-  set_mode "$1"
 }
 
 display_power() {

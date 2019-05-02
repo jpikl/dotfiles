@@ -28,13 +28,33 @@ clear_line() {
   echo -ne "\r"
 }
 
-die() {
-    [[ "$1" ]] && echo_error "$1"
-    exit 1
+self() {
+  basename "$0"
 }
 
-die_invalid_usage() {
-  die "Try '$(basename "$0") --help' for more information."
+print_usage_hint() {
+  echo_error "Try '$(self) --help' for more information."
+}
+
+die() {
+  [[ "$1" ]] && echo_error "$(self): $1"
+  exit 1
+}
+
+die_invalid_args() {
+  print_usage_hint
+  exit 255
+}
+
+die_unprocessable_args() {
+  echo_error "$(self): Internal error: Unable to process arguments!"
+  exit 254
+}
+
+die_missing_args() {
+  echo_error "$(self): Missing required argument!"
+  print_usage_hint
+  exit 253
 }
 
 confirm() {
