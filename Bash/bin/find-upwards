@@ -37,14 +37,14 @@ process_args() {
 
 find_upwards() {
   [[ -d $path ]] || die "'$path' is not a directory!"
-  cd "$path" || die
+  cd "$path" || die_unable_cd
 
   while true; do
     find "$PWD" "${expression[@]}"
     if [[ $PWD == / ]]; then
       break;
     else
-      cd .. || die
+      cd .. || die_unable_cd
     fi
   done
 }

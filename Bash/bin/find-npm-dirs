@@ -48,7 +48,7 @@ process_args() {
 }
 
 find_npm_dirs() {
-  cd "$path" || die
+  cd "$path" || die_unable_cd
 
   local expression
   local npm_dirs

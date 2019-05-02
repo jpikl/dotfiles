@@ -57,6 +57,10 @@ die_missing_args() {
   exit 253
 }
 
+die_unable_cd() {
+  exit 252
+}
+
 confirm() {
   local reply
   read -n 1 -r -p "$1 [y/n]: " reply

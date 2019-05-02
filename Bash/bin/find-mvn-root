@@ -46,7 +46,7 @@ process_args() {
 }
 
 find_mvn_root() {
-  cd "$path" || die
+  cd "$path" || die_unable_cd
 
   local -r root_pom_xml=$(find-upwards -name pom.xml | tail --lines=1)
   [[ $root_pom_xml ]] || die "Unable to find root pom.xml!"
