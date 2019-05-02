@@ -10,28 +10,28 @@ if [[ -f $BASH_DIR/profile_local.sh ]]; then
 fi
 
 # Core directories
-[[ -z $BACKUP_DIR ]] && export BACKUP_DIR=~/Backup
-[[ -z $DESKTOP_DIR ]] && export DESKTOP_DIR=~/Desktop
-[[ -z $DOCUMENTS_DIR ]] && export DOCUMENTS_DIR=~/Documents
-[[ -z $DOWNLOAD_DIR ]] && export DOWNLOAD_DIR=~/Downloads
-[[ -z $LIBRARIES_DIR ]] && export LIBRARIES_DIR=~/Libraries
-[[ -z $MUSIC_DIR ]] && export MUSIC_DIR=~/Music
-[[ -z $PICTURES_DIR ]] && export PICTURES_DIR=~/Pictures
-[[ -z $PLAYLISTS_DIR ]] && export PLAYLISTS_DIR=~/Playlists
-[[ -z $PRIVATE_DECRYPTED_DIR ]] && export PRIVATE_DECRYPTED_DIR=~/Private
-[[ -z $PRIVATE_ENCRYPTED_DIR ]] && export PRIVATE_ENCRYPTED_DIR=~/.private
-[[ -z $PUBLIC_DIR ]] && export PUBLIC_DIR=~/Public
-[[ -z $TEMP_DIR ]] && export TEMPLATES_DIR=~/Temp
-[[ -z $TEMPLATES_DIR ]] && export TEMPLATES_DIR=~/Templates
-[[ -z $VIDEOS_DIR ]] && export VIDEOS_DIR=~/Videos
-[[ -z $WORKSPACE_DIR ]] && export VIDEOS_DIR=~/Workspace
+export BACKUP_DIR=${BACKUP_DIR:-~/Backup}
+export DESKTOP_DIR=${DESKTOP_DIR:-~/Desktop}
+export DOCUMENTS_DIR=${DOCUMENTS_DIR:-~/Documents}
+export DOWNLOADS_DIR=${DOWNLOADS_DIR:-~/Downloads}
+export LIBRARIES_DIR=${LIBRARIES_DIR:-~/Libraries}
+export MUSIC_DIR=${MUSIC_DIR:-~/Music}
+export PICTURES_DIR=${PICTURES_DIR:-~/Pictures}
+export PLAYLISTS_DIR=${PLAYLISTS_DIR:-~/Playlists}
+export PRIVATE_DECRYPTED_DIR=${PRIVATE_DECRYPTED_DIR:-~/Private}
+export PRIVATE_ENCRYPTED_DIR=${PRIVATE_ENCRYPTED_DIR:-~/.private}
+export PUBLIC_DIR=${PUBLIC_DIR:-~/Public}
+export TEMP_DIR=${TEMP_DIR:-~/Temp}
+export TEMPLATES_DIR=${TEMPLATES_DIR:-~/Templates}
+export VIDEOS_DIR=${VIDEOS_DIR:-~/Videos}
+export WORKSPACE_DIR=${WORKSPACE_DIR:-~/Workspace}
 
 # Library directories
-[[ -z $MAVEN_DIR ]] && export MAVEN_DIR=$LIBRARIES_DIR/maven
-[[ -z $NPM_DIR ]] && export NPM_DIR=$LIBRARIES_DIR/npm
+export MAVEN_DIR=${MAVEN_DIR:-$LIBRARIES_DIR/maven}
+export NPM_DIR=${NPM_DIR:-$LIBRARIES_DIR/npm}
 
 # Prompt options
-[[ -z $PROMPT_GIT_ENABLED ]] && export PROMPT_GIT_ENABLED=true
+export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
 
 # Path
 export PATH=$PATH:$BASH_DIR/bin
