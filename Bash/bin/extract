@@ -211,7 +211,14 @@ extract_7z() {
     opts+=("-bb3") # Log everything.
   fi
 
-  7z x "${opts[@]}" "$input" || handle_error
+  if [[ $verbose = false && $overwrite = true ]]; then
+    # In this particular case, where no confirmation is needed,
+    # we can safely redirect all output to /dev/null.
+    7z x "${opts[@]}" "$input" >/dev/null || handle_error
+  else
+    7z x "${opts[@]}" "$input" || handle_error
+  fi
+
 }
 
 extract() {
