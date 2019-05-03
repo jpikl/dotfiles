@@ -9,6 +9,7 @@ fi
 
 if [[ -z $BASH_DIR ]]; then
   echo "${BASH_SOURCE[0]}: Environment variable BASH_DIR is not defined!"
+  echo "${BASH_SOURCE[0]}: ~/Bash/profile.sh was probably not sourced before!"
   return
 fi
 
