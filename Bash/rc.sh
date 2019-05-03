@@ -12,14 +12,15 @@ if [[ -z $BASH_DIR ]]; then
   return
 fi
 
+# Binaries
+eval "$(dircolors --bourne-shell)"
+command -v thefuck >/dev/null && eval "$(thefuck --alias)"
+
 # Sources
 source "$BASH_DIR/aliases.sh"
 source "$BASH_DIR/prompt.sh"
 
-# Binaries
-command thefuck 2>/dev/null && eval "$(thefuck --alias)"
-
-# Local override not commited in git
+# Local override not committed in git
 if [[ -f $BASH_DIR/rc_local.sh ]]; then
   source "$BASH_DIR/rc_local.sh"
 fi

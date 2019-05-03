@@ -4,7 +4,6 @@
 alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
 # Colors
-eval "$(dircolors --bourne-shell)"
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 
