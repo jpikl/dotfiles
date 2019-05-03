@@ -7,7 +7,7 @@ print_help() {
   echo "Find directories of node projects."
   echo
   echo "Usage:"
-  echo "  $(self) [options] [path]"
+  echo "  $(self) [options] [--] [path]"
   echo
   echo "Options:"
   echo "  -s, --select-one  User will be prompted select one of multiple results."

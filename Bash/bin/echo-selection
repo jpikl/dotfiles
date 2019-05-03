@@ -7,7 +7,7 @@ print_help() {
   echo "Let user select one of words and print it."
   echo
   echo "Usage:"
-  echo "  $(self) [word]..."
+  echo "  $(self) [options] [--] [word]..."
   echo
   echo "Options:"
   echo "  -d, --default=<word>  Default value when no words are provided."

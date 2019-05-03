@@ -7,7 +7,7 @@ print_help() {
   echo "Get version of a maven project."
   echo
   echo "Usage:"
-  echo "  $(self) [options] [file]"
+  echo "  $(self) [options] [--] [file]"
   echo
   echo "Options:"
   echo "  -h, --help  Display this help."

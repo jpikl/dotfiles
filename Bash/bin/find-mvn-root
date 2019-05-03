@@ -7,7 +7,7 @@ print_help() {
   echo "Find root directory of a maven project."
   echo
   echo "Usage:"
-  echo "  $(self) [options] [path]"
+  echo "  $(self) [options] [--] [path]"
   echo
   echo "Options:"
   echo "  -h, --help  Display this help."

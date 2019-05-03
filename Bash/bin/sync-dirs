@@ -7,7 +7,7 @@ print_help() {
   echo "Synchronize two directories using rsync."
   echo
   echo "Usage:"
-  echo "  $(self) [options] <source> <destination>"
+  echo "  $(self) [options] [--] <source> <destination>"
   echo
   echo "Options:"
   echo "  -t, --times-only  Preserve only modification times."
