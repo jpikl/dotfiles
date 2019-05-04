@@ -28,10 +28,13 @@ alias rclip='xclip -out -selection clipboard'
 
 # Npm
 alias npmg='npm --global'
-alias npmgl='npm --global --depth=0 list'
+alias npmgl='npmg --depth=0 list'
+alias npmgu='npmg install'
+alias npmgu='npmg uninstall'
 alias npmi='npm install'
 alias npmfi='rm --force package-lock.json && npmi'
-alias npmffi='rm --recursive --force node_modules && npmfi'
+alias npmffi='rm --force --recursive node_modules && npmfi'
+alias npmu='npm uninstall'
 alias npmls='npm-list-scripts'
 alias npmd='npm-run-any --rerun-on-failure webpack-dev dev'
 
