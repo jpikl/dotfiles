@@ -17,6 +17,10 @@ print_help() {
   echo
   echo "Message:"
   echo "  Optional message to display during wait."
+  echo
+  echo "Exit code:"
+  echo "  0  Normal execution."
+  echo "  1  User canceled sleep."
 }
 
 set_duration() {
@@ -67,7 +71,11 @@ interactive_sleep() {
 
     echo -ne "\r"
     echo -n "$line " # Clearing space at the end for case the previous line was 1 char longer.
-    read -rs -n1 -t 1 && break
+
+    if read -rs -n1 -t 1; then
+      clear_line "${#line}"
+      exit 1
+    fi
 
     (( time_left-- ))
   done
