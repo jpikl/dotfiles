@@ -67,7 +67,7 @@ interactive_sleep() {
       line="$line $message"
     fi
 
-    line="$line [Press any key to cancel]"
+    line="$line [Press any key to continue]"
 
     echo -ne "\r"
     echo -n "$line " # Clearing space at the end for case the previous line was 1 char longer.

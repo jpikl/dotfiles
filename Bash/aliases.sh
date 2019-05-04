@@ -33,13 +33,12 @@ alias npmi='npm install'
 alias npmfi='rm --force package-lock.json && npmi'
 alias npmffi='rm --recursive --force node_modules && npmfi'
 alias npmls='npm-list-scripts'
-alias npmd='npmls | egrep --line-regexp "dev|webpack-dev" | head --lines=1 | xargs --no-run-if-empty npm run --'
+alias npmd='npm-run-any --rerun-on-failure webpack-dev dev'
 
 # Maven
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
 alias mvnsv='mvn-set-version'
-alias mvngv='mvn-get-version'
 
 # React Native
 alias rndebug='adb shell input keyevent 82'

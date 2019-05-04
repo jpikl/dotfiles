@@ -20,6 +20,29 @@ is_printable() {
   [[ $1 =~ [^[:space:]] ]]
 }
 
+is_one_of() {
+  local -r value=$1
+  shift
+  for item in "$@"; do
+    [[ $item == "$value" ]] && return 0
+  done
+  return 1
+}
+
+join_values() {
+  local -r separator=$1
+  local result
+  shift
+  for item in "$@"; do
+    if [[ $result ]]; then
+      result=$result$separator$item
+    else
+      result=$item
+    fi
+  done
+  echo "$result"
+}
+
 echo_error() {
   >&2 echo "$@"
 }
