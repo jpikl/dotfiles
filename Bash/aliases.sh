@@ -36,7 +36,7 @@ alias npmfi='rm --force package-lock.json && npmi'
 alias npmffi='rm --force --recursive node_modules && npmfi'
 alias npmu='npm uninstall'
 alias npmls='npm-list-scripts'
-alias npmd='npm-run-any --rerun-on-failure webpack-dev dev'
+alias npmd='npm-run-script --rerun-on-failure webpack-dev dev'
 
 # Maven
 alias mvnci='mvn clean install'
