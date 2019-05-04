@@ -18,6 +18,10 @@ alias lla='ls -l --all --human-readable'
 alias cdmvnroot='cd $(find-mvn-root || pwd)'
 alias cdnpmdir='cd $(find-npm-dirs --select-one || pwd)'
 
+# Find
+alias findup='find-upwards'
+alias findsrc='get-find-expression --ignore-non-sources | xargs find'
+
 # Clipboard
 alias wclip='xclip -in -selection clipboard'
 alias rclip='xclip -out -selection clipboard'
@@ -46,7 +50,5 @@ alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
 alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
-# Custom scripts
+# Other
 alias unpack='extract'
-alias upfind='find-upwards'
-alias srcfind='get-find-expression --ignore-non-sources | xargs find'
