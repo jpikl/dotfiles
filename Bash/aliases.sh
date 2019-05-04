@@ -6,6 +6,8 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 # Colors
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 
 # Ls
 alias la='ls --all'
@@ -31,7 +33,7 @@ alias npmd='npmls | egrep --line-regexp "dev|webpack-dev" | head --lines=1 | xar
 
 # Maven
 alias mvnci='mvn clean install'
-alias mvncist='mvn clean install -Dmaven.test.skip=true'
+alias mvncist='mvnci -Dmaven.test.skip=true'
 alias mvnsv='mvn-set-version'
 alias mvngv='mvn-get-version'
 
