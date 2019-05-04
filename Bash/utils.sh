@@ -6,6 +6,7 @@ ERR_UNPROCESSABLE_ARGS=100
 ERR_INVALID_ARGS=101
 ERR_MISSING_ARGS=102
 ERR_UNABLE_CD=103
+ERR_CMD_NOT_FOUND=104
 
 is_integer() {
   [[ $1 =~ ^[0-9]+$ ]]
@@ -68,11 +69,8 @@ die_unable_cd() {
   exit $ERR_UNABLE_CD
 }
 
-confirm() {
-  local reply
-  read -n 1 -r -p "$1 [y/n]: " reply
-  echo
-  [[ $reply =~ [y/Y] ]]
+die_cmd_not_found() {
+  die "Command $1 is required!" $ERR_CMD_NOT_FOUND
 }
 
 cmd_exists() {
@@ -80,19 +78,27 @@ cmd_exists() {
 }
 
 require_cmd() {
-  cmd_exists "$1" || die "Command '$1' is required!"
+  cmd_exists "$1" || die_cmd_not_found "$1"
 }
 
 require_gnu_getopt() {
   getopt --test >/dev/null
-  [[ $? -eq 4 ]] || die "GNU getopt is required!"
+  [[ $? -eq 4 ]] || die "GNU getopt is required!" $ERR_CMD_NOT_FOUND
 }
 
 get_args() {
-  local -r name=$(basename "$0")
   local -r short_opts=$1
-  shift
-  local -r long_opts=$1
-  shift
-  getopt --name "$name" --options "$short_opts" --longoptions "$long_opts" -- "$@"
+  local -r long_opts=$2
+  shift 2
+  getopt --name "$(self)" \
+         --options "$short_opts" \
+         --longoptions "$long_opts" \
+         -- "$@"
+}
+
+confirm() {
+  local reply
+  read -n 1 -r -p "$1 [y/n]: " reply
+  echo
+  [[ $reply =~ [y/Y] ]]
 }
