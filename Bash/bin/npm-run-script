@@ -7,7 +7,7 @@ print_help() {
   echo "Run script of a npm package."
   echo
   echo "Usage:"
-  echo "  $(self) [options] <script>..."
+  echo "  $(self) [options] [--] <script>..."
   echo
   echo "Options:"
   echo "  -r, --rerun-on-failure       Rerun script if it ends unexpectedly."
