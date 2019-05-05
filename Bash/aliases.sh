@@ -46,6 +46,9 @@ alias mvnsv='mvn-set-version'
 # React Native
 alias rndebug='adb shell input keyevent 82'
 
+# Java
+alias javace='java-count-exceptions'
+
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'
 alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
