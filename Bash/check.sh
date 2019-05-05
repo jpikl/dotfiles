@@ -5,7 +5,6 @@ files=(
   ../.bash_profile
   ../.bashrc
   ../.profile
-  ../.xprofile
   *.sh
   bin/*
 )
