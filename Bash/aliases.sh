@@ -3,20 +3,20 @@
 # Git repo for dotfiles
 alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
-# Colors
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
 # Ls
+alias ls='ls --color=auto'
 alias la='ls --all'
 alias ll='ls -l --human-readable'
-alias lla='ls -l --all --human-readable'
+alias lla='ll --all'
 
 # Cd
 alias cdmvnroot='cd $(find-mvn-root || pwd)'
 alias cdnpmdir='cd $(find-npm-dirs --select-one || pwd)'
+
+# Grep
+alias grep='grep --color=auto'
+alias egrep='grep --extended-regexp'
+alias fgrep='grep --fixed-strings'
 
 # Find
 alias findup='find-upwards'
