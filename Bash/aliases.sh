@@ -57,3 +57,4 @@ alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
 # Other
 alias unpack='extract'
+alias fitterm='cut -c1-${COLUMNS}'
