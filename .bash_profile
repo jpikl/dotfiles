@@ -1,5 +1,10 @@
 # shellcheck shell=bash
 # shellcheck source=/dev/null
 
-source ~/Bash/profile.sh
-source ~/Bash/rc.sh
+# Local override not committed in git
+if [[ -f ~/profile_local ]]; then
+  source ~/profile_local
+fi
+
+source ~/.profile
+source ~/.bashrc
