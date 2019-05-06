@@ -1,6 +1,11 @@
 # shellcheck shell=bash
 # shellcheck source=/dev/null
 
+# Local override not committed in git
+if [[ -f ~/.profile_local ]]; then
+  source ~/.profile_local
+fi
+
 normalize_path() {
   local path=$1
 
@@ -15,7 +20,7 @@ normalize_path() {
   echo "$path"
 }
 
-# Core directories
+# Home directories
 BACKUP_DIR=$(normalize_path "${BACKUP_DIR:-"$HOME/Backup"}")
 BINARIES_DIR=$(normalize_path "${BINARIES_DIR:-"$HOME/.local/bin"}")
 CACHE_DIR=$(normalize_path "${CACHE_DIR:-"$HOME/.cache"}")
@@ -23,7 +28,7 @@ CONFIG_DIR=$(normalize_path "${CONFIG_DIR:-"$HOME/.config"}")
 DATA_DIR=$(normalize_path "${DATA_DIR:-"$HOME/.local/share"}")
 DESKTOP_DIR=$(normalize_path "${DESKTOP_DIR:-"$HOME/Desktop"}")
 DOCUMENTS_DIR=$(normalize_path "${DOCUMENTS_DIR:-"$HOME/Documents"}")
-DOWNLOADS_DIR=$(normalize_path "${DOWNLOADS_DIR:-"$HOME/Downloads"}")
+DOWNLOAD_DIR=$(normalize_path "${DOWNLOAD_DIR:-"$HOME/Downloads"}")
 LIBRARIES_DIR=$(normalize_path "${LIBRARIES_DIR:-"$HOME/.local/lib"}")
 MUSIC_DIR=$(normalize_path "${MUSIC_DIR:-"$HOME/Music"}")
 PICTURES_DIR=$(normalize_path "${PICTURES_DIR:-"$HOME/Pictures"}")
@@ -41,12 +46,28 @@ BASH_LIB_DIR=$(normalize_path "${BASH_LIB_DIR:-"$LIBRARIES_DIR/bash"}")
 MAVEN_LIB_DIR=$(normalize_path "${MAVEN_LIB_DIR:-"$LIBRARIES_DIR/maven"}")
 NPM_LIB_DIR=$(normalize_path "${NPM_LIB_DIR:-"$LIBRARIES_DIR/npm"}")
 
-# Core directires
+# System directories
+MEDIA_DIR="/var/run/media/$USER"
+VOLUMES_DIR="/run/user/$UID/gvfs"
+
+# Links to directories
+BINARIES_LINK=$(normalize_path "${BINARIES_LINK:-"$HOME/Binaries"}")
+CACHE_LINK=$(normalize_path "${CACHE_LINK:-"$HOME/Cache"}")
+CONFIG_LINK=$(normalize_path "${CONFIG_LINK:-"$HOME/Config"}")
+DATA_LINK=$(normalize_path "${DATA_LINK:-"$HOME/Data"}")
+LIBRARIES_LINK=$(normalize_path "${LIBRARIES_LINK:-"$HOME/Libraries"}")
+MEDIA_LINK=$(normalize_path "${MEDIA_LINK:-"$HOME/Media"}")
+VOLUMES_LINK=$(normalize_path "${VOLUMES_LINK:-"$HOME/Volumes"}")
+
+# Home directires
 export BACKUP_DIR
 export BINARIES_DIR
+export CACHE_DIR
+export CONFIG_DIR
+export DATA_DIR
 export DESKTOP_DIR
 export DOCUMENTS_DIR
-export DOWNLOADS_DIR
+export DOWNLOAD_DIR
 export LIBRARIES_DIR
 export MUSIC_DIR
 export PICTURES_DIR
@@ -61,8 +82,21 @@ export WORKSPACE_DIR
 
 # Library directories
 export BASH_LIB_DIR
-export NPM_LIB_DIR
 export MAVEN_LIB_DIR
+export NPM_LIB_DIR
+
+# System directories
+export MEDIA_DIR
+export VOLUMES_DIR
+
+# Links to directories
+export BINARIES_LINK
+export CACHE_LINK
+export CONFIG_LINK
+export DATA_LINK
+export LIBRARIES_LINK
+export MEDIA_LINK
+export VOLUMES_LINK
 
 # Path
 export PATH=$PATH:$BINARIES_DIR
@@ -70,7 +104,7 @@ export PATH=$PATH:$NPM_LIB_DIR/bin # Unix
 export PATH=$PATH:$NPM_LIB_DIR     # Windows
 
 # Prompt options
-export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
+export PROMPT_GIT_ENABLED=${PROMPT_GIT_ENABLED:-true}
 
 # Other
 export EDITOR=vim

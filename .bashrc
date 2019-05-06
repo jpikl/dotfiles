@@ -22,6 +22,6 @@ source "$BASH_LIB_DIR/aliases.sh"
 source "$BASH_LIB_DIR/prompt.sh"
 
 # Local override not committed in git
-if [[ -f ~/bashrc_local ]]; then
-  source ~/bashrc_local
+if [[ -f ~/.bashrc_local ]]; then
+  source ~/.bashrc_local
 fi
