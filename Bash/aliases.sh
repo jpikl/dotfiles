@@ -5,9 +5,9 @@ alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
 # Ls
 alias ls='ls --color=auto'
-alias la='ls --all'
+alias la='ls --almost-all'
 alias ll='ls -l --human-readable'
-alias lla='ll --all'
+alias lla='ll --almost-all'
 
 # Cd
 alias cdmvnroot='cd $(find-mvn-root || pwd)'
