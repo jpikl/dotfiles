@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".local/bin"
+		},
+		{
+			"path": ".local/lib/bash"
+		}
+	],
+	"settings": {}
+}
