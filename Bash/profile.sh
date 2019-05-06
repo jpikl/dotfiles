@@ -13,7 +13,7 @@ normalize_path() {
   local path=$1
 
   if [[ $path =~ ^[a-zA-Z]: ]]; then
-    # Convert paths like 'C:\Dir\SubDir' to '/c/Dir/SubDir' 
+    # Convert paths like 'C:\Dir\SubDir' to '/c/Dir/SubDir'
     # that will work with MSYS environment on Windows.
     path=${path,}       # Make first character lowercase.
     path=${path/:/}     # Remove ':' character.
@@ -25,6 +25,7 @@ normalize_path() {
 
 # Directories init
 BACKUP_DIR=$(normalize_path "${BACKUP_DIR:-"$HOME/Backup"}")
+BINARIES_DIR=$(normalize_path "${BINARIES_DIR:-"$HOME/.local/bin"}")
 DESKTOP_DIR=$(normalize_path "${DESKTOP_DIR:-"$HOME/Desktop"}")
 DOCUMENTS_DIR=$(normalize_path "${DOCUMENTS_DIR:-"$HOME/Documents"}")
 DOWNLOADS_DIR=$(normalize_path "${DOWNLOADS_DIR:-"$HOME/Downloads"}")
@@ -43,6 +44,7 @@ MAVEN_DIR=$(normalize_path "${MAVEN_DIR:-"$LIBRARIES_DIR/maven"}")
 NPM_DIR=$(normalize_path "${NPM_DIR:-"$LIBRARIES_DIR/npm"}")
 
 # Directories export
+export BINARIES_DIR
 export BACKUP_DIR
 export DESKTOP_DIR
 export DOCUMENTS_DIR
@@ -65,7 +67,7 @@ export NPM_DIR
 export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
 
 # Path
-export PATH=$PATH:$BASH_DIR/bin
+export PATH=$PATH:$BINARIES_DIR
 export PATH=$PATH:$NPM_DIR/bin # Unix
 export PATH=$PATH:$NPM_DIR     # Windows
 
