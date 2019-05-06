@@ -1,12 +1,9 @@
 # shellcheck shell=bash
 # shellcheck source=/dev/null
 
-# Root directory for all Bash scripts
-export BASH_DIR=~/Bash
-
 # Local override not committed in git
-if [[ -f $BASH_DIR/profile_local.sh ]]; then
-  source "$BASH_DIR/profile_local.sh"
+if [[ -f ~/profile_local.sh ]]; then
+  source ~/profile_local.sh
 fi
 
 normalize_path() {
@@ -23,34 +20,43 @@ normalize_path() {
   echo "$path"
 }
 
-# Directories init
+# Core directories
 BACKUP_DIR=$(normalize_path "${BACKUP_DIR:-"$HOME/Backup"}")
 BINARIES_DIR=$(normalize_path "${BINARIES_DIR:-"$HOME/.local/bin"}")
+CACHE_DIR=$(normalize_path "${CACHE_DIR:-"$HOME/.cache"}")
+CONFIG_DIR=$(normalize_path "${CONFIG_DIR:-"$HOME/.config"}")
+DATA_DIR=$(normalize_path "${DATA_DIR:-"$HOME/.local/share"}")
 DESKTOP_DIR=$(normalize_path "${DESKTOP_DIR:-"$HOME/Desktop"}")
 DOCUMENTS_DIR=$(normalize_path "${DOCUMENTS_DIR:-"$HOME/Documents"}")
 DOWNLOADS_DIR=$(normalize_path "${DOWNLOADS_DIR:-"$HOME/Downloads"}")
-LIBRARIES_DIR=$(normalize_path "${LIBRARIES_DIR:-"$HOME/Libraries"}")
+LIBRARIES_DIR=$(normalize_path "${LIBRARIES_DIR:-"$HOME/.local/lib"}")
 MUSIC_DIR=$(normalize_path "${MUSIC_DIR:-"$HOME/Music"}")
 PICTURES_DIR=$(normalize_path "${PICTURES_DIR:-"$HOME/Pictures"}")
 PLAYLISTS_DIR=$(normalize_path "${PLAYLISTS_DIR:-"$HOME/Playlists"}")
 PRIVATE_DECRYPTED_DIR=$(normalize_path "${PRIVATE_DECRYPTED_DIR:-"$HOME/Private"}")
-PRIVATE_ENCRYPTED_DIR=$(normalize_path "${PRIVATE_ENCRYPTED_DIR:-"$HOME.private"}")
+PRIVATE_ENCRYPTED_DIR=$(normalize_path "${PRIVATE_ENCRYPTED_DIR:-"$HOME/.private"}")
 PUBLIC_DIR=$(normalize_path "${PUBLIC_DIR:-"$HOME/Public"}")
 TEMP_DIR=$(normalize_path "${TEMP_DIR:-"$HOME/Temp"}")
 TEMPLATES_DIR=$(normalize_path "${TEMPLATES_DIR:-"$HOME/Templates"}")
 VIDEOS_DIR=$(normalize_path "${VIDEOS_DIR:-"$HOME/Videos"}")
 WORKSPACE_DIR=$(normalize_path "${WORKSPACE_DIR:-"$HOME/Workspace"}")
+
+# Library directories
+BASH_DIR=$(normalize_path "${BASH_DIR:-"$LIBRARIES_DIR/bash"}")
 MAVEN_DIR=$(normalize_path "${MAVEN_DIR:-"$LIBRARIES_DIR/maven"}")
 NPM_DIR=$(normalize_path "${NPM_DIR:-"$LIBRARIES_DIR/npm"}")
 
 # Directories export
-export BINARIES_DIR
 export BACKUP_DIR
+export BASH_DIR
+export BINARIES_DIR
 export DESKTOP_DIR
 export DOCUMENTS_DIR
 export DOWNLOADS_DIR
 export LIBRARIES_DIR
+export MAVEN_DIR
 export MUSIC_DIR
+export NPM_DIR
 export PICTURES_DIR
 export PLAYLISTS_DIR
 export PRIVATE_DECRYPTED_DIR
@@ -60,8 +66,6 @@ export TEMP_DIR
 export TEMPLATES_DIR
 export VIDEOS_DIR
 export WORKSPACE_DIR
-export MAVEN_DIR
-export NPM_DIR
 
 # Prompt options
 export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
