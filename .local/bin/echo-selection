@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# shellcheck source=utils.sh
-source "$BASH_DIR/utils.sh"
+# shellcheck source=.local/lib/bash/utils.sh
+source "$BASH_LIB_DIR/utils.sh"
 
 print_help() {
   echo "Let user select one of words and print it."

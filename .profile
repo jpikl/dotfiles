@@ -28,8 +28,8 @@ LIBRARIES_DIR=$(normalize_path "${LIBRARIES_DIR:-"$HOME/.local/lib"}")
 MUSIC_DIR=$(normalize_path "${MUSIC_DIR:-"$HOME/Music"}")
 PICTURES_DIR=$(normalize_path "${PICTURES_DIR:-"$HOME/Pictures"}")
 PLAYLISTS_DIR=$(normalize_path "${PLAYLISTS_DIR:-"$HOME/Playlists"}")
-PRIVATE_DECRYPTED_DIR=$(normalize_path "${PRIVATE_DECRYPTED_DIR:-"$HOME/Private"}")
-PRIVATE_ENCRYPTED_DIR=$(normalize_path "${PRIVATE_ENCRYPTED_DIR:-"$HOME/.private"}")
+PRIVATE_DIR=$(normalize_path "${PRIVATE_DIR:-"$HOME/Private"}")
+PRIVATE_HIDDEN_DIR=$(normalize_path "${PRIVATE_HIDDEN_DIR:-"$HOME/.private"}")
 PUBLIC_DIR=$(normalize_path "${PUBLIC_DIR:-"$HOME/Public"}")
 TEMP_DIR=$(normalize_path "${TEMP_DIR:-"$HOME/Temp"}")
 TEMPLATES_DIR=$(normalize_path "${TEMPLATES_DIR:-"$HOME/Templates"}")
@@ -37,38 +37,40 @@ VIDEOS_DIR=$(normalize_path "${VIDEOS_DIR:-"$HOME/Videos"}")
 WORKSPACE_DIR=$(normalize_path "${WORKSPACE_DIR:-"$HOME/Workspace"}")
 
 # Library directories
-BASH_DIR=$(normalize_path "${BASH_DIR:-"$LIBRARIES_DIR/bash"}")
-MAVEN_DIR=$(normalize_path "${MAVEN_DIR:-"$LIBRARIES_DIR/maven"}")
-NPM_DIR=$(normalize_path "${NPM_DIR:-"$LIBRARIES_DIR/npm"}")
+BASH_LIB_DIR=$(normalize_path "${BASH_LIB_DIR:-"$LIBRARIES_DIR/bash"}")
+MAVEN_LIB_DIR=$(normalize_path "${MAVEN_LIB_DIR:-"$LIBRARIES_DIR/maven"}")
+NPM_LIB_DIR=$(normalize_path "${NPM_LIB_DIR:-"$LIBRARIES_DIR/npm"}")
 
-# Directories export
+# Core directires
 export BACKUP_DIR
-export BASH_DIR
 export BINARIES_DIR
 export DESKTOP_DIR
 export DOCUMENTS_DIR
 export DOWNLOADS_DIR
 export LIBRARIES_DIR
-export MAVEN_DIR
 export MUSIC_DIR
-export NPM_DIR
 export PICTURES_DIR
 export PLAYLISTS_DIR
-export PRIVATE_DECRYPTED_DIR
-export PRIVATE_ENCRYPTED_DIR
+export PRIVATE_DIR
+export PRIVATE_HIDDEN_DIR
 export PUBLIC_DIR
 export TEMP_DIR
 export TEMPLATES_DIR
 export VIDEOS_DIR
 export WORKSPACE_DIR
 
-# Prompt options
-export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
+# Library directories
+export BASH_LIB_DIR
+export NPM_LIB_DIR
+export MAVEN_LIB_DIR
 
 # Path
 export PATH=$PATH:$BINARIES_DIR
-export PATH=$PATH:$NPM_DIR/bin # Unix
-export PATH=$PATH:$NPM_DIR     # Windows
+export PATH=$PATH:$NPM_LIB_DIR/bin # Unix
+export PATH=$PATH:$NPM_LIB_DIR     # Windows
+
+# Prompt options
+export PROMPT_GIT_ENABLE=${PROMPT_GIT_ENABLED:-true}
 
 # Other
 export EDITOR=vim

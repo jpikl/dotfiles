@@ -7,8 +7,8 @@ if [[ $- != *i* ]]; then
   return
 fi
 
-if [[ -z $BASH_DIR ]]; then
-  echo "${BASH_SOURCE[0]}: Environment variable BASH_DIR is not defined!"
+if [[ -z $BASH_LIB_DIR ]]; then
+  echo "${BASH_SOURCE[0]}: Environment variable BASH_LIB_DIR is not defined!"
   echo "${BASH_SOURCE[0]}: ~/.bash_profile was probably not sourced before!"
   return
 fi
@@ -18,8 +18,8 @@ eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"
 
 # Sources
-source "$BASH_DIR/aliases.sh"
-source "$BASH_DIR/prompt.sh"
+source "$BASH_LIB_DIR/aliases.sh"
+source "$BASH_LIB_DIR/prompt.sh"
 
 # Local override not committed in git
 if [[ -f ~/bashrc_local ]]; then
