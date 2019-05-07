@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-# Git repo for dotfiles
+# Git for dotfiles
 alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
 # Ls
