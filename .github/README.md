@@ -29,19 +29,28 @@ any conflicts.
 git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME checkout -f
 ```
 
+Customize your personal [configuration](#configuration).
+
 Logout and login to reload Bash environment.
+
+Use `home-init` command to initialize home directory structure.
+Try `-h, --help` option for usage.
+
+```bash
+home-init -h
+```
 
 ## Configuration
 
 The following files are not part of the `~/.dotfiles.git` repository and
 can be used for machine-specific or user-specific configuration.
 
-`~/Bash/profile_local.sh`
+`~/.profile_local`
 
-- Sourced at the start of `~/.bash_profile`.
-- Can be used to customize environment variables.
+- Sourced at the start of `~/.profile`.
+- Can be used to override environment variables defined in `~/.profile`.
 
-`~/Bash/rc_local.sh`
+`~/.bashrc_local`
 
 - Sourced at the end of `~/.bashrc`.
 - Can be used to define custom aliases and functions.
@@ -52,13 +61,11 @@ Git commands for the `~/.dotfiles.git` repository have to be executed
 using `dotfiles` command.
 
 ```bash
-dotfiles add ~/Bash/bin/foo-bar
-dotfiles commit -m "Add foo-bar command"
-dotfiles push
+dotfiles status # Instead of 'git status'
 ```
 
-Everything outside the `~/Bash` directory is ignored by default and
-needs to be forcibly added using the `-f, --force` option.
+Everything in the home directory is ignored by default and
+needs to be  forcibly added using `-f, --force` option.
 
 ```bash
 dotfiles add -f ~/.foo-bar
@@ -70,11 +77,11 @@ dotfiles push
 
 All Bash scripts are validated using [shellcheck](https://shellcheck.net/).
 
-Run `check.sh` to start the validation.
+Run `check-dotfiles` command from the home directory to start the validation.
 
 ```bash
-cd ~/Bash
-./check.sh
+cd
+check-dotfiles
 ```
 
 ## License

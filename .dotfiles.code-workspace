@@ -5,6 +5,9 @@
 		},
 		{
 			"path": ".local/lib/bash"
+		},
+		{
+			"path": ".github"
 		}
 	],
 	"settings": {}
