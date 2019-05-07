@@ -9,7 +9,7 @@ fi
 
 if [[ -z $BASH_LIB_DIR ]]; then
   echo "${BASH_SOURCE[0]}: Environment variable BASH_LIB_DIR is not defined!"
-  echo "${BASH_SOURCE[0]}: ~/.bash_profile was probably not sourced before!"
+  echo "${BASH_SOURCE[0]}: ~/.profile was probably not sourced before!"
   return
 fi
 
