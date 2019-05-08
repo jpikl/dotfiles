@@ -59,7 +59,7 @@ find_npm_dirs() {
   [[ ${#npm_dirs[@]} -gt 0 ]] || die "Unable to find any package.json!"
 
   if [[ ${#npm_dirs[@]} -gt 1 && $select_one == true ]]; then
-    echo-selection "${npm_dirs[@]}"
+    print-selection "${npm_dirs[@]}"
   else
     printf "%s\n" "${npm_dirs[@]}"
   fi
