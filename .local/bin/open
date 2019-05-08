@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck source=.local/lib/bash/utils.sh
-source "$BABASH_LIB_DIRSH_DIR/utils.sh"
+source "$BASH_LIB_DIR/utils.sh"
 
 print_help() {
   echo "Opens a file or URL in the user's preferred application."
