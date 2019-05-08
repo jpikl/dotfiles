@@ -12,14 +12,15 @@ print_help() {
   echo "Options:"
   echo "  -d, --directories     Create directories for *_DIR environment variables."
   echo "  -s, --symbolic-links  Create symbolic links for *_LINK environment variables."
+  echo "  -f, --fonts           Download patched fonts for terminal."
   echo "  -h, --help            Display this help."
 }
 
 process_args() {
   require_gnu_getopt
 
-  local -r short_opts=dsh
-  local -r long_opts=directories,symbolic-links,help
+  local -r short_opts=dsfh
+  local -r long_opts=directories,symbolic-links,fonts,help
   local args
 
   args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
@@ -29,6 +30,7 @@ process_args() {
     case "$1" in
       -d|--directories)    directories=true; shift ;;
       -s|--symbolic-links) symbolic_links=true; shift ;;
+      -f|--fonts)          fonts=true; shift ;;
       -h|--help)           print_help; exit ;;
       --)                  shift; break ;;
       *)                   die_unprocessable_args ;;
@@ -69,7 +71,7 @@ create_dirs() {
 create_sym_link() {
   if [[ ! -L $1 ]]; then
     echo "Creating symbolic link '$1' to '$2'"
-    ln --symbolic --no-target-directory "$2" "$1"
+    ln --symbolic --no-target-directory "$2" "$1"*sdfsdf
   fi
 }
 
@@ -83,14 +85,33 @@ create_sym_links() {
   create_sym_link "$VOLUMES_LINK" "$VOLUMES_DIR"
 }
 
+download_font() {
+  local -r font=$(basename "$1")
+  local -r file=$DATA_DIR/fonts/$font
+
+  if [[ ! -f "$file" ]]; then
+    echo "Downloading font '$font'"
+    wget --no-verbose --output-document="$file" "$1" 2>&1 | grep ERROR
+    [[ ${PIPESTATUS[0]} -eq 0 ]] || rm -f "$file" # Clean up unfinished download.
+  fi
+}
+
+download_fonts() {
+  for file in "Literation Mono Nerd Font Complete"{," Mono"}{," Windows Compatible"}.ttf; do
+    download_font "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/LiberationMono/complete/$file"
+  done
+}
+
 home_init() {
   [[ $directories = true ]] && create_dirs
   [[ $symbolic_links = true ]] && create_sym_links
+  [[ $fonts = true ]] && download_fonts
 }
 
 function main() {
   local directories=false
   local symbolic_links=false
+  local fonts=false
 
   process_args "$@"
   home_init
