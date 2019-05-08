@@ -121,12 +121,13 @@ create_bashrc_local() {
 
 download_font() {
   local -r font=$(basename "$1")
-  local -r file=$DATA_DIR/fonts/$font
+  local -r dir=$DATA_DIR/fonts
+  local -r file=$dir/$font
 
   if [[ ! -f "$file" ]]; then
     echo "Downloading font '$font'"
-    wget --no-verbose --output-document="$file" "$1" 2>&1 | grep ERROR
-    [[ ${PIPESTATUS[0]} -eq 0 ]] || rm -f "$file" # Clean up unfinished download.
+    mkdir -p "$dir"
+    wget --output-document="$file" "$1" || rm -f "$file" # Clean up unfinished download.
   fi
 }
 
