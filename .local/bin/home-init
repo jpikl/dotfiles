@@ -73,7 +73,7 @@ create_dirs() {
 create_sym_link() {
   if [[ ! -L $1 ]]; then
     echo "Creating symbolic link '$1' to '$2'"
-    ln --symbolic --no-target-directory "$2" "$1"*sdfsdf
+    ln --symbolic --no-target-directory "$2" "$1"
   fi
 }
 
