@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
 
@@ -52,13 +54,13 @@ confirm_overwrite() {
 }
 
 handle_error() {
-  [[ $1 ]] && echo_error "$1"
+  [[ ${1:-} ]] && echo_error "$1"
   [[ $skip_errors = true ]] || die
 }
 
 extract_tar() {
   local -r input=$1
-  local -r compression=$2
+  local -r compression=${2:-}
 
   local opts=(
     "--extract"     # Do extraction.
@@ -248,7 +250,7 @@ function main() {
   local overwrite=false
   local verbose=false
   local skip_errors=false
-  local files
+  local files=()
 
   process_args "$@"
 

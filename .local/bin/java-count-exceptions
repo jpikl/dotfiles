@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
 
@@ -66,7 +68,7 @@ java_count_exceptions() {
 
 function main() {
   local messages=false
-  local file
+  local file=
 
   process_args "$@"
   java_count_exceptions

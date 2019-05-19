@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
 
@@ -49,7 +51,7 @@ process_args() {
 
   if [[ $# -ge 1 ]]; then
     set_duration "$1"
-    message=$2
+    message=${2:-}
   else
     die_missing_args
   fi

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
 
@@ -61,7 +63,7 @@ echo_select() {
 }
 
 function main() {
-  local default
+  local default=
   local words
 
   process_args "$@"

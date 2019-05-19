@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
 
@@ -77,7 +79,7 @@ npm_run_any() {
     [[ $rerun_on_failure = true ]] || break
     echo_error
     echo_error "package.json $target_script script unexpectedly crashed!"
-    interactive-sleep "$rerun_delay" "Script will automatically rerun"
+    interactive-sleep "$rerun_delay" "Script will automatically rerun" || true
   done
 }
 

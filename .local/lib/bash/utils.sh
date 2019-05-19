@@ -68,7 +68,7 @@ print_usage_hint() {
 }
 
 die() {
-  [[ "$1" ]] && echo_error "$(self): $1"
+  [[ "${1:-}" ]] && echo_error "$(self): $1"
   exit "${2:-$ERR_GENERIC}"
 }
 
@@ -105,8 +105,9 @@ require_cmd() {
 }
 
 require_gnu_getopt() {
-  getopt --test >/dev/null
-  [[ $? -eq 4 ]] || die "GNU getopt is required!" $ERR_CMD_NOT_FOUND
+  local result=0
+  getopt --test >/dev/null || result=$?
+  [[ $result -eq 4 ]] || die "GNU getopt is required!" $ERR_CMD_NOT_FOUND
 }
 
 get_args() {
