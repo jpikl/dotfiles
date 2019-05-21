@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-# shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/args.sh"
+
 
 print_help() {
   echo "Extract archive in nearly any format."
@@ -22,13 +23,11 @@ print_help() {
 }
 
 process_args() {
-  require_gnu_getopt
-
   local -r short_opts=ovsh
   local -r long_opts=overwrite,verbose,skip-errors,help
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
+  args=$(get_args "$short_opts" "$long_opts" "$@")
   eval set -- "$args"
 
   while true ; do

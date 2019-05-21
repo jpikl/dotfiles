@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-# shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
   echo "Print progress bar."
@@ -52,13 +52,11 @@ set_bg_char() {
 }
 
 process_args() {
-  require_gnu_getopt
-
   local -r short_opts=w:m:f:b:h
   local -r long_opts=width:,max-value:,fg-char:,bg-char:,help
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
+  args=$(get_args "$short_opts" "$long_opts" "$@")
   eval set -- "$args"
 
   while true ; do

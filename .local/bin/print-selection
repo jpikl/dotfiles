@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-# shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
   echo "Let user select one of words and print it."
@@ -20,13 +20,11 @@ print_help() {
 }
 
 process_args() {
-  require_gnu_getopt
-
   local -r short_opts=d:h
   local -r long_opts=default:,help
   local args
 
-  args=$(get_args "$short_opts" "$long_opts" "$@") || die_invalid_args
+  args=$(get_args "$short_opts" "$long_opts" "$@")
   eval set -- "$args"
 
   while true ; do

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+files=(
+  ~/.bash_logout
+  ~/.bash_profile
+  ~/.bashrc
+  ~/.profile
+  ~/.local/bin/*
+  ~/.local/lib/bash/*.sh
+)
+
+echo "Checking the following files:"
+echo
+
+for file in "${files[@]}"; do
+  echo "  $file"
+done
+
+shellcheck --exclude=SC1090 "${files[@]}" && printf "\nSUCCESS\n"

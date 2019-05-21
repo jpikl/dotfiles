@@ -96,28 +96,16 @@ die_cmd_not_found() {
   die "Command $1 is required!" $ERR_CMD_NOT_FOUND
 }
 
+die_missing_dependency() {
+  exit $ERR_CMD_NOT_FOUND
+}
+
 cmd_exists() {
   command -v "$1" >/dev/null
 }
 
 require_cmd() {
   cmd_exists "$1" || die_cmd_not_found "$1"
-}
-
-require_gnu_getopt() {
-  local result=0
-  getopt --test >/dev/null || result=$?
-  [[ $result -eq 4 ]] || die "GNU getopt is required!" $ERR_CMD_NOT_FOUND
-}
-
-get_args() {
-  local -r short_opts=$1
-  local -r long_opts=$2
-  shift 2
-  getopt --name "$(self)" \
-         --options "$short_opts" \
-         --longoptions "$long_opts" \
-         -- "$@"
 }
 
 confirm() {

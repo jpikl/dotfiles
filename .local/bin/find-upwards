@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-# shellcheck source=.local/lib/bash/utils.sh
 source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
   echo "Search upwards in directory tree."

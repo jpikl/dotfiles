@@ -1,0 +1,3 @@
+[submodule ".local/lib/bash/pure-getopt"]
+	path = .local/lib/bash/pure-getopt
+	url = https://github.com/agriffis/pure-getopt.git
