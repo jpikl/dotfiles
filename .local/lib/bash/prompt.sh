@@ -25,8 +25,6 @@ __separator_symbol=''
 __default_color_on='\[\033[1;37m\]'
 __default_color_off='\[\033[0m\]'
 
-echo -e '\uf108 \uf6c4     \uf007 \uf2bd \uf2c0 \uf2be     \uf115 \uf114 \uf07c \uf07b'
-
 function __enrich() {
     local flag=$1
     local symbol=$2
