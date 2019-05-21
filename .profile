@@ -1,5 +1,4 @@
 # shellcheck shell=bash
-# shellcheck source=/dev/null
 
 # Local override not committed in git
 if [[ -f ~/.profile_local ]]; then
@@ -37,7 +36,6 @@ PRIVATE_DIR=$(normalize_path "${PRIVATE_DIR:-"$HOME/Private"}")
 PRIVATE_HIDDEN_DIR=$(normalize_path "${PRIVATE_HIDDEN_DIR:-"$HOME/.private"}")
 PUBLIC_DIR=$(normalize_path "${PUBLIC_DIR:-"$HOME/Public"}")
 TEMP_DIR=$(normalize_path "${TEMP_DIR:-"$HOME/Temp"}")
-TEMPLATES_DIR=$(normalize_path "${TEMPLATES_DIR:-"$HOME/Templates"}")
 VIDEOS_DIR=$(normalize_path "${VIDEOS_DIR:-"$HOME/Videos"}")
 WORKSPACE_DIR=$(normalize_path "${WORKSPACE_DIR:-"$HOME/Workspace"}")
 
@@ -76,7 +74,6 @@ export PRIVATE_DIR
 export PRIVATE_HIDDEN_DIR
 export PUBLIC_DIR
 export TEMP_DIR
-export TEMPLATES_DIR
 export VIDEOS_DIR
 export WORKSPACE_DIR
 

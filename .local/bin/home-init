@@ -65,7 +65,6 @@ create_dirs() {
   create_dir "$PRIVATE_HIDDEN_DIR"
   create_dir "$PUBLIC_DIR"
   create_dir "$TEMP_DIR"
-  create_dir "$TEMPLATES_DIR"
   create_dir "$VIDEOS_DIR"
   create_dir "$WORKSPACE_DIR"
 }
