@@ -57,7 +57,6 @@ function main() {
   local items
 
   process_args "$@"
-  require_cmd xdg-open
 
   for item in "${items[@]}"; do
     open "$item"

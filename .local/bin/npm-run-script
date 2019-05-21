@@ -55,8 +55,6 @@ process_args() {
 }
 
 npm_run_any() {
-  require_cmd npm
-
   [[ -f package.json ]] || die "No package.json in the current directory!"
 
   local available_scripts

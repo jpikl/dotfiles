@@ -5,7 +5,7 @@ ERR_GENERIC=1
 ERR_UNPROCESSABLE_ARGS=100
 ERR_INVALID_ARGS=101
 ERR_MISSING_ARGS=102
-ERR_CMD_NOT_FOUND=104
+ERR_MISSING_DEPENDENCY=103
 
 is_integer() {
   [[ $1 =~ ^[0-9]+$ ]]
@@ -87,20 +87,12 @@ die_missing_args() {
   exit $ERR_MISSING_ARGS
 }
 
-die_cmd_not_found() {
-  die "Command $1 is required!" $ERR_CMD_NOT_FOUND
-}
-
 die_missing_dependency() {
-  exit $ERR_CMD_NOT_FOUND
+  exit $ERR_MISSING_DEPENDENCY
 }
 
-cmd_exists() {
+command_exists() {
   command -v "$1" >/dev/null
-}
-
-require_cmd() {
-  cmd_exists "$1" || die_cmd_not_found "$1"
 }
 
 confirm() {
