@@ -5,7 +5,6 @@ ERR_GENERIC=1
 ERR_UNPROCESSABLE_ARGS=100
 ERR_INVALID_ARGS=101
 ERR_MISSING_ARGS=102
-ERR_UNABLE_CD=103
 ERR_CMD_NOT_FOUND=104
 
 is_integer() {
@@ -86,10 +85,6 @@ die_missing_args() {
   echo_error "$(self): Missing required argument!"
   print_usage_hint
   exit $ERR_MISSING_ARGS
-}
-
-die_unable_cd() {
-  exit $ERR_UNABLE_CD
 }
 
 die_cmd_not_found() {
