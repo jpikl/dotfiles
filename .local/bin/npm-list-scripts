@@ -6,13 +6,15 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "List scripts of a npm package."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options]"
-  echo
-  echo "Options:"
-  echo "  -h, --help  Display this help."
+  cat <<-EOT
+		List scripts of a npm package.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -h, --help  Display this help.
+	EOT
 }
 
 process_args() {

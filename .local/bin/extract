@@ -5,21 +5,22 @@ set -euo pipefail
 source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-
 print_help() {
-  echo "Extract archive in nearly any format."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] <file>..."
-  echo
-  echo "Options:"
-  echo "  -o, --overwrite    Overwrite existing files without prompting."
-  echo "  -v, --verbose      Verbose mode with additional output."
-  echo "  -s, --skip-errors  Skip extraction errors."
-  echo "  -h, --help         Display this help."
-  echo
-  echo "File:"
-  echo "  One or more files to extract."
+  cat <<-EOT
+		Extract archive in nearly any format.
+
+		Usage:
+		  $(self) [options] [--] <file>...
+
+		Options:
+		  -o, --overwrite    Overwrite existing files without prompting.
+		  -v, --verbose      Verbose mode with additional output.
+		  -s, --skip-errors  Skip extraction errors.
+		  -h, --help         Display this help.
+
+		File:
+		  One or more files to extract.
+	EOT
 }
 
 process_args() {

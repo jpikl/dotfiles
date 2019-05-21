@@ -6,19 +6,21 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Search upwards in directory tree."
-  echo
-  echo "Usage:"
-  echo "  $(self) [path] [expression]"
-  echo
-  echo "Path:"
-  echo "  Search starting point."
-  echo "  Default path is the current working directory."
-  echo
-  echo "Expression:"
-  echo "  Any expression accepted by the find command."
-  echo "  See 'find -help' or 'man find' for more details."
-  echo "  Use of -maxdepth is discouraged since it's set internally to 1 by default."
+  cat <<-EOT
+		Search upwards in directory tree.
+
+		Usage:
+		  $(self) [path] [expression]
+
+		Path:
+		  Search starting point.
+		  Default path is the current working directory.
+
+		Expression:
+		  Any expression accepted by the find command.
+		  See 'find -help' or 'man find' for more details.
+		  Use of -maxdepth is discouraged since it's set internally to 1 by default.
+	EOT
 }
 
 process_args() {

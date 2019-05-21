@@ -6,22 +6,24 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Synchronize two directories using rsync."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] <source> <destination>"
-  echo
-  echo "Options:"
-  echo "  -t, --times-only  Preserve only modification times."
-  echo "  -e, --exfat       Optimize for exFAT filesystem."
-  echo "  -f, --force       Skip dry run. Perform sync without confirmation."
-  echo "  -h, --help        Display this help."
-  echo
-  echo "Source:"
-  echo "  Source directory."
-  echo
-  echo "Destination:"
-  echo "  Destination directory."
+  cat <<-EOT
+		Synchronize two directories using rsync.
+
+		Usage:
+		  $(self) [options] [--] <source> <destination>
+
+		Options:
+		  -t, --times-only  Preserve only modification times.
+		  -e, --exfat       Optimize for exFAT filesystem.
+		  -f, --force       Skip dry run. Perform sync without confirmation.
+		  -h, --help        Display this help.
+
+		Source:
+		  Source directory.
+
+		Destination:
+		  Destination directory.
+	EOT
 }
 
 set_source() {

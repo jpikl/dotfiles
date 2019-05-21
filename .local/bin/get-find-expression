@@ -6,26 +6,28 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Generate expression for the find command."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options]"
-  echo
-  echo "Options:"
-  echo "  -l, --lines               Print expressions on a separate lines."
-  echo "  -G, --ignore-git          Ignore .git directories."
-  echo "  -P, --ignore-project      Ignore project metadata."
-  echo "  -L, --ignore-libs         Ignore libraries."
-  echo "  -O, --ignore-compiled     Ignore compilation output."
-  echo "  -s, --ignore-non-sources  Same as --ignore-{git,project,libs,compiled}."
-  echo "  -h, --help                Display this help."
-  echo
-  echo "Examples:"
-  echo "  # Find HEAD files outside .git directory."
-  echo "  $(self) -G | xargs -t find . -name HEAD"
-  echo
-  echo "  # Find *.xml files between source files."
-  echo "  $(self) -s | xargs -t find . -name '*.xml'"
+  cat <<-EOT
+		Generate expression for the find command.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -l, --lines               Print expressions on a separate lines.
+		  -G, --ignore-git          Ignore .git directories.
+		  -P, --ignore-project      Ignore project metadata.
+		  -L, --ignore-libs         Ignore libraries.
+		  -O, --ignore-compiled     Ignore compilation output.
+		  -s, --ignore-non-sources  Same as --ignore-{git,project,libs,compiled}.
+		  -h, --help                Display this help.
+
+		Examples:
+		  # Find HEAD files outside .git directory.
+		  $(self) -G | xargs -t find . -name HEAD
+
+		  # Find *.xml files between source files.
+		  $(self) -s | xargs -t find . -name '*.xml'
+	EOT
 }
 
 process_args() {

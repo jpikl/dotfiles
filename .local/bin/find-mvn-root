@@ -6,17 +6,19 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Find root directory of a maven project."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] [path]"
-  echo
-  echo "Options:"
-  echo "  -h, --help  Display this help."
-  echo
-  echo "Path:"
-  echo "  Search starting point."
-  echo "  Default path is the current working directory."
+  cat <<-EOT
+		Find root directory of a maven project.
+
+		Usage:
+		  $(self) [options] [--] [path]
+
+		Options:
+		  -h, --help  Display this help.
+
+		Path:
+		  Search starting point.
+		  Default path is the current working directory.
+	EOT
 }
 
 set_path() {

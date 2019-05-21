@@ -6,20 +6,22 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Print progress bar."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] <value>"
-  echo
-  echo "Options:"
-  echo "  -w, --width=<value>        Progress bar width (default: $width)."
-  echo "  -m, --max-value=<value>    Maximum progress value (default: $max_value)."
-  echo "  -f, --fg-char=<character>  Character used to draw foreground (default: '$fg_char')."
-  echo "  -b, --bg-char=<character>  Character used to draw Background (default: '$bg_char')."
-  echo "  -h, --help                 Display this help."
-  echo
-  echo "Value:"
-  echo "  Progress value between 0 and maximum value (default: $max_value)."
+  cat <<-EOT
+		Print progress bar.
+
+		Usage:
+		  $(self) [options] <value>
+
+		Options:
+		  -w, --width=<value>        Progress bar width (default: $width).
+		  -m, --max-value=<value>    Maximum progress value (default: $max_value).
+		  -f, --fg-char=<character>  Character used to draw foreground (default: '$fg_char').
+		  -b, --bg-char=<character>  Character used to draw Background (default: '$bg_char').
+		  -h, --help                 Display this help.
+
+		Value:
+		  Progress value between 0 and maximum value (default: $max_value).
+	EOT
 }
 
 set_value() {

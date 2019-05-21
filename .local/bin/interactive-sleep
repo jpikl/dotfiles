@@ -6,23 +6,25 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Cancelable sleep with displayed progress."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] <duration> [message]"
-  echo
-  echo "Options:"
-  echo "  -h, --help  Display this help."
-  echo
-  echo "Duration:"
-  echo "  Number of seconds to sleep for."
-  echo
-  echo "Message:"
-  echo "  Optional message to display during wait."
-  echo
-  echo "Exit code:"
-  echo "  0  Normal execution."
-  echo "  1  User canceled sleep."
+  cat <<-EOT
+		Cancelable sleep with displayed progress.
+
+		Usage:
+		  $(self) [options] <duration> [message]
+
+		Options:
+		  -h, --help  Display this help.
+
+		Duration:
+		  Number of seconds to sleep for.
+
+		Message:
+		  Optional message to display during wait.
+
+		Exit code:
+		  0  Normal execution.
+		  1  User canceled sleep.
+	EOT
 }
 
 set_duration() {

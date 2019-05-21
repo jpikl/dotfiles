@@ -6,17 +6,19 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Let user select one of words and print it."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] [word]..."
-  echo
-  echo "Options:"
-  echo "  -d, --default=<word>  Default value when no words are provided."
-  echo "  -h, --help            Display this help."
-  echo
-  echo "Word:"
-  echo "  Zero or more words to let user select from."
+  cat <<-EOT
+		Let user select one of words and print it.
+
+		Usage:
+		  $(self) [options] [--] [word]...
+
+		Options:
+		  -d, --default=<word>  Default value when no words are provided.
+		  -h, --help            Display this help.
+
+		Word:
+		  Zero or more words to let user select from.
+	EOT
 }
 
 process_args() {

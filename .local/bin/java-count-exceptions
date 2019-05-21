@@ -6,18 +6,20 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Count occurrences of Java exceptions in a log file."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] [file]"
-  echo
-  echo "Options:"
-  echo "  -m, --messages  Include exception messages."
-  echo "  -h, --help      Display this help."
-  echo
-  echo "File:"
-  echo "  Log file to read."
-  echo "  If not specified, text is read from stdin."
+  cat <<-EOT
+		Count occurrences of Java exceptions in a log file.
+
+		Usage:
+		  $(self) [options] [--] [file]
+
+		Options:
+		  -m, --messages  Include exception messages.
+		  -h, --help      Display this help.
+
+		File:
+		  Log file to read.
+		  If not specified, text is read from stdin.
+	EOT
 }
 
 set_file() {

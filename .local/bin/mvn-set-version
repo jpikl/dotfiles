@@ -1,23 +1,25 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-source "$BASH_LIB_DIR/args.sh"
 
 source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Set version of a maven project."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] <version>"
-  echo
-  echo "Options:"
-  echo "  -b, --backup   Create backup of original pom.xml files."
-  echo "  -v, --verbose  Verbose mode with additional output."
-  echo "  -h, --help     Display this help."
-  echo
-  echo "Version:"
-  echo "  New version to set."
+  cat <<-EOT
+		Set version of a maven project.
+
+		Usage:
+		  $(self) [options] <version>
+
+		Options:
+		  -b, --backup   Create backup of original pom.xml files.
+		  -v, --verbose  Verbose mode with additional output.
+		  -h, --help     Display this help.
+
+		Version:
+		  New version to set.
+	EOT
 }
 
 set_version() {

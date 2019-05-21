@@ -6,17 +6,19 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Opens a file or URL in the user's preferred application."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] <item>..."
-  echo
-  echo "Options:"
-  echo "  -s, --skip-errors  Skip opening errors."
-  echo "  -h, --help         Display this help."
-  echo
-  echo "Item:"
-  echo "  One or more files or URLs to open."
+  cat <<-EOT
+		Opens a file or URL in the user's preferred application.
+
+		Usage:
+		  $(self) [options] [--] <item>...
+
+		Options:
+		  -s, --skip-errors  Skip opening errors.
+		  -h, --help         Display this help.
+
+		Item:
+		  One or more files or URLs to open.
+	EOT
 }
 
 process_args() {

@@ -6,18 +6,20 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Find directories of node projects."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options] [--] [path]"
-  echo
-  echo "Options:"
-  echo "  -s, --select-one  User will be prompted select one of multiple results."
-  echo "  -h, --help        Display this help."
-  echo
-  echo "Path:"
-  echo "  Search starting point."
-  echo "  Default path is the current working directory."
+  cat <<-EOT
+		Find directories of node projects.
+
+		Usage:
+		  $(self) [options] [--] [path]
+
+		Options:
+		  -s, --select-one  User will be prompted select one of multiple results.
+		  -h, --help        Display this help.
+
+		Path:
+		  Search starting point.
+		  Default path is the current working directory.
+	EOT
 }
 
 set_path() {

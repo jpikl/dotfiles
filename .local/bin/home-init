@@ -6,17 +6,19 @@ source "$BASH_LIB_DIR/utils.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
-  echo "Initialize home directory structure."
-  echo
-  echo "Usage:"
-  echo "  $(self) [options]"
-  echo
-  echo "Options:"
-  echo "  -d, --directories     Create directories for *_DIR environment variables."
-  echo "  -s, --symbolic-links  Create symbolic links for *_LINK environment variables."
-  echo "  -c, --local-config    Create default .profile_local and .bashrc_local files."
-  echo "  -f, --fonts           Download patched fonts for terminal."
-  echo "  -h, --help            Display this help."
+  cat <<-EOT
+		Initialize home directory structure.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -d, --directories     Create directories for *_DIR environment variables.
+		  -s, --symbolic-links  Create symbolic links for *_LINK environment variables.
+		  -c, --local-config    Create default .profile_local and .bashrc_local files.
+		  -f, --fonts           Download patched fonts for terminal.
+		  -h, --help            Display this help.
+	EOT
 }
 
 process_args() {
