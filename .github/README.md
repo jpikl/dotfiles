@@ -81,7 +81,7 @@ Run `check-dotfiles` command from the home directory to start the validation.
 
 ```bash
 cd
-check-dotfiles
+dotfiles-check
 ```
 
 ## License
