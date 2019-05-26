@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
@@ -27,7 +27,7 @@ print_help() {
 }
 
 set_source() {
-  [[ -d $1 ]] || die "'$1' is not a directory."
+  [[ -d $1 ]] || die "'$1' is not a directory"
 
   if [[ $1 == */ ]]; then
     source=$1
@@ -37,7 +37,7 @@ set_source() {
 }
 
 set_destination() {
-  [[ -d $1 ]] || die "'$1' is not a directory."
+  [[ -d $1 ]] || die "'$1' is not a directory"
   destination=$1
 }
 
@@ -70,7 +70,7 @@ process_args() {
 
 sync_dirs() {
   if [[ $source -ef $destination ]]; then
-    die "'$source' and '$destination' point to the same directory!"
+    die "'$source' and '$destination' point to the same directory"
   fi
 
   local opts=("--delete" "--human-readable")

@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
 
 print_help() {
   cat <<-EOT
@@ -25,7 +26,7 @@ print_help() {
 
 set_rerun_delay() {
   # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid rerun delay '$1'!"
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "invalid rerun delay '$1'"
   rerun_delay=$1
 }
 
@@ -55,7 +56,7 @@ process_args() {
 }
 
 npm_run_any() {
-  [[ -f package.json ]] || die "No package.json in the current directory!"
+  [[ -f package.json ]] || die "no package.json in the current directory"
 
   local available_scripts
   local target_script
@@ -70,13 +71,12 @@ npm_run_any() {
   done
 
   if [[ -z $target_script ]]; then
-    die "package.json has none of [$(join_values ", " "${scripts[@]}")] scripts!"
+    die "package.json has none of [$(join_values ", " "${scripts[@]}")] scripts"
   fi
 
   while ! npm run "$target_script"; do
     [[ $rerun_on_failure = true ]] || break
-    echo_error
-    echo_error "package.json $target_script script unexpectedly crashed!"
+    printf "\npackage.json %s script unexpectedly crashed!\n" "$target_script" >&2
     interactive-sleep "$rerun_delay" "Script will automatically rerun" || true
   done
 }

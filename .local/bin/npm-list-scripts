@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
@@ -35,7 +35,7 @@ process_args() {
 }
 
 npm_list_scripts() {
-  [[ -f package.json ]] || die "No package.json in the current directory!"
+  [[ -f package.json ]] || die "no package.json in the current directory"
   # Lines with script names start with 2 spaces which we need to cut off.
   npm run | grep '^  \S' | cut --characters=3-
 }

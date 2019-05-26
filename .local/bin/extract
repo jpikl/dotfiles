@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
@@ -54,7 +54,7 @@ confirm_overwrite() {
 }
 
 handle_error() {
-  [[ ${1:-} ]] && echo_error "$1"
+  [[ ${1:-} ]] && alert "$1" >&2
   [[ $skip_errors = true ]] || die
 }
 
@@ -225,7 +225,7 @@ extract() {
   echo "Extracting '$file'"
 
   if [[ ! -f "$file" ]]; then
-    handle_error "'$file' is not a file!"
+    handle_error "'$file' is not a file"
     return
   fi
 
@@ -242,7 +242,7 @@ extract() {
     *.zip|*.jar)      extract_zip "$file" ;;
     *.rar)            extract_rar "$file" ;;
     *.7z)             extract_7z  "$file" ;;
-    *)                handle_error "'$file' has unsupported archive extension!" ;;
+    *)                handle_error "'$file' has unsupported archive extension" ;;
   esac
 }
 

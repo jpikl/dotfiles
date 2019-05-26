@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
@@ -40,7 +40,7 @@ process_args() {
 }
 
 find_upwards() {
-  [[ -d $path ]] || die "'$path' is not a directory!"
+  [[ -d $path ]] || die "'$path' is not a directory"
   cd "$path"
 
   while true; do

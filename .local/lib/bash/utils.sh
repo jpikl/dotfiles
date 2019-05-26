@@ -1,12 +1,5 @@
 # shellcheck shell=bash
 
-# Exit error codes
-ERR_GENERIC=1
-ERR_UNPROCESSABLE_ARGS=100
-ERR_INVALID_ARGS=101
-ERR_MISSING_ARGS=102
-ERR_MISSING_DEPENDENCY=103
-
 is_integer() {
   [[ $1 =~ ^[0-9]+$ ]]
 }
@@ -28,6 +21,16 @@ is_one_of() {
   return 1
 }
 
+is_command() {
+  command -v "$1" >/dev/null
+}
+
+repeat_value() {
+  for (( i = 0; i < $1; i++ )); do
+    echo -n "$2"
+  done
+}
+
 join_values() {
   local -r separator=$1
   local result
@@ -42,62 +45,8 @@ join_values() {
   echo "$result"
 }
 
-echo_error() {
-  >&2 echo "$@"
-}
-
-echo_times() {
-  for (( i = 0; i < $1; i++ )); do
-    echo -n "$2"
-  done
-}
-
 clear_line() {
-  echo -ne "\r"
-  echo_times "$1" " "
-  echo -ne "\r"
-}
-
-self() {
-  basename "$0"
-}
-
-print_usage_hint() {
-  echo_error "Try '$(self) --help' for more information."
-}
-
-die() {
-  [[ "${1:-}" ]] && echo_error "$(self): $1"
-  exit "${2:-$ERR_GENERIC}"
-}
-
-die_invalid_args() {
-  print_usage_hint
-  exit $ERR_INVALID_ARGS
-}
-
-die_unprocessable_args() {
-  echo_error "$(self): Internal error: Unable to process arguments!"
-  exit $ERR_UNPROCESSABLE_ARGS
-}
-
-die_missing_args() {
-  echo_error "$(self): Missing required argument!"
-  print_usage_hint
-  exit $ERR_MISSING_ARGS
-}
-
-die_missing_dependency() {
-  exit $ERR_MISSING_DEPENDENCY
-}
-
-command_exists() {
-  command -v "$1" >/dev/null
-}
-
-confirm() {
-  local reply
-  read -n 1 -r -p "$1 [y/n]: " reply
-  echo
-  [[ $reply =~ [y/Y] ]]
+  printf "\r"
+  repeat_value "$1" " "
+  printf "\r"
 }

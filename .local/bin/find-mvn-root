@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
@@ -22,7 +22,7 @@ print_help() {
 }
 
 set_path() {
-  [[ -d $1 ]] || die "'$1' is not a directory!"
+  [[ -d $1 ]] || die "'$1' is not a directory"
   path=$1
 }
 
@@ -51,7 +51,7 @@ find_mvn_root() {
   cd "$path"
 
   local -r root_pom_xml=$(find-upwards -name pom.xml | tail --lines=1)
-  [[ $root_pom_xml ]] || die "Unable to find root pom.xml!"
+  [[ $root_pom_xml ]] || die "unable to find root pom.xml"
 
   dirname "$root_pom_xml"
 }

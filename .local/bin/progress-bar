@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
 
 print_help() {
   cat <<-EOT
@@ -26,30 +27,30 @@ print_help() {
 
 set_value() {
   # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid value '$1'!"
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid value '$1'"
   value=$1
 }
 
 set_max_value() {
   # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 1 ]] || die "Invalid max value '$1'!"
+  is_integer "$1" && [[ $1 -ge 1 ]] || die "invalid max value '$1'"
   max_value=$1
 }
 
 set_width() {
   # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 1 ]] || die "Invalid width '$1'!"
+  is_integer "$1" && [[ $1 -ge 1 ]] || die "invalid width '$1'"
   width=$1
 }
 
 set_fg_char() {
   # shellcheck disable=SC2015
-  is_character "$1" || die "Invalid foreground character '$1'!"
+  is_character "$1" || die "invalid foreground character '$1'"
   fg_char=$1
 }
 
 set_bg_char() {
-  is_character "$1" || die "Invalid background character '$1'!"
+  is_character "$1" || die "invalid background character '$1'"
   bg_char=$1
 }
 
@@ -84,8 +85,8 @@ progress_bar() {
   local -r fg_width=$(( width * value / max_value ))
   local -r bg_width=$(( width - fg_width ))
 
-  echo_times "$fg_width" "$fg_char"
-  echo_times "$bg_width" "$bg_char"
+  repeat_value "$fg_width" "$fg_char"
+  repeat_value "$bg_width" "$bg_char"
 }
 
 function main() {

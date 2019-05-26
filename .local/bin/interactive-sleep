@@ -2,8 +2,9 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
 
 print_help() {
   cat <<-EOT
@@ -29,7 +30,7 @@ print_help() {
 
 set_duration() {
   # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid duration '$1'!"
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "invalid duration '$1'"
   duration=$1
 }
 
