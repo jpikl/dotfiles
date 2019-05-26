@@ -16,7 +16,7 @@ die_no_gnu_getopt() {
   {
     alert "GNU getopt is required"
     echo "You can get pure bash implementation of GNU getopt with:"
-    echo "  dotfiles submodule update "$PURE_GETOPT_DIR""
+    echo "  dotfiles submodule update $PURE_GETOPT_DIR"
   } >&2
   exit $ERR_NO_GNU_GETOPT
 }
