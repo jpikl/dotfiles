@@ -75,13 +75,10 @@ dotfiles push
 
 ## Validation
 
-All Bash scripts are validated using [shellcheck](https://shellcheck.net/).
-
-Run `check-dotfiles` command from the home directory to start the validation.
+Use `bashfiles` command to validate Bash scripts with [shellcheck](https://shellcheck.net).
 
 ```bash
-cd
-dotfiles-check
+bashfiles check
 ```
 
 ## License

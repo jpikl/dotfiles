@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly FILES=(
+	~/.bash_logout
+	~/.bash_profile
+	~/.bashrc
+	~/.profile
+	~/.local/bin/*
+	~/.local/lib/bash/*.sh
+)
+
+readonly EXCLUDE=SC1090
+
+help() {
+	cat <<-EOT
+		Do things with Bash files.
+
+		Usage:
+		  $(basename "$0") <action>
+
+		Action:
+		  list   List bash files.
+		  check  Validate bash files using shellcheck.
+
+		Links:
+		  shellcheck  https://shellcheck.net
+	EOT
+}
+
+list() {
+	printf "%s\n" "${FILES[@]}"
+}
+
+check() {
+	shellcheck --exclude=$EXCLUDE "${FILES[@]}"
+	echo "All Bash files are valid."
+}
+
+main() {
+	case "${1:-}" in
+		list)  list ;;
+		check) check ;;
+		*)     help ;;
+	esac
+}
+
+main "$@"
