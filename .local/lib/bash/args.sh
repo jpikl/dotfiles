@@ -1,12 +1,12 @@
 # shellcheck shell=bash
 
-ERR_NO_GNU_GETOPT=10
-ERR_UNPROCESSABLE_ARGS=11
-ERR_INVALID_ARGS=12
-ERR_MISSING_ARGS=13
+readonly ERR_NO_GNU_GETOPT=10
+readonly ERR_UNPROCESSABLE_ARGS=11
+readonly ERR_INVALID_ARGS=12
+readonly ERR_MISSING_ARGS=13
 
-PURE_GETOPT_DIR=$BASH_LIB_DIR/pure-getopt
-PURE_GETOPT_SCRIPT=$PURE_GETOPT_DIR/getopt.bash
+readonly PURE_GETOPT_DIR=$BASH_LIB_DIR/pure-getopt
+readonly PURE_GETOPT_SCRIPT=$PURE_GETOPT_DIR/getopt.bash
 
 help_usage() {
   echo "Try '$(self) --help' for more information."
