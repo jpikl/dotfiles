@@ -11,11 +11,7 @@ files=(
   ~/.local/lib/bash/*.sh
 )
 
-echo "Checking the following files:"
-echo
-
-for file in "${files[@]}"; do
-  echo "  $file"
-done
+printf "Checking the following files:\n\n"
+printf "  %s\n" "${files[@]}"
 
 shellcheck --exclude=SC1090 "${files[@]}" && printf "\nSUCCESS\n"
