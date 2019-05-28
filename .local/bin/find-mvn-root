@@ -50,7 +50,8 @@ init() {
 find_mvn_root() {
   cd "$path"
 
-  local -r root_pom_xml=$(find-upwards -name pom.xml | tail --lines=1)
+  local root_pom_xml
+  root_pom_xml=$(find-upwards -name pom.xml | tail --lines=1)
   [[ $root_pom_xml ]] || die "unable to find root pom.xml"
 
   dirname "$root_pom_xml"
