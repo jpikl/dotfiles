@@ -3,18 +3,18 @@
 set -euo pipefail
 
 readonly FILES=(
-	~/.bash_logout
-	~/.bash_profile
-	~/.bashrc
-	~/.profile
-	~/.local/bin/*
-	~/.local/lib/bash/*.sh
+  ~/.bash_logout
+  ~/.bash_profile
+  ~/.bashrc
+  ~/.profile
+  ~/.local/bin/*
+  ~/.local/lib/bash/*.sh
 )
 
 readonly EXCLUDE=SC1090
 
 help() {
-	cat <<-EOT
+  cat <<-EOT
 		Do things with Bash files.
 
 		Usage:
@@ -30,20 +30,20 @@ help() {
 }
 
 list() {
-	printf "%s\n" "${FILES[@]}"
+  printf "%s\n" "${FILES[@]}"
 }
 
 check() {
-	shellcheck --exclude=$EXCLUDE "${FILES[@]}"
-	echo "All Bash files are valid."
+  shellcheck --exclude=$EXCLUDE "${FILES[@]}"
+  echo "All Bash files are valid."
 }
 
 main() {
-	case "${1:-}" in
-		list)  list ;;
-		check) check ;;
-		*)     help ;;
-	esac
+  case "${1:-}" in
+    list)  list ;;
+    check) check ;;
+    *)     help ;;
+  esac
 }
 
 main "$@"

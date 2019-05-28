@@ -9,15 +9,16 @@ indent_size = 4
 
 [{*.{sh,bash},.bash*,.profile}]
 end_of_line = lf
-indent_style = tab
 indent_size = 2
 
 # Same content as the section above.
 # Must be declared separately due to error in editorconfig parsing library.
 [.local/bin/*]
 end_of_line = lf
-indent_style = tab
 indent_size = 2
 
 [*.{html,css,less,sass,js,jsx,ts,tsx}]
 indent_size = 2
+
+[{Makefile,makefile}]
+indent_style = tab
