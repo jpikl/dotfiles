@@ -20,6 +20,8 @@ __should_push_symbol=''
 __has_stashes_symbol=''
 __host_symbol=''
 __user_symbol=''
+__ok_symbol=''
+__error_symbol=''
 __current_working_dir_symbol=''
 __separator_symbol=''
 __default_color_on='\[\033[1;37m\]'
@@ -80,6 +82,7 @@ function __get_current_action() {
 }
 
 function __build_prompt() {
+    local last_exit_code=$?
     local enabled=true
     local prompt=""
 
@@ -190,17 +193,27 @@ function __custom_build_prompt() {
     local black_on_purple="${black}${background_purple}"
     local purple_on_green="${purple}${background_green}"
     local black_on_green="${black}${background_green}"
-    local green_on_blue="${green}${background_blue}"
+    local green_on_white="${green}${background_white}"
     local black_on_blue="${black}${background_blue}"
     local blue_on_white="${blue}${background_white}"
+    local white_on_blue="${white}${background_blue}"
 
     # Flags
     local __default_color_on="${black_on_white}"
 
+    # Exit code
+    local exit_code_symbol
+    if [[ $last_exit_code -eq 0 ]]; then
+      exit_code_symbol=$__ok_symbol
+    else
+      exit_code_symbol=$__error_symbol
+    fi
+
     # Prompt
     local prompt="${black_on_purple} ${__host_symbol} \\h "
     prompt+="${purple_on_green}${__separator_symbol}${black_on_green} ${__user_symbol} \\u "
-    prompt+="${green_on_blue}${__separator_symbol}${black_on_blue} ${__current_working_dir_symbol} \\w "
+    prompt+="${green_on_white}${__separator_symbol}${black_on_white} ${exit_code_symbol} ${last_exit_code} "
+    prompt+="${white_on_blue}${__separator_symbol}${black_on_blue} ${__current_working_dir_symbol} \\w "
 
     if [[ $is_a_git_repo == true ]]; then
         # on filesystem
