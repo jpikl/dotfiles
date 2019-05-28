@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Open a file or URL in the user's preferred application.
 
@@ -21,7 +21,7 @@ print_help() {
 	EOT
 }
 
-process_args() {
+init() {
   local -r short_opts=sh
   local -r long_opts=skip-errors,help
   local args
@@ -32,7 +32,7 @@ process_args() {
   while true ; do
     case "$1" in
       -s|--skip-errors) skip_errors=true; shift ;;
-      -h|--help)        print_help; exit ;;
+      -h|--help)        help; exit ;;
       --)               shift; break ;;
       *)                die_unprocessable_args ;;
     esac
@@ -56,7 +56,7 @@ function main() {
   local skip_errors=false
   local items
 
-  process_args "$@"
+  init "$@"
 
   for item in "${items[@]}"; do
     open "$item"

@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 source "$BASH_LIB_DIR/utils.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Print progress bar.
 
@@ -54,7 +54,7 @@ set_bg_char() {
   bg_char=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=w:m:f:b:h
   local -r long_opts=width:,max-value:,fg-char:,bg-char:,help
   local args
@@ -68,7 +68,7 @@ process_args() {
       -m|--max-value) set_max_value "$2"; shift 2 ;;
       -f|--fg-char)   set_fg_char "$2"; shift 2 ;;
       -b|--bg-char)   set_bg_char "$2"; shift 2 ;;
-      -h|--help)      print_help; exit ;;
+      -h|--help)      help; exit ;;
       --)             shift; break ;;
       *)              die_unprocessable_args ;;
     esac
@@ -96,7 +96,7 @@ function main() {
   local fg_char="#"
   local bg_char="-"
 
-  process_args "$@"
+  init "$@"
   progress_bar
 }
 

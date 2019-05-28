@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Count occurrences of Java exceptions in a log file.
 
@@ -27,7 +27,7 @@ set_file() {
   file=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=mh
   local -r long_opts=messages,help
   local args
@@ -38,7 +38,7 @@ process_args() {
   while true ; do
     case "$1" in
       -m|--messages) messages=true; shift ;;
-      -h|--help)     print_help; exit ;;
+      -h|--help)     help; exit ;;
       --)            shift; break ;;
       *)             die_unprocessable_args ;;
     esac
@@ -70,7 +70,7 @@ function main() {
   local messages=false
   local file=
 
-  process_args "$@"
+  init "$@"
   java_count_exceptions
 }
 

@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 source "$BASH_LIB_DIR/utils.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Set version of a maven project.
 
@@ -28,7 +28,7 @@ set_version() {
   version=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=bvh
   local -r long_opts=backup,verbose,help
   local args
@@ -40,7 +40,7 @@ process_args() {
     case "$1" in
       -b|--backup)  backup=true; shift ;;
       -v|--verbose) verbose=true; shift ;;
-      -h|--help)    print_help; exit ;;
+      -h|--help)    help; exit ;;
       --)           shift; break ;;
       *)            die_unprocessable_args ;;
     esac
@@ -76,7 +76,7 @@ function main() {
   local verbose=false
   local version
 
-  process_args "$@"
+  init "$@"
   mvn_set_version
 }
 

@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 source "$BASH_LIB_DIR/utils.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Run script of a npm package.
 
@@ -30,7 +30,7 @@ set_rerun_delay() {
   rerun_delay=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=rd:h
   local -r long_opts=rerun-on-failure,rerun-delay:,help
   local args
@@ -42,7 +42,7 @@ process_args() {
     case "$1" in
       -r|--rerun-on-failure) rerun_on_failure=true; shift ;;
       -d|--rerun-delay)      set_rerun_delay "$2"; shift 2 ;;
-      -h|--help)             print_help; exit ;;
+      -h|--help)             help; exit ;;
       --)                    shift; break ;;
       *)                     die_unprocessable_args ;;
     esac
@@ -86,7 +86,7 @@ function main() {
   local rerun_delay=30
   local scripts
 
-  process_args "$@"
+  init "$@"
   npm_run_any
 }
 

@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Find directories of node projects.
 
@@ -27,7 +27,7 @@ set_path() {
   path=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=sh
   local -r long_opts=select-one,help
   local args
@@ -38,7 +38,7 @@ process_args() {
   while true ; do
     case "$1" in
       -s|--select-one) select_one=true; shift ;;
-      -h|--help)       print_help; exit ;;
+      -h|--help)       help; exit ;;
       --)              shift; break ;;
       *)               die_unprocessable_args ;;
     esac
@@ -71,7 +71,7 @@ function main() {
   local select_one=false
   local path=$PWD
 
-  process_args "$@"
+  init "$@"
   find_npm_dirs
 }
 

@@ -90,24 +90,24 @@ function __build_prompt() {
 
     # Git info
     if [[ $PROMPT_GIT_ENABLED == true ]]; then
-        local -r current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
+        local -r current_commit_hash=$(git rev-parse HEAD 2>/dev/null)
         if [[ -n $current_commit_hash ]]; then local -r is_a_git_repo=true; fi
     else
         local -r is_a_git_repo=false
     fi
 
     if [[ $is_a_git_repo == true ]]; then
-        local -r current_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
+        local -r current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
         if [[ $current_branch == 'HEAD' ]]; then local detached=true; fi
 
-        local -r number_of_logs="$(git log --pretty=oneline -n1 2> /dev/null | wc -l)"
+        local -r number_of_logs="$(git log --pretty=oneline -n1 2>/dev/null | wc -l)"
         if [[ $number_of_logs -eq 0 ]]; then
             local just_init=true
         else
-            local -r upstream=$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2> /dev/null)
+            local -r upstream=$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2>/dev/null)
             if [[ -n "${upstream}" && "${upstream}" != "@{upstream}" ]]; then local has_upstream=true; fi
 
-            local -r git_status="$(git status --porcelain 2> /dev/null)"
+            local -r git_status="$(git status --porcelain 2>/dev/null)"
             local -r action="$(__get_current_action)"
 
             if [[ $git_status =~ ($'\n'|^).M ]]; then local has_modifications=true; fi
@@ -120,11 +120,11 @@ function __build_prompt() {
             local -r number_of_untracked_files=$(grep -c "^??" <<< "${git_status}")
             if [[ $number_of_untracked_files -gt 0 ]]; then local has_untracked_files=true; fi
 
-            local -r tag_at_current_commit=$(git describe --exact-match --tags "$current_commit_hash" 2> /dev/null)
+            local -r tag_at_current_commit=$(git describe --exact-match --tags "$current_commit_hash" 2>/dev/null)
             if [[ -n $tag_at_current_commit ]]; then local is_on_a_tag=true; fi
 
             if [[ $has_upstream == true ]]; then
-                local -r commits_diff="$(git log --pretty=oneline --topo-order --left-right "${current_commit_hash}"..."${upstream}" 2> /dev/null)"
+                local -r commits_diff="$(git log --pretty=oneline --topo-order --left-right "${current_commit_hash}"..."${upstream}" 2>/dev/null)"
                 local -r commits_ahead=$(grep -c "^<" <<< "$commits_diff")
                 local -r commits_behind=$(grep -c "^>" <<< "$commits_diff")
             fi
@@ -132,9 +132,9 @@ function __build_prompt() {
             if [[ $commits_ahead -gt 0 && $commits_behind -gt 0 ]]; then local has_diverged=true; fi
             if [[ $has_diverged == false && $commits_ahead -gt 0 ]]; then local should_push=true; fi
 
-            local -r will_rebase=$(git config --get branch."${current_branch}".rebase 2> /dev/null)
+            local -r will_rebase=$(git config --get branch."${current_branch}".rebase 2>/dev/null)
 
-            local -r number_of_stashes="$(git stash list -n1 2> /dev/null | wc -l)"
+            local -r number_of_stashes="$(git stash list -n1 2>/dev/null | wc -l)"
             if [[ $number_of_stashes -gt 0 ]]; then local has_stashes=true; fi
         fi
     fi

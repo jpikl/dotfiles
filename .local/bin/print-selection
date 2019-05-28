@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Let user select one of words and print it.
 
@@ -21,7 +21,7 @@ print_help() {
 	EOT
 }
 
-process_args() {
+init() {
   local -r short_opts=d:h
   local -r long_opts=default:,help
   local args
@@ -32,7 +32,7 @@ process_args() {
   while true ; do
     case "$1" in
       -d|--default) default=$2; shift 2 ;;
-      -h|--help)    print_help; exit ;;
+      -h|--help)    help; exit ;;
       --)           shift; break ;;
       *)            die_unprocessable_args ;;
     esac
@@ -66,7 +66,7 @@ function main() {
   local default=
   local words
 
-  process_args "$@"
+  init "$@"
   echo_select
 }
 

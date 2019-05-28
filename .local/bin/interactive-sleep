@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 source "$BASH_LIB_DIR/utils.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Cancelable sleep with displayed progress.
 
@@ -34,7 +34,7 @@ set_duration() {
   duration=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=h
   local -r long_opts=help
   local args
@@ -44,7 +44,7 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -h|--help) print_help; exit ;;
+      -h|--help) help; exit ;;
       --)        shift; break ;;
       *)         die_unprocessable_args ;;
     esac
@@ -90,7 +90,7 @@ function main() {
   local duration
   local message
 
-  process_args "$@"
+  init "$@"
   interactive_sleep
 }
 

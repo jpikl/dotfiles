@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Find root directory of a maven project.
 
@@ -26,7 +26,7 @@ set_path() {
   path=$1
 }
 
-process_args() {
+init() {
   local -r short_opts=h
   local -r long_opts=help
   local args
@@ -36,7 +36,7 @@ process_args() {
 
   while true ; do
     case "$1" in
-      -h|--help) print_help; exit ;;
+      -h|--help) help; exit ;;
       --)        shift; break ;;
       *)         die_unprocessable_args ;;
     esac
@@ -59,7 +59,7 @@ find_mvn_root() {
 function main() {
   local path=$PWD
 
-  process_args "$@"
+  init "$@"
   find_mvn_root
 }
 

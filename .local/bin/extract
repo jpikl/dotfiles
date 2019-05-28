@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Extract archive in nearly any format.
 
@@ -23,7 +23,7 @@ print_help() {
 	EOT
 }
 
-process_args() {
+init() {
   local -r short_opts=ovsh
   local -r long_opts=overwrite,verbose,skip-errors,help
   local args
@@ -36,7 +36,7 @@ process_args() {
       -o|--overwrite)   overwrite=true; shift ;;
       -v|--verbose)     verbose=true; shift ;;
       -s|--skip-errors) skip_errors=true; shift ;;
-      -h|--help)        print_help; exit ;;
+      -h|--help)        help; exit ;;
       --)               shift; break ;;
       *)                die_unprocessable_args ;;
     esac
@@ -159,7 +159,7 @@ extract_z() {
 
   # This might actually call gzip/gunzip on some Linux distributions, but
   # we rather use only the options described by the uncompress(1) man page.
-  uncompress "${opts[@]}" "$input" > "$output" || handle_error
+  uncompress "${opts[@]}" "$input" >"$output" || handle_error
 }
 
 extract_zip() {
@@ -252,7 +252,7 @@ function main() {
   local skip_errors=false
   local files=()
 
-  process_args "$@"
+  init "$@"
 
   for file in "${files[@]}"; do
     extract "$file"

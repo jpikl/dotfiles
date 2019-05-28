@@ -5,7 +5,7 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 
-print_help() {
+help() {
   cat <<-EOT
 		Generate expression for the find command.
 
@@ -30,7 +30,7 @@ print_help() {
 	EOT
 }
 
-process_args() {
+init() {
   local -r short_opts=lGPLOsh
   local -r long_opts=lines,ignore-git,ignore-project,ignore-libs,ignore-compiled,ignore-non-sources,help
   local args
@@ -50,7 +50,7 @@ process_args() {
                                ignore_libs=true
                                ignore_compiled=true
                                shift ;;
-      -h|--help)               print_help; exit ;;
+      -h|--help)               help; exit ;;
       --)                      shift; break ;;
       *)                       die_unprocessable_args ;;
     esac
@@ -99,7 +99,7 @@ function main() {
   ignore_libs=false
   ignore_compiled=false
 
-  process_args "$@"
+  init "$@"
   get_find_expression
 }
 
