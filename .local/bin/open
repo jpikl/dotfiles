@@ -7,7 +7,7 @@ source "$BASH_LIB_DIR/args.sh"
 
 print_help() {
   cat <<-EOT
-		Opens a file or URL in the user's preferred application.
+		Open a file or URL in the user's preferred application.
 
 		Usage:
 		  $(self) [options] [--] <item>...

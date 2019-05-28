@@ -1,5 +1,4 @@
 # shellcheck shell=bash
-# shellcheck source=/dev/null
 
 # Interactive mode check
 if [[ $- != *i* ]]; then
@@ -7,6 +6,7 @@ if [[ $- != *i* ]]; then
   return
 fi
 
+# Profile initialization check
 if [[ -z $BASH_LIB_DIR ]]; then
   echo "${BASH_SOURCE[0]}: Environment variable BASH_LIB_DIR is not defined!"
   echo "${BASH_SOURCE[0]}: ~/.profile was probably not sourced before!"
