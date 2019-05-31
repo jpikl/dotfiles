@@ -100,9 +100,6 @@ export PATH=$PATH:$BINARIES_DIR
 export PATH=$PATH:$NPM_LIB_DIR/bin # Unix
 export PATH=$PATH:$NPM_LIB_DIR     # Windows
 
-# Prompt options
-export PROMPT_GIT_ENABLED=${PROMPT_GIT_ENABLED:-true}
-
 # Other
 export EDITOR=vim
 

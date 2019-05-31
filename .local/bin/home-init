@@ -106,8 +106,6 @@ create_profile_local() {
       profile_export "[A-Z_]+_LIB_DIR"
       printf "\n# Links to directories\n"
       profile_export "[A-Z_]+_LINK"
-      printf "\n# Prompt options\n"
-      profile_export "PROMPT_[A-Z_]+"
     } >$file
   fi
 }
