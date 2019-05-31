@@ -1,3 +1,6 @@
 [submodule ".local/lib/bash/pure-getopt"]
 	path = .local/lib/bash/pure-getopt
 	url = https://github.com/agriffis/pure-getopt.git
+[submodule ".local/lib/bash/pureline"]
+	path = .local/lib/bash/pureline
+	url = https://github.com/chris-marsh/pureline.git
