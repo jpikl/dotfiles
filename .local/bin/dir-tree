@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Based on https://centerkey.com/tree
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Print directory tree.
+
+		Usage:
+		  $(self) [options] [--] [path]
+
+		Options:
+		  -f, --files  Print also files.
+		  -h, --help   Display this help.
+
+		Path:
+		  Root of a directory tree to print.
+		  Default path is the current working directory.
+	EOT
+}
+
+set_path() {
+  [[ -d $1 ]] || die "'$1' is not a directory"
+  path=$1
+}
+
+init() {
+  local -r short_opts=fh
+  local -r long_opts=files,help
+  local args
+
+  args=$(get_args "$short_opts" "$long_opts" "$@")
+  eval set -- "$args"
+
+  while true ; do
+    case "$1" in
+      -f|--files)  files=true; shift ;;
+      -h|--help)   help; exit ;;
+      --)          shift; break ;;
+      *)           die_unprocessable_args ;;
+    esac
+  done
+
+  if [[ $# -ge 1 ]]; then
+    set_path "$1"
+  fi
+}
+
+dir_tree() {
+  cd "$path"
+
+  local find_args=("-mindepth" "1")
+
+  if [[ $files == false ]]; then
+    find_args+=("-type" "d")
+  fi
+
+  # Sed expressions:
+  # 1) Replace leading dirs by spaces.
+  # 2) Remove extra left padding.
+
+  find "${find_args[@]}" \
+    | sort \
+    | sed --expression "s/[^\/]*\//  /g" \
+          --expression "s/^  //"
+}
+
+function main() {
+  local path=$PWD
+  local files=false
+
+  init "$@"
+  dir_tree
+}
+
+main "$@"
