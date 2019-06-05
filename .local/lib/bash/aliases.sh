@@ -77,6 +77,9 @@ alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
 alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
+# Backup
+alias bakmuslist='dir-tree $MUSIC_DIR > $BACKUP_DIR/music.txt'
+
 # Other
 alias unpack='extract'
 alias fitterm='cut --characters=-$COLUMNS'
