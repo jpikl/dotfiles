@@ -5,6 +5,9 @@ readonly PURELINE_SCRIPT=$PURELINE_DIR/pureline
 readonly PURELINE_CONFIG=$CONFIG_DIR/pureline.conf
 
 if [[ -f $PURELINE_SCRIPT ]]; then
+  conemu_cwd_module() {
+    [[ $ConEmuPID ]] && ConEmuC -StoreCWD
+  }
   source "$PURELINE_SCRIPT" "$PURELINE_CONFIG"
 else
   {
