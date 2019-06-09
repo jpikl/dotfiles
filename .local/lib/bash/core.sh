@@ -15,9 +15,3 @@ alert() {
   echo "$(self): $1"
 }
 
-confirm() {
-  local reply
-  read -n 1 -r -p "$1 [y/n]: " reply
-  echo
-  [[ $reply =~ [Yy] ]]
-}

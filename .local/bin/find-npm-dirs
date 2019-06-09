@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/input.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 help() {
@@ -61,7 +62,7 @@ find_npm_dirs() {
   [[ ${#npm_dirs[@]} -gt 0 ]] || die "unable to find any package.json"
 
   if [[ ${#npm_dirs[@]} -gt 1 && $select_one == true ]]; then
-    print-selection "${npm_dirs[@]}"
+    choose "${npm_dirs[@]}"
   else
     printf "%s\n" "${npm_dirs[@]}"
   fi
