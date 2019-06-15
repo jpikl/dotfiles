@@ -11,7 +11,7 @@ readonly FILES=(
   ~/.local/lib/bash/*.sh
 )
 
-readonly EXCLUDE=SC1090
+readonly SC_EXCLUDE=SC1090
 
 help() {
   cat <<-EOT
@@ -34,7 +34,7 @@ list() {
 }
 
 check() {
-  shellcheck --exclude=$EXCLUDE "${FILES[@]}"
+  shellcheck --exclude=$SC_EXCLUDE "${FILES[@]}"
   echo "All Bash files are valid."
 }
 
