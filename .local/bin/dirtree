@@ -55,14 +55,18 @@ run() {
     find_args+=("-type" "d")
   fi
 
+  find_args+=("-print0")
+
   # Sed expressions:
   # 1) Replace leading dirs by spaces.
   # 2) Remove extra left padding.
 
   find "${find_args[@]}" \
-    | sort \
-    | sed --expression "s/[^\/]*\//  /g" \
-          --expression "s/^  //"
+    | sort --zero-terminated \
+    | sed --null-data \
+          --expression "s/[^\/]*\//  /g" \
+          --expression "s/^  //" \
+          --expression "s/$/\n/"
 }
 
 function main() {

@@ -47,7 +47,7 @@ run() {
   cd "$path"
 
   local root_pom_xml
-  root_pom_xml=$(findup -name pom.xml | tail --lines=1)
+  root_pom_xml=$(findup -name pom.xml -print0 | tail --zero-terminated --lines=1)
   [[ $root_pom_xml ]] || die "unable to find root pom.xml"
 
   dirname "$root_pom_xml"
