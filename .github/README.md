@@ -33,11 +33,11 @@ Customize your personal [configuration](#configuration).
 
 Logout and login to reload Bash environment.
 
-Use `home-init` command to initialize home directory structure.
-Try `-h, --help` option for usage.
+Use `homefiles` command to initialize home directory structure.
+Try `-h` option for usage.
 
 ```bash
-home-init -h
+homefiles -h
 ```
 
 ## Configuration
