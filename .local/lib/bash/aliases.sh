@@ -23,8 +23,8 @@ alias cdlib='cd "$LIBRARIES_DIR"'
 alias cdmed='cd "$MEDIA_DIR"'
 alias cdmus='cd "$MUSIC_DIR"'
 alias cdmvnlib='cd "$MAVEN_LIB_DIR"'
-alias cdmvnroot='cd $(find-mvn-root || pwd)'
-alias cdnpmdir='cd $(find-npm-dirs --select-one || pwd)'
+alias cdmvnroot='cd $(findmvnroot || pwd)'
+alias cdnpmdir='cd $(findnpmdirs -1 || pwd)'
 alias cdnpmlib='cd "$NPM_LIB_DIR"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplist='cd "$PLAYLISTS_DIR"'
@@ -41,8 +41,7 @@ alias egrep='grep --extended-regexp'
 alias fgrep='grep --fixed-strings'
 
 # Find
-alias findup='find-upwards'
-alias findsrc='get-find-expression --ignore-non-sources | xargs find'
+alias findsrc='genfindexpr -s | xargs find'
 
 # Clipboard
 alias wclip='xclip -in -selection clipboard'
@@ -57,19 +56,14 @@ alias npmi='npm install'
 alias npmfi='rm --force package-lock.json && npmi'
 alias npmffi='rm --force --recursive node_modules && npmfi'
 alias npmu='npm uninstall'
-alias npmls='npm-list-scripts'
-alias npmd='npm-run-script --rerun-on-failure webpack-dev dev'
+alias npmd='npmrs -r webpack-dev dev'
 
 # Maven
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
-alias mvnsv='mvn-set-version'
 
 # React Native
 alias rndebug='adb shell input keyevent 82'
-
-# Java
-alias javace='java-count-exceptions'
 
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'
@@ -78,8 +72,7 @@ alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
 # Backup
-alias bakmuslist='dir-tree $MUSIC_DIR > $BACKUP_DIR/music.txt'
+alias bakmuslist='dirtree $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Other
-alias unpack='extract'
 alias fitterm='cut --characters=-$COLUMNS'

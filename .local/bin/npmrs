@@ -57,7 +57,7 @@ run() {
   local available_scripts
   local target_script
 
-  mapfile -t available_scripts < <(npm-list-scripts)
+  mapfile -t available_scripts < <(npmls)
 
   for script in "${scripts[@]}"; do
     if is_one_of "$script" "${available_scripts[@]}"; then
@@ -73,7 +73,7 @@ run() {
   while ! npm run "$target_script"; do
     [[ $rerun_on_failure = true ]] || break
     printf "\npackage.json %s script unexpectedly crashed!\n" "$target_script" >&2
-    interactive-sleep "$rerun_delay" "Script will automatically rerun" || true
+    isleep "$rerun_delay" "Script will automatically rerun" || true
   done
 }
 

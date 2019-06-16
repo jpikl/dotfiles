@@ -14,7 +14,7 @@ help() {
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -s  User will be prompted select one of multiple results.
+		  -1  User will be prompted select one of multiple results.
 		  -h  Display this help.
 
 		Path:
@@ -31,9 +31,9 @@ set_path() {
 init() {
   local opt
 
-  while getopts ":sh" opt; do
+  while getopts ":1h" opt; do
     case "$opt" in
-      s) select_one=true ;;
+      1) select_one=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -52,7 +52,7 @@ run() {
   local expression
   local npm_dirs
 
-  mapfile -t expression < <(get-find-expression --lines --ignore-non-sources)
+  mapfile -t expression < <(genfindexpr -ls)
   mapfile -t npm_dirs < <(find . "${expression[@]}" -name package.json -exec dirname {} \;)
 
   [[ ${#npm_dirs[@]} -gt 0 ]] || die "unable to find any package.json"

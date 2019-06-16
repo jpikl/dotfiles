@@ -59,7 +59,7 @@ run() {
   local line
 
   while [[ $time_left -gt 0 ]]; do
-    line="[$(progress-bar -w 10 -m "$duration" "$time_left")]"
+    line="[$(progbar -w 10 -m "$duration" "$time_left")]"
     line="$line ($time_left s)"
 
     if [[ $message ]];  then
