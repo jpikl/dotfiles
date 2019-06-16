@@ -86,7 +86,9 @@ create_sym_links() {
 profile_export() {
   grep --extended-regexp --only-matching "$1" ~/.profile \
     | grep --extended-regexp --invert-match "${2:-#}" \
-    | sort | uniq | xargs printf "#export %s=\n"
+    | sort \
+    | uniq \
+    | xargs printf "#export %s=\n"
 }
 
 create_profile_local() {
