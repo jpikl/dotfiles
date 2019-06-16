@@ -7,17 +7,16 @@ source "$BASH_LIB_DIR/args.sh"
 
 help() {
   cat <<-EOT
-		Command description.
+		Aks user for confirmation.
 
 		Usage:
-		  $(self) [options] [--] <arg>...
+		  $(self) [options] [--] <message>
 
 		Options:
-		  -f  Flag description.
 		  -h  Display this help.
 
 		Arguments:
-		  arg  Argument decription.
+		  message  Confirmation message.
 	EOT
 }
 
@@ -26,7 +25,6 @@ init() {
 
   while getopts ":fh" opt; do
     case "$opt" in
-      f) flag=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -35,20 +33,21 @@ init() {
   shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
-    args=("$@")
+    message=$1
   else
     die_missing_arg
   fi
 }
 
 run() {
-  echo "flag=$flag"
-  echo "args=${args[*]}"
+  local reply
+  read -n 1 -r -p "$message [y/n]: " reply
+  echo
+  [[ $reply =~ [Yy] ]]
 }
 
 function main() {
-  local flag=false
-  local args
+  local message
 
   init "$@"
   run
