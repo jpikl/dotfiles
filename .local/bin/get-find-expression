@@ -51,7 +51,7 @@ init() {
   done
 }
 
-get_find_expression() {
+run() {
   local ignored_dirs=()
 
   if [[ $ignore_git = true ]]; then
@@ -94,7 +94,7 @@ function main() {
   ignore_compiled=false
 
   init "$@"
-  get_find_expression
+  run
 }
 
 main "$@"

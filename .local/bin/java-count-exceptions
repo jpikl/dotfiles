@@ -45,7 +45,7 @@ init() {
   fi
 }
 
-java_count_exceptions() {
+run() {
   if [[ $file ]]; then
     exec <"$file"
   fi
@@ -67,7 +67,7 @@ function main() {
   local file=
 
   init "$@"
-  java_count_exceptions
+  run
 }
 
 main "$@"

@@ -243,6 +243,12 @@ extract() {
   esac
 }
 
+run() {
+  for file in "${files[@]}"; do
+    extract "$file"
+  done
+}
+
 function main() {
   local overwrite=false
   local verbose=false
@@ -250,10 +256,7 @@ function main() {
   local files=()
 
   init "$@"
-
-  for file in "${files[@]}"; do
-    extract "$file"
-  done
+  run
 }
 
 main "$@"

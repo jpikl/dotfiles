@@ -51,7 +51,7 @@ init() {
   fi
 }
 
-npm_run_any() {
+run() {
   [[ -f package.json ]] || die "no package.json in the current directory"
 
   local available_scripts
@@ -83,7 +83,7 @@ function main() {
   local scripts
 
   init "$@"
-  npm_run_any
+  run
 }
 
 main "$@"

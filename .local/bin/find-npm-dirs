@@ -46,7 +46,7 @@ init() {
   fi
 }
 
-find_npm_dirs() {
+run() {
   cd "$path"
 
   local expression
@@ -69,7 +69,7 @@ function main() {
   local path=$PWD
 
   init "$@"
-  find_npm_dirs
+  run
 }
 
 main "$@"

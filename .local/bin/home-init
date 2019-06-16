@@ -131,7 +131,7 @@ download_fonts() {
   done
 }
 
-home_init() {
+run() {
   [[ $directories = true ]] && create_dirs
   [[ $symbolic_links = true ]] && create_sym_links
   [[ $local_config = true ]] && create_profile_local
@@ -147,7 +147,7 @@ function main() {
   local fonts=false
 
   init "$@"
-  home_init
+  run
 }
 
 main "$@"

@@ -43,7 +43,7 @@ init() {
   fi
 }
 
-find_mvn_root() {
+run() {
   cd "$path"
 
   local root_pom_xml
@@ -57,7 +57,7 @@ function main() {
   local path=$PWD
 
   init "$@"
-  find_mvn_root
+  run
 }
 
 main "$@"

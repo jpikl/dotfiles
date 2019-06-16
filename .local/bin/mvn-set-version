@@ -49,7 +49,7 @@ init() {
   fi
 }
 
-mvn_set_version() {
+run() {
   [[ -f pom.xml ]] || die "no pom.xml in the current directory"
 
   local args=()
@@ -73,7 +73,7 @@ function main() {
   local version
 
   init "$@"
-  mvn_set_version
+  run
 }
 
 main "$@"

@@ -28,7 +28,7 @@ init() {
   done
 }
 
-npm_list_scripts() {
+run() {
   [[ -f package.json ]] || die "no package.json in the current directory"
   # Lines with script names start with 2 spaces which we need to cut off.
   npm run | grep '^  \S' | cut --characters=3-
@@ -36,7 +36,7 @@ npm_list_scripts() {
 
 function main() {
   init "$@"
-  npm_list_scripts
+  run
 }
 
 main "$@"

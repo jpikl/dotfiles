@@ -39,7 +39,7 @@ init() {
   expression+=("$@")
 }
 
-find_upwards() {
+run() {
   [[ -d $path ]] || die "'$path' is not a directory"
   cd "$path"
 
@@ -58,7 +58,7 @@ function main() {
   local expression=("-maxdepth" "1")
 
   init "$@"
-  find_upwards
+  run
 }
 
 main "$@"

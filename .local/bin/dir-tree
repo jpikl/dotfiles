@@ -46,7 +46,7 @@ init() {
   fi
 }
 
-dir_tree() {
+run() {
   cd "$path"
 
   local find_args=("-mindepth" "1")
@@ -70,7 +70,7 @@ function main() {
   local files=false
 
   init "$@"
-  dir_tree
+  run
 }
 
 main "$@"

@@ -77,7 +77,7 @@ init() {
   fi
 }
 
-progress_bar() {
+run() {
   local -r fg_width=$(( width * value / max_value ))
   local -r bg_width=$(( width - fg_width ))
 
@@ -93,7 +93,7 @@ function main() {
   local bg_char="-"
 
   init "$@"
-  progress_bar
+  run
 }
 
 main "$@"

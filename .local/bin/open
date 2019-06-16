@@ -48,15 +48,18 @@ open() {
   xdg-open "$item" || [[ $skip_errors = true ]] || die
 }
 
+run() {
+  for item in "${items[@]}"; do
+    open "$item"
+  done
+}
+
 function main() {
   local skip_errors=false
   local items
 
   init "$@"
-
-  for item in "${items[@]}"; do
-    open "$item"
-  done
+  run
 }
 
 main "$@"

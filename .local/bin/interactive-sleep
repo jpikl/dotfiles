@@ -54,7 +54,7 @@ init() {
   fi
 }
 
-interactive_sleep() {
+run() {
   local time_left=$duration
   local line
 
@@ -87,7 +87,7 @@ function main() {
   local message
 
   init "$@"
-  interactive_sleep
+  run
 }
 
 main "$@"

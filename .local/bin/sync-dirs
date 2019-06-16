@@ -65,7 +65,7 @@ init() {
   fi
 }
 
-sync_dirs() {
+run() {
   if [[ $source -ef $destination ]]; then
     die "'$source' and '$destination' point to the same directory"
   fi
@@ -108,7 +108,7 @@ function main() {
   local destination
 
   init "$@"
-  sync_dirs
+  run
 }
 
 main "$@"
