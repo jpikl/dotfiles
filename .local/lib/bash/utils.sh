@@ -33,7 +33,7 @@ repeat_value() {
 
 join_values() {
   local -r separator=$1
-  local result
+  local result=
   shift
   for item in "$@"; do
     if [[ $result ]]; then
