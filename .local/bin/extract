@@ -19,8 +19,8 @@ help() {
 		  -s  Skip extraction errors.
 		  -h  Display this help.
 
-		File:
-		  One or more files to extract.
+		Arguments:
+		  file  One or more files to extract.
 	EOT
 }
 

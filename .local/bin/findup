@@ -12,15 +12,19 @@ help() {
 		Usage:
 		  $(self) [path] [expression]
 
-		Path:
-		  Search starting point.
-		  Default path is the current working directory.
-
-		Expression:
-		  Any expression accepted by the find command.
-		  See 'find -help' or 'man find' for more details.
-		  Use of -maxdepth is discouraged since it's set internally to 1 by default.
+		Arguments:
+		  path        Search starting point.
+		              Default path is the current working directory.
+		  expression  Any expression accepted by the find command.
+		              See 'find -help' or 'man find' for more details.
+		              Use of -maxdepth is discouraged since it's set internally
+		              to 1 by default.
 	EOT
+}
+
+set_path() {
+  [[ -d $1 ]] || die "'$1' is not a directory"
+  path=$1
 }
 
 init() {
@@ -32,7 +36,7 @@ init() {
   done
 
   if [[ $# -gt 0 && $1 != -* ]]; then
-    path=$1
+    set_path "$1"
     shift
   fi
 
@@ -40,11 +44,10 @@ init() {
 }
 
 run() {
-  [[ -d $path ]] || die "'$path' is not a directory"
   cd "$path"
 
   while true; do
-    find "$PWD" "${expression[@]}" || die
+    find "$PWD" "${expression[@]}"
     if [[ $PWD == / ]]; then
       break;
     else

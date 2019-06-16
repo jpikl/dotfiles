@@ -16,15 +16,14 @@ help() {
 		Options:
 		  -h  Display this help.
 
-		Duration:
-		  Number of seconds to sleep for.
+		Arguments:
+		  duration  Number of seconds to sleep for.
+		  message   Message to display during sleep.
 
-		Message:
-		  Optional message to display during wait.
-
-		Exit code:
-		  0  Normal execution.
-		  1  User canceled sleep.
+		Exit status:
+		  0  Sleep finished without error.
+		  1  Error occurred.
+		  2  User canceled sleep.
 	EOT
 }
 
@@ -66,14 +65,14 @@ run() {
       line="$line $message"
     fi
 
-    line="$line [Press any key to continue]"
+    line="$line [Press any key to skip]"
 
     echo -ne "\r"
     echo -n "$line " # Clearing space at the end for case the previous line was 1 char longer.
 
     if read -rs -n1 -t 1; then
       clear_line "${#line}"
-      exit 1
+      exit 2
     fi
 
     (( time_left-- ))

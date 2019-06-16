@@ -18,8 +18,8 @@ help() {
 		  -v  Verbose mode with additional output.
 		  -h  Display this help.
 
-		Version:
-		  New version to set.
+		Arguments:
+		  version  Version to set.
 	EOT
 }
 

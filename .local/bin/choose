@@ -16,8 +16,8 @@ help() {
 		  -d <default>  Default value to print if no values were specified.
 		  -h            Display this help.
 
-		Value:
-		  Zero or more values to select from.
+		Arguments:
+		  value  Zero or more values to select from.
 	EOT
 }
 

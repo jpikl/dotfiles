@@ -15,9 +15,9 @@ help() {
 		Options:
 		  -h  Display this help.
 
-		Path:
-		  Search starting point.
-		  Default path is the current working directory.
+		Arguments:
+		  path  Search starting point.
+		        Default path is the current working directory.
 	EOT
 }
 

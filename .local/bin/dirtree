@@ -17,9 +17,9 @@ help() {
 		  -f  Print also files.
 		  -h  Display this help.
 
-		Path:
-		  Root of a directory tree to print.
-		  Default path is the current working directory.
+		Arguments:
+		  path  Root of a directory tree to print.
+		        Default path is the current working directory.
 	EOT
 }
 
