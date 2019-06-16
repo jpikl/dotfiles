@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Let user select on of multiple values and print it.
+
+		Usage:
+		  $(self) [options] [--] [value]...
+
+		Options:
+		  -d <default>  Default value to print if no values were specified.
+		  -h            Display this help.
+
+		Value:
+		  Zero or more values to select from.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":d:h" opt; do
+    case "$opt" in
+      d) default=$OPTARG ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  values=("$@")
+}
+
+run() {
+  if [[ ${#values[@]} -eq 0 ]]; then
+    if [[ $default ]]; then
+      echo "$default"
+    fi
+    return
+  fi
+  if [[ ${#values[@]} -eq 1 ]]; then
+    echo "${values[0]}"
+    return
+  fi
+  local reply
+  select reply in "${values[@]}"; do
+    if [[ $reply ]]; then
+      echo "$reply"
+      return
+    fi
+  done
+}
+
+function main() {
+  local default=
+  local values
+
+  init "$@"
+  run
+}
+
+main "$@"

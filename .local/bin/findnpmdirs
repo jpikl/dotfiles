@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/input.sh"
 source "$BASH_LIB_DIR/args.sh"
 
 help() {
@@ -14,7 +13,7 @@ help() {
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -1  User will be prompted select one of multiple results.
+		  -0  Results will be terminated with null character.
 		  -h  Display this help.
 
 		Path:
@@ -31,9 +30,9 @@ set_path() {
 init() {
   local opt
 
-  while getopts ":1h" opt; do
+  while getopts ":0h" opt; do
     case "$opt" in
-      1) select_one=true ;;
+      0) zero_terminated=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -57,15 +56,15 @@ run() {
 
   [[ ${#npm_dirs[@]} -gt 0 ]] || die "unable to find any package.json"
 
-  if [[ ${#npm_dirs[@]} -gt 1 && $select_one == true ]]; then
-    choose "${npm_dirs[@]}"
+  if [[ $zero_terminated = true ]]; then
+    printf "%s\0" "${npm_dirs[@]}"
   else
     printf "%s\n" "${npm_dirs[@]}"
   fi
 }
 
 function main() {
-  local select_one=false
+  local zero_terminated=false
   local path=$PWD
 
   init "$@"
