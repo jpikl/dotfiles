@@ -14,8 +14,8 @@ help() {
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -f, --files  Print also files.
-		  -h, --help   Display this help.
+		  -f  Print also files.
+		  -h  Display this help.
 
 		Path:
 		  Root of a directory tree to print.
@@ -29,21 +29,17 @@ set_path() {
 }
 
 init() {
-  local -r short_opts=fh
-  local -r long_opts=files,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -f|--files)  files=true; shift ;;
-      -h|--help)   help; exit ;;
-      --)          shift; break ;;
-      *)           die_unprocessable_args ;;
+  while getopts ":fh" opt; do
+    case "$opt" in
+      f) files=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     set_path "$1"

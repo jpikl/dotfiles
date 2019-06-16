@@ -14,9 +14,9 @@ help() {
 		  $(self) [options] <version>
 
 		Options:
-		  -b, --backup   Create backup of original pom.xml files.
-		  -v, --verbose  Verbose mode with additional output.
-		  -h, --help     Display this help.
+		  -b  Create backup of original pom.xml files.
+		  -v  Verbose mode with additional output.
+		  -h  Display this help.
 
 		Version:
 		  New version to set.
@@ -29,27 +29,23 @@ set_version() {
 }
 
 init() {
-  local -r short_opts=bvh
-  local -r long_opts=backup,verbose,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -b|--backup)  backup=true; shift ;;
-      -v|--verbose) verbose=true; shift ;;
-      -h|--help)    help; exit ;;
-      --)           shift; break ;;
-      *)            die_unprocessable_args ;;
+  while getopts ":bvh" opt; do
+    case "$opt" in
+      b) backup=true ;;
+      v) verbose=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     set_version "$1"
   else
-    die_missing_args
+    die_missing_arg
   fi
 }
 

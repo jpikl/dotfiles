@@ -14,11 +14,11 @@ help() {
 		  $(self) [options] <value>
 
 		Options:
-		  -w, --width=<value>        Progress bar width (default: $width).
-		  -m, --max-value=<value>    Maximum progress value (default: $max_value).
-		  -f, --fg-char=<character>  Character used to draw foreground (default: '$fg_char').
-		  -b, --bg-char=<character>  Character used to draw Background (default: '$bg_char').
-		  -h, --help                 Display this help.
+		  -w <width>  Progress bar width (default: $width).
+		  -m <value>  Maximum progress value (default: $max_value).
+		  -f <char>   Character used to draw foreground (default: '$fg_char').
+		  -b <char>   Character used to draw Background (default: '$bg_char').
+		  -h          Display this help.
 
 		Value:
 		  Progress value between 0 and maximum value (default: $max_value).
@@ -55,29 +55,25 @@ set_bg_char() {
 }
 
 init() {
-  local -r short_opts=w:m:f:b:h
-  local -r long_opts=width:,max-value:,fg-char:,bg-char:,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -w|--width)     set_width "$2"; shift 2 ;;
-      -m|--max-value) set_max_value "$2"; shift 2 ;;
-      -f|--fg-char)   set_fg_char "$2"; shift 2 ;;
-      -b|--bg-char)   set_bg_char "$2"; shift 2 ;;
-      -h|--help)      help; exit ;;
-      --)             shift; break ;;
-      *)              die_unprocessable_args ;;
+  while getopts ":w:m:f:b:h" opt; do
+    case "$opt" in
+      w) set_width "$OPTARG" ;;
+      m) set_max_value "$OPTARG" ;;
+      f) set_fg_char "$OPTARG" ;;
+      b) set_bg_char "$OPTARG" ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     set_value "$1"
   else
-    die_missing_args
+    die_missing_arg
   fi
 }
 

@@ -14,8 +14,8 @@ help() {
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -s, --select-one  User will be prompted select one of multiple results.
-		  -h, --help        Display this help.
+		  -s  User will be prompted select one of multiple results.
+		  -h  Display this help.
 
 		Path:
 		  Search starting point.
@@ -29,21 +29,17 @@ set_path() {
 }
 
 init() {
-  local -r short_opts=sh
-  local -r long_opts=select-one,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -s|--select-one) select_one=true; shift ;;
-      -h|--help)       help; exit ;;
-      --)              shift; break ;;
-      *)               die_unprocessable_args ;;
+  while getopts ":sh" opt; do
+    case "$opt" in
+      s) select_one=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     set_path "$1"

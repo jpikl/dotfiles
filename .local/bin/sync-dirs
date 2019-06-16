@@ -14,10 +14,10 @@ help() {
 		  $(self) [options] [--] <source> <destination>
 
 		Options:
-		  -t, --times-only  Preserve only modification times.
-		  -e, --exfat       Optimize for exFAT filesystem.
-		  -f, --force       Skip dry run. Perform sync without confirmation.
-		  -h, --help        Display this help.
+		  -t  Preserve only modification times.
+		  -e  Optimize for exFAT filesystem.
+		  -f  Skip dry run. Perform sync without confirmation.
+		  -h  Display this help.
 
 		Source:
 		  Source directory.
@@ -43,29 +43,25 @@ set_destination() {
 }
 
 init() {
-  local -r short_opts=tefh
-  local -r long_opts=times-only,exfat,force,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -t|--times-only) times_only=true; shift ;;
-      -e|--exfat)      exfat=true; shift ;;
-      -f|--force)      force=true; shift ;;
-      -h|--help)       help; exit ;;
-      --)              shift; break ;;
-      *)               die_unprocessable_args ;;
+  while getopts ":tefh" opt; do
+    case "$opt" in
+      t) times_only=true ;;
+      e) exfat=true ;;
+      f) force=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 2 ]]; then
     set_source "$1"
     set_destination "$2"
   else
-    die_missing_args
+    die_missing_arg
   fi
 }
 

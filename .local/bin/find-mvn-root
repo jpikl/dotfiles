@@ -13,7 +13,7 @@ help() {
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -h, --help  Display this help.
+		  -h  Display this help.
 
 		Path:
 		  Search starting point.
@@ -27,20 +27,16 @@ set_path() {
 }
 
 init() {
-  local -r short_opts=h
-  local -r long_opts=help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -h|--help) help; exit ;;
-      --)        shift; break ;;
-      *)         die_unprocessable_args ;;
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     set_path "$1"

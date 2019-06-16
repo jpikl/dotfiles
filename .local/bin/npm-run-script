@@ -14,9 +14,9 @@ help() {
 		  $(self) [options] [--] <script>...
 
 		Options:
-		  -r, --rerun-on-failure       Rerun script if it ends unexpectedly.
-		  -d, --rerun-delay=<seconds>  Rerun delay (default: $rerun_delay).
-		  -h, --help                   Display this help.
+		  -r            Rerun script if it ends unexpectedly.
+		  -d <seconds>  Rerun delay (default: $rerun_delay).
+		  -h            Display this help.
 
 		Script:
 		  One or more script names.
@@ -31,27 +31,23 @@ set_rerun_delay() {
 }
 
 init() {
-  local -r short_opts=rd:h
-  local -r long_opts=rerun-on-failure,rerun-delay:,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -r|--rerun-on-failure) rerun_on_failure=true; shift ;;
-      -d|--rerun-delay)      set_rerun_delay "$2"; shift 2 ;;
-      -h|--help)             help; exit ;;
-      --)                    shift; break ;;
-      *)                     die_unprocessable_args ;;
+  while getopts ":rd:h" opt; do
+    case "$opt" in
+      r) rerun_on_failure=true; ;;
+      d) set_rerun_delay "$OPTARG" ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     scripts=("$@")
   else
-    die_missing_args
+    die_missing_arg
   fi
 }
 

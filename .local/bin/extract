@@ -14,10 +14,10 @@ help() {
 		  $(self) [options] [--] <file>...
 
 		Options:
-		  -o, --overwrite    Overwrite existing files without prompting.
-		  -v, --verbose      Verbose mode with additional output.
-		  -s, --skip-errors  Skip extraction errors.
-		  -h, --help         Display this help.
+		  -o  Overwrite existing files without prompting.
+		  -v  Verbose mode with additional output.
+		  -s  Skip extraction errors.
+		  -h  Display this help.
 
 		File:
 		  One or more files to extract.
@@ -25,28 +25,24 @@ help() {
 }
 
 init() {
-  local -r short_opts=ovsh
-  local -r long_opts=overwrite,verbose,skip-errors,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -o|--overwrite)   overwrite=true; shift ;;
-      -v|--verbose)     verbose=true; shift ;;
-      -s|--skip-errors) skip_errors=true; shift ;;
-      -h|--help)        help; exit ;;
-      --)               shift; break ;;
-      *)                die_unprocessable_args ;;
+  while getopts ":ovsh" opt; do
+    case "$opt" in
+      o) overwrite=true ;;
+      v) verbose=true ;;
+      s) skip_errors=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     files=("$@")
   else
-    die_missing_args
+    die_missing_arg
   fi
 }
 

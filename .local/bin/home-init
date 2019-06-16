@@ -14,31 +14,25 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -d, --directories     Create directories for *_DIR environment variables.
-		  -s, --symbolic-links  Create symbolic links for *_LINK environment variables.
-		  -c, --local-config    Create default .profile_local and .bashrc_local files.
-		  -f, --fonts           Download patched fonts for terminal.
-		  -h, --help            Display this help.
+		  -d  Create directories for *_DIR environment variables.
+		  -s  Create symbolic links for *_LINK environment variables.
+		  -c  Create default .profile_local and .bashrc_local files.
+		  -f  Download patched fonts for terminal.
+		  -h  Display this help.
 	EOT
 }
 
 init() {
-  local -r short_opts=dscfh
-  local -r long_opts=directories,symbolic-links,local-config,fonts,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -d|--directories)    directories=true; shift ;;
-      -s|--symbolic-links) symbolic_links=true; shift ;;
-      -c|--local-config)   local_config=true; shift ;;
-      -f|--fonts)          fonts=true; shift ;;
-      -h|--help)           help; exit ;;
-      --)                  shift; break ;;
-      *)                   die_unprocessable_args ;;
+  while getopts ":dscfh" opt; do
+    case "$opt" in
+      d) directories=true ;;
+      s) symbolic_links=true ;;
+      c) local_config=true ;;
+      f) fonts=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
 }
@@ -143,6 +137,7 @@ home_init() {
   [[ $local_config = true ]] && create_profile_local
   [[ $local_config = true ]] && create_bashrc_local
   [[ $fonts = true ]] && download_fonts
+  true # To reset exit code
 }
 
 function main() {

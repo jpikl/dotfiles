@@ -13,8 +13,8 @@ help() {
 		  $(self) [options] [--] [file]
 
 		Options:
-		  -m, --messages  Include exception messages.
-		  -h, --help      Display this help.
+		  -m  Include exception messages.
+		  -h  Display this help.
 
 		File:
 		  Log file to read.
@@ -28,21 +28,17 @@ set_file() {
 }
 
 init() {
-  local -r short_opts=mh
-  local -r long_opts=messages,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -m|--messages) messages=true; shift ;;
-      -h|--help)     help; exit ;;
-      --)            shift; break ;;
-      *)             die_unprocessable_args ;;
+  while getopts ":mh" opt; do
+    case "$opt" in
+      m) messages=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     set_file "$1"

@@ -13,46 +13,40 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -l, --lines               Print expressions on a separate lines.
-		  -G, --ignore-git          Ignore .git directories.
-		  -P, --ignore-project      Ignore project metadata.
-		  -L, --ignore-libs         Ignore libraries.
-		  -O, --ignore-compiled     Ignore compilation output.
-		  -s, --ignore-non-sources  Same as --ignore-{git,project,libs,compiled}.
-		  -h, --help                Display this help.
+		  -l  Print expressions on separate lines.
+		  -G  Exclude .git directories.
+		  -P  Exclude project metadata.
+		  -L  Exclude libraries.
+		  -O  Exclude compilation output.
+		  -s  Include source file only. Same as -GPLO.
+		  -h  Display this help.
 
 		Examples:
-		  # Find HEAD files outside .git directory.
+		  Find HEAD files outside .git directory:
 		  $(self) -G | xargs -t find . -name HEAD
 
-		  # Find *.xml files between source files.
+		  Find *.xml files between source files:
 		  $(self) -s | xargs -t find . -name '*.xml'
 	EOT
 }
 
 init() {
-  local -r short_opts=lGPLOsh
-  local -r long_opts=lines,ignore-git,ignore-project,ignore-libs,ignore-compiled,ignore-non-sources,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -l|--lines)              lines=true; shift; ;;
-      -G|--ignore-git)         ignore_git=true; shift; ;;
-      -P|--ignore-project)     ignore_project=true; shift; ;;
-      -L|--ignore-libs)        ignore_libs=true; shift; ;;
-      -O|--ignore-compiled)    ignore_compiled=true; shift; ;;
-      -s|--ignore-non-sources) ignore_git=true
-                               ignore_project=true
-                               ignore_libs=true
-                               ignore_compiled=true
-                               shift ;;
-      -h|--help)               help; exit ;;
-      --)                      shift; break ;;
-      *)                       die_unprocessable_args ;;
+  while getopts ":lGPLOsh" opt; do
+    case "$opt" in
+      l) lines=true ;;
+      G) ignore_git=true ;;
+      P) ignore_project=true ;;
+      L) ignore_libs=true ;;
+      O) ignore_compiled=true ;;
+      s) ignore_git=true
+         ignore_project=true
+         ignore_libs=true
+         ignore_compiled=true
+         ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
 }

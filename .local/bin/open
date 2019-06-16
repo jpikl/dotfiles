@@ -13,8 +13,8 @@ help() {
 		  $(self) [options] [--] <item>...
 
 		Options:
-		  -s, --skip-errors  Skip opening errors.
-		  -h, --help         Display this help.
+		  -s  Skip opening errors.
+		  -h  Display this help.
 
 		Item:
 		  One or more files or URLs to open.
@@ -22,26 +22,22 @@ help() {
 }
 
 init() {
-  local -r short_opts=sh
-  local -r long_opts=skip-errors,help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -s|--skip-errors) skip_errors=true; shift ;;
-      -h|--help)        help; exit ;;
-      --)               shift; break ;;
-      *)                die_unprocessable_args ;;
+  while getopts ":sh" opt; do
+    case "$opt" in
+      s) skip_errors=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
     items=("$@")
   else
-    die_missing_args
+    die_missing_arg
   fi
 }
 

@@ -13,23 +13,17 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -h, --help  Display this help.
+		  -h  Display this help.
 	EOT
 }
 
 init() {
-  local -r short_opts=h
-  local -r long_opts=help
-  local args
+  local opt
 
-  args=$(get_args "$short_opts" "$long_opts" "$@")
-  eval set -- "$args"
-
-  while true ; do
-    case "$1" in
-      -h|--help) help; exit ;;
-      --)        shift; break ;;
-      *)         die_unprocessable_args ;;
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
     esac
   done
 }
