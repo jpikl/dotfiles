@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Command description.
+
+		Usage:
+		  $(self) [options] [--] [arg]...
+
+		Options:
+		  -f  Flag description.
+		  -h  Display this help.
+
+		Arguments:
+		  arg  Argument decription.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":fh" opt; do
+    case "$opt" in
+      f) flag=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  args=("$@")
+}
+
+run() {
+  echo "flag=$flag"
+  echo "args=${args[*]}"
+}
+
+function main() {
+  local flag=false
+  local args
+
+  init "$@"
+  run
+}
+
+main "$@"
