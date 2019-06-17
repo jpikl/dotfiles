@@ -46,11 +46,17 @@ init() {
 run() {
   cd "$path"
 
-  local root_pom_xml
-  root_pom_xml=$(findup -name pom.xml -print0 | tail --zero-terminated --lines=1)
-  [[ $root_pom_xml ]] || die "unable to find root pom.xml"
+  local root_dir
 
-  dirname "$root_pom_xml"
+  root_dir=$(findup -name pom.xml -printf "%h\0" \
+    | tail --zero-terminated --lines=1 \
+    | tr --delete '\0')
+
+  if [[ $root_dir ]]; then
+    echo "$root_dir"
+  else
+    die "unable to find root pom.xml"
+  fi
 }
 
 function main() {
