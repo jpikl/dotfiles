@@ -6,20 +6,23 @@ if [[ $- != *i* ]]; then
   return
 fi
 
-# Profile initialization check
-if [[ -z $BASH_LIB_DIR ]]; then
-  echo "${BASH_SOURCE[0]}: Environment variable BASH_LIB_DIR is not defined!"
-  echo "${BASH_SOURCE[0]}: ~/.profile was probably not sourced before!"
-  return
-fi
+# History control
+# - Ignore commands with space before.
+# - Erase duplicates.
+export HISTCONTROL=ignorespace:erasedups
 
 # Binaries
 eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"
 
 # Sources
-source "$BASH_LIB_DIR/aliases.sh"
-source "$BASH_LIB_DIR/prompt.sh"
+if [[ $BASH_LIB_DIR ]]; then
+  source "$BASH_LIB_DIR/aliases.sh"
+  source "$BASH_LIB_DIR/prompt.sh"
+else
+  echo "${BASH_SOURCE[0]}: Environment variable BASH_LIB_DIR is not set!"
+  echo "${BASH_SOURCE[0]}: ~/.profile was probably not sourced before!"
+fi
 
 # Local override not committed in git
 if [[ -f ~/.bashrc_local ]]; then
