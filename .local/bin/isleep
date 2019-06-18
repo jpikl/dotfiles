@@ -55,30 +55,31 @@ init() {
 
 run() {
   local time_left=$duration
-  local line
+  local exit_status=0
+
+  tput sc # Save the cursor position.
+  tput civis || true # Set to cursor to be invisible (may not be supported by terminal).
 
   while [[ $time_left -gt 0 ]]; do
-    line="[$(progbar -w 10 -m "$duration" "$time_left")]"
-    line="$line ($time_left s)"
+    tput rc # Restore the cursor position.
 
-    if [[ $message ]];  then
-      line="$line $message"
-    fi
-
-    line="$line [Press any key to skip]"
-
-    echo -ne "\r"
-    echo -n "$line " # Clearing space at the end for case the previous line was 1 char longer.
+    printf "[%s] (%d s)" "$(progbar -w 10 -m "$duration" "$time_left")" "$time_left"
+    [[ $message ]] &&  printf " %s" "$message"
+    printf " [Press any key to skip] " # Extra space at the end for case the previous line was 1 char longer.
 
     if read -rs -n1 -t 1; then
-      clear_line "${#line}"
-      exit 2
+      exit_status=2
+      break
     fi
 
     (( time_left-- ))
   done
 
-  clear_line "${#line}"
+  tput rc # Restore the cursor position.
+  tput ed # Clear from the cursor to the end of the screen.
+  tput cnorm || true # Set the cursor to its normal state (may not be supported by terminal).
+
+  exit $exit_status
 }
 
 function main() {

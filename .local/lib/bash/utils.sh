@@ -44,9 +44,3 @@ join_values() {
   done
   echo "$result"
 }
-
-clear_line() {
-  printf "\r"
-  repeat_value "$1" " "
-  printf "\r"
-}
