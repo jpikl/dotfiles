@@ -41,7 +41,7 @@ init() {
 
 run() {
   local reply
-  read -n 1 -r -p "$message [y/n]: " reply
+  read -rn1 -p "$message [y/n]: " reply
   echo
   [[ $reply =~ [Yy] ]]
 }
