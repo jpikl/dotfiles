@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Read pressed key name from stdin.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -r  Print raw byte sequence instead of a human readable name.
+		  -h  Display this help.
+
+		For correct key name detection, terminal should
+		be switched to application mode if possible.
+
+		  if tput smkx 2>/dev/null; then
+		    trap "tput rmkx" EXIT # Restore to normal mode on exit
+		  fi
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":rh" opt; do
+    case "$opt" in
+      r) raw=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+}
+
+run() {
+  declare c1 c2 c3 c4
+
+  read -rsN1 c1
+  read -rt0 && read -rsN1 c2
+  read -rt0 && read -rsN1 c3
+  read -rt0 && read -rsN1 c4
+
+  local key=${c1:-}${c2:-}${c3:-}${c4:-}
+
+  if [[ $raw = true ]]; then
+    printf "%s" "$key"
+    return
+  fi
+
+  if [[ $key = [[:graph:]] ]]; then
+    echo "${key,,}" # To lower case
+    return
+  fi
+
+  local -A key_names=(
+    [$'\e']=escape
+    [$'\n']=enter
+    [$'\t']=tab
+    [$'\x7f']=backspace # '\b' is not working
+    [' ']=space
+  )
+
+  if [[ ${key_names[$key]+_} ]]; then
+    echo "${key_names[$key]}"
+    return
+  fi
+
+  local escaped_key=$key
+  escaped_key=${key/$'\e'/\\\\E}
+  escaped_key=${escaped_key/[/\\[}
+
+  infocmp -L1 \
+    | grep --extended-regexp "key_[a-z]+=${escaped_key}," \
+    | sed --regexp-extended --expression 's/^.*_([a-z]+)=.*$/\1/' \
+    || echo "unknown"
+}
+
+function main() {
+  local raw=false
+
+  init "$@"
+  run
+}
+
+main "$@"
