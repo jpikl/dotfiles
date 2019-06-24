@@ -7,26 +7,35 @@ source "$BASH_LIB_DIR/args.sh"
 
 help() {
   cat <<-EOT
-		Let user select on of multiple values and print it.
+		Let user select one from multiple values and print it.
 
 		Usage:
 		  $(self) [options] [--] [value]...
 
 		Options:
-		  -d <default>  Default value to print if no values were specified.
+		  -p <prompt>   Message to print as a prompt.
+		  -d <default>  Default value to print if no values are available.
+		  -b            Use basic interface instead of fullscreen mode.
 		  -h            Display this help.
 
 		Arguments:
 		  value  Zero or more values to select from.
+
+		Exit status:
+		  0  Value was selected.
+		  1  Error occurred.
+		  2  No value was selected.
 	EOT
 }
 
 init() {
   local opt
 
-  while getopts ":d:h" opt; do
+  while getopts "p:d:bh" opt; do
     case "$opt" in
+      p) prompt=$OPTARG ;;
       d) default=$OPTARG ;;
+      b) basic=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -38,31 +47,178 @@ init() {
 }
 
 run() {
+  trap on_exit EXIT
+
   if [[ ${#values[@]} -eq 0 ]]; then
-    if [[ $default ]]; then
-      echo "$default"
-    fi
-    return
+    result=$default
+  elif [[ ${#values[@]} -eq 1 ]]; then
+    result=${values[0]}
+  elif [[ $basic = true ]] || ! fullscreen_mode; then
+    basic_mode
   fi
-  if [[ ${#values[@]} -eq 1 ]]; then
-    echo "${values[0]}"
-    return
+}
+
+on_exit() {
+  {
+    [[ $fullscreen_on == true ]] && tput rmcup
+    [[ $app_mode_on == true ]] && tput rmkx
+    [[ $invisible_cursor_on == true ]] && tput cnorm
+  } >&2
+
+  if [[ $result ]]; then
+    echo "$result"
+  else
+    return 2
+  fi
+}
+
+basic_mode() {
+  if [[ $prompt ]]; then
+    echo "$prompt"
   fi
   local reply
   select reply in "${values[@]}"; do
     if [[ $reply ]]; then
-      echo "$reply"
+      result=$reply
       return
     fi
   done
 }
 
-function main() {
+fullscreen_mode() {
+  tput smcup 2>/dev/null && fullscreen_on=true || return 1
+  tput smkx 2>/dev/null && app_mode_on=true
+  tput civis 2>/dev/null && invisible_cursor_on=true
+
+  local value_max_width
+  local page_length
+  local page_count
+  local selection=0
+
+  compute_and_render_all
+  trap compute_and_render_all WINCH
+
+  while true; do
+    case $(readkey -t1) in # Timeout to allow to execute WINCH trap
+      up)    set_selection $((selection - 1)) ;;
+      down)  set_selection $((selection + 1)) ;;
+      ppage) set_selection $((selection - 10)) ;;
+      npage) set_selection $((selection + 10)) ;;
+      home)  set_selection 0 ;;
+      end)   set_selection $((${#values[@]} - 1)) ;;
+      enter|space) result=${values[$selection]}; return ;;
+      escape)      return ;;
+    esac
+  done
+}
+
+compute_and_render_all() {
+  local screen_width
+  local screen_height
+
+  screen_width=$(tput cols)
+  screen_height=$(tput lines)
+
+  value_max_width=$((screen_width - 2))
+
+  if [[ $value_max_width -lt 0 ]]; then
+    value_max_width=0
+  fi
+
+  page_length=$((screen_height - 2))
+
+  if [[ $page_length -lt 1 ]]; then
+    page_length=1
+  fi
+
+  page_count=$((${#values[@]} / page_length))
+
+  if ((${#values[@]} % page_length > 0)); then
+    ((page_count++)) || true
+  fi
+
+  render_all
+}
+
+render_all() {
+  tput clear
+  tput home
+
+  local page=$((selection / page_length))
+
+  if [[ $page_count -gt 1 || $prompt ]]; then
+    if [[ $page_count -gt 1 ]]; then
+      printf "[Page %d/%d]" "$((page + 1))" "$page_count"
+      [[ $prompt ]] && printf " "
+    fi
+    [[ $prompt ]] && printf "%s" "$prompt"
+    echo
+  fi
+
+  local page_start=$((page * page_length))
+  local page_end=$((page_start + page_length))
+
+  if [[ $page_end -gt ${#values[@]} ]]; then
+    page_end=${#values[@]}
+  fi
+
+  local i
+
+  for ((i = page_start; i < page_end; i++)); do
+    echo "  ${values[i]::$value_max_width}"
+  done
+
+  render_cursor
+}
+
+render_cursor() {
+  local y=$((selection % page_length))
+  if [[ $page_count -gt 1 || $prompt ]]; then
+    ((y++)) || true
+  fi
+  tput cup "$y" 0
+  printf "%s" "${1:->}"
+}
+
+clear_cursor() {
+  render_cursor " "
+}
+
+set_selection() {
+  local new_selection=$1
+
+  if [[ $new_selection -lt 0 ]]; then
+    new_selection=0
+  elif [[ $new_selection -ge ${#values[@]} ]]; then
+    new_selection=$((${#values[@]} - 1))
+  fi
+
+  local page=$((selection / page_length))
+  local new_page=$((new_selection / page_length))
+
+  if [[ $new_page != "$page" ]]; then
+    selection=$new_selection
+    render_all
+  elif [[ $new_selection != "$selection" ]]; then
+    clear_cursor
+    selection=$new_selection
+    render_cursor
+  fi
+}
+
+main() {
+  local prompt=
   local default=
+  local basic=false
   local values
 
   init "$@"
-  run
+  run >&2
 }
+
+declare fullscreen_on=false
+declare app_mode_on=false
+declare invisible_cursor_on=false
+declare result=
 
 main "$@"

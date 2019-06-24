@@ -4,6 +4,10 @@ is_integer() {
   [[ $1 =~ ^[0-9]+$ ]]
 }
 
+is_decimal() {
+  [[ $1 =~ ^([0-9]+\.)?[0-9]+$ ]]
+}
+
 is_character() {
   [[ ${#1} == 1 ]]
 }
@@ -26,6 +30,7 @@ is_command() {
 }
 
 repeat_value() {
+  local i
   for (( i = 0; i < $1; i++ )); do
     echo -n "$2"
   done
