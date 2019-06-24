@@ -4,6 +4,7 @@ set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
 
 help() {
   cat <<-EOT
@@ -13,24 +14,33 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -r  Print raw byte sequence instead of a human readable name.
-		  -h  Display this help.
+      -t <seconds>  Timeout after which the read is canceled.
+		  -r            Print raw byte sequence instead of a human readable name.
+		  -h            Display this help.
 
-		For correct key name detection, terminal should
-		be switched to application mode if possible.
+		Exit status:
+		  0  Key name was successfully read.
+		  1  Error occurred.
+		  2  Unable to recognize key name.
+		  3  Timeout expired.
 
-		  if tput smkx 2>/dev/null; then
-		    trap "tput rmkx" EXIT # Restore to normal mode on exit
-		  fi
+		For correct key name detection, terminal should be switched to
+		application mode 'tput smkx' if possible.
 	EOT
+}
+
+set_timeout() {
+  is_decimal "$1" || die "invalid timeout '$1'"
+  timeout=$1
 }
 
 init() {
   local opt
 
-  while getopts ":rh" opt; do
+  while getopts ":rt:h" opt; do
     case "$opt" in
       r) raw=true ;;
+      t) set_timeout "$OPTARG" ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -40,8 +50,16 @@ init() {
 run() {
   local key
   local char
+  local status=0
 
-  read -rsN1 key
+  if [[ $timeout ]]; then
+    read -rsN1 -t "$timeout" key || status=$?
+  else
+    read -rsN1 key || status=$?
+  fi
+
+  [[ $status -gt 128 ]] && exit 4
+  [[ $status -gt 0 ]] && exit 3
 
   if [[ $key == $'\e' ]]; then
     for ((i = 0; i < 4; i++)); do
@@ -86,11 +104,12 @@ run() {
   infocmp -L1 \
     | grep --extended-regexp "key_[a-z]+=${escaped_key}," \
     | sed --regexp-extended --expression 's/^.*_([a-z]+)=.*$/\1/' \
-    || echo "unknown"
+    || exit 2
 }
 
 function main() {
   local raw=false
+  local timeout=
 
   init "$@"
   run
