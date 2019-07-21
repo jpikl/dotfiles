@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Start or reuse existing ssh-agent process.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -h  Display this help.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+}
+
+is_valid_pid() {
+  [[ ${SSH_AGENT_PID:-} ]] && kill -0 "$SSH_AGENT_PID" &>/dev/null
+}
+
+is_valid_sock() {
+  [[ ${SSH_AUTH_SOCK:-} && -S $SSH_AUTH_SOCK ]]
+}
+
+run() {
+  is_valid_pid && is_valid_sock && exit
+
+  local -r vars_file=/tmp/ssh-agent-vars-$UID
+
+  if [[ -f $vars_file ]]; then
+    unset SSH_AGENT_PID
+    unset SSH_AUTH_SOCK
+    source "$vars_file" >/dev/null
+
+    if ! is_valid_pid || ! is_valid_sock; then
+      rm "$vars_file"
+      is_valid_pid && kill "$SSH_AGENT_PID"
+      is_valid_sock && rm "$SSH_AUTH_SOCK "
+    fi
+  fi
+
+  if [[ ! -f $vars_file ]]; then
+    ssh-agent > $vars_file
+  fi
+
+  cat "$vars_file"
+}
+
+function main() {
+  init "$@"
+  run
+}
+
+main "$@"

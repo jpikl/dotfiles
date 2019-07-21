@@ -57,6 +57,8 @@ LIBRARIES_LINK=$(normalize_path "${LIBRARIES_LINK:-"$HOME/Libraries"}")
 MEDIA_LINK=$(normalize_path "${MEDIA_LINK:-"$HOME/Media"}")
 VOLUMES_LINK=$(normalize_path "${VOLUMES_LINK:-"$HOME/Volumes"}")
 
+unset normalize_path
+
 # Home directires
 export BACKUP_DIR
 export BINARIES_DIR
@@ -103,5 +105,5 @@ export PATH=$PATH:$NPM_LIB_DIR     # Windows
 # Other
 export EDITOR=vim
 
-# Cleanup
-unset normalize_path
+# Init SSH agent
+command -v ssh-agent >/dev/null && eval "$(sshinitag)"
