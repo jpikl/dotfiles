@@ -65,6 +65,8 @@ on_exit() {
     [[ $invisible_cursor_on == true ]] && tput cnorm
   } >&2
 
+  [[ $stty_orig_state ]] && stty "$stty_orig_state"
+
   if [[ $result ]]; then
     echo "$result"
   else
@@ -89,6 +91,9 @@ fullscreen_mode() {
   tput smcup 2>/dev/null && fullscreen_on=true || return 1
   tput smkx 2>/dev/null && app_mode_on=true
   tput civis 2>/dev/null && invisible_cursor_on=true
+
+  stty_orig_state=$(stty -g)
+  stty -echo
 
   local value_max_width
   local page_length
@@ -219,6 +224,7 @@ main() {
 declare fullscreen_on=false
 declare app_mode_on=false
 declare invisible_cursor_on=false
+declare stty_orig_state=
 declare result=
 
 main "$@"
