@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
+
+help() {
+  cat <<-EOT
+		Find packages using pacman or pacaur.
+
+		Usage:
+		  $(self) [options] [--] <name>...
+
+		Options:
+		  -v  Verbose mode with additional output.
+		  -h  Display this help.
+
+		Arguments:
+		  name  Package name.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":vh" opt; do
+    case "$opt" in
+      v) verbose=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ $# -ge 1 ]]; then
+    name=$1
+  else
+    die_missing_arg
+  fi
+}
+
+quiet_mode() {
+  if is_command pacman; then
+    tput setaf 2
+    echo "[local]"
+    tput sgr0
+
+    pacman --query --quiet  | grep -- "$name" | sort || true
+
+    echo
+    tput setaf 6
+    echo "[repositories]"
+    tput sgr0
+
+    pacman --sync --list --quiet | grep -- "$name" | sort || true
+  fi
+
+  if is_command pacaur; then
+    is_command pacman && echo
+
+    tput setaf 5
+    echo "[aur]"
+    tput sgr0
+
+    pacaur --sync --search --aur --quiet -- "$name" | grep -- "$name" | sort || true
+  fi
+}
+
+verbose_mode() {
+  if is_command pacman; then
+    pacman --query --search -- "$name" || true
+    pacman --sync --search -- "$name" || true
+  fi
+
+  if is_command pacaur; then
+    pacaur --sync --search --aur -- "$name" || true
+  fi
+}
+
+run() {
+  if [[ $verbose = true ]]; then
+    verbose_mode
+  else
+    quiet_mode
+  fi
+}
+
+function main() {
+  local verbose=false
+  local name
+
+  init "$@"
+  run
+}
+
+main "$@"
