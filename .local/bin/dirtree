@@ -66,7 +66,8 @@ run() {
     | sed --null-data \
           --expression "s/[^\/]*\//  /g" \
           --expression "s/^  //" \
-          --expression "s/$/\n/"
+          --expression "s/$/\n/" \
+    | tr --delete '\000'
 }
 
 function main() {
