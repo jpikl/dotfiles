@@ -14,7 +14,7 @@ help() {
 		  $(self) [options]
 
 		Options:
-      -t <seconds>  Timeout after which the read is canceled.
+		  -t <seconds>  Timeout after which the read is canceled.
 		  -r            Print raw byte sequence instead of a human readable name.
 		  -h            Display this help.
 
