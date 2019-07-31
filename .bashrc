@@ -11,6 +11,10 @@ fi
 # - Erase duplicates.
 export HISTCONTROL=ignorespace:erasedups
 
+# Remember current tty device
+TTY=$(tty) || TTY=
+export TTY
+
 # Binaries
 eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"
