@@ -41,9 +41,17 @@ init() {
 
 run() {
   local reply
-  read -rn1 -p "$message [y/n]: " reply
-  echo
-  [[ $reply =~ [Yy] ]]
+  printf "%s [y/n]: " "$message"
+
+  while true; do
+    read -rsn1 reply
+    if [[ $reply =~ [YyZzNn] ]]; then
+      echo "$reply"
+      break
+    fi
+  done
+
+  [[ $reply =~ [YyZz] ]]
 }
 
 function main() {
