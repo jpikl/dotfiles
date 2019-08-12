@@ -18,8 +18,8 @@ help() {
 		  -b            Use basic interface instead of fullscreen mode.
 		  -h            Display this help.
 
-		Arguments:
-		  value  Zero or more values to select from.
+		Value:
+		  Zero or more values to select from.
 
 		Exit status:
 		  0  Value was selected.

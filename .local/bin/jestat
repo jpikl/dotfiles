@@ -16,9 +16,9 @@ help() {
 		  -m  Include exception messages.
 		  -h  Display this help.
 
-		Arguments:
-		  file  Log file to read.
-		        If not specified, text is read from stdin.
+		File:
+		  Log file to read.
+		  If not specified, text is read from stdin.
 	EOT
 }
 

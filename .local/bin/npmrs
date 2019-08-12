@@ -18,9 +18,9 @@ help() {
 		  -d <seconds>  Rerun delay (default: $rerun_delay).
 		  -h            Display this help.
 
-		Arguments:
-		  script  One or more script names.
-		          First of these scripts that is defined in package.json will be run.
+		Script:
+		  One or more script names.
+		  First of these scripts that is defined in package.json will be run.
 	EOT
 }
 

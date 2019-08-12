@@ -16,8 +16,8 @@ help() {
 		  -s  Skip opening errors.
 		  -h  Display this help.
 
-		Arguments:
-		  item  One or more files or URLs to open.
+		Item:
+		  One or more files or URLs to open.
 	EOT
 }
 

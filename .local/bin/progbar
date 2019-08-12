@@ -20,8 +20,8 @@ help() {
 		  -b <char>   Character used to draw Background (default: '$bg_char').
 		  -h          Display this help.
 
-		Arguments:
-		  value  Progress value between 0 and maximum value (default: $max_value).
+		Value:
+		  Progress value between 0 and maximum value (default: $max_value).
 	EOT
 }
 

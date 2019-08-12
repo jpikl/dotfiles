@@ -18,9 +18,11 @@ help() {
 		  -f  Skip dry run. Perform sync without confirmation.
 		  -h  Display this help.
 
-		Arguments:
-		  source       Source directory.
-		  destination  Destination directory.
+		Source:
+		  Source directory.
+
+		Destination:
+		  Destination directory.
 	EOT
 }
 

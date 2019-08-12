@@ -16,9 +16,11 @@ help() {
 		Options:
 		  -h  Display this help.
 
-		Arguments:
-		  duration  Number of seconds to sleep for.
-		  message   Message to display during sleep.
+		Duration:
+		  Number of seconds to sleep for.
+
+		Message:
+		  Message to display during sleep.
 
 		Exit status:
 		  0  Sleep finished without error.

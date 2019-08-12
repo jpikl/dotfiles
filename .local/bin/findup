@@ -12,13 +12,14 @@ help() {
 		Usage:
 		  $(self) [path] [expression]
 
-		Arguments:
-		  path        Search starting point.
-		              Default path is the current working directory.
-		  expression  Any expression accepted by the find command.
-		              See 'find -help' or 'man find' for more details.
-		              Use of -maxdepth is discouraged since it's set internally
-		              to 1 by default.
+		Path:
+		  Search starting point.
+		  Default path is the current working directory.
+
+		Expression:
+		  Any expression accepted by the find command.
+		  See 'find -help' or 'man find' for more details.
+		  Use of -maxdepth is discouraged, it is set internally to 1 by default.
 	EOT
 }
 

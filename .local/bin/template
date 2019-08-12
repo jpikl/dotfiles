@@ -10,14 +10,14 @@ help() {
 		Command description.
 
 		Usage:
-		  $(self) [options] [--] <arg>...
+		  $(self) [options] [--] <argument>...
 
 		Options:
 		  -f  Flag description.
 		  -h  Display this help.
 
-		Arguments:
-		  arg  Argument decription.
+		Argument:
+		  Argument decription.
 	EOT
 }
 

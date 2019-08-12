@@ -17,8 +17,8 @@ help() {
 		  -v  Verbose mode with additional output.
 		  -h  Display this help.
 
-		Arguments:
-		  name  Package name.
+		Name:
+		  Package name.
 	EOT
 }
 

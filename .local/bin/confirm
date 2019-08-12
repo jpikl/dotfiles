@@ -15,8 +15,8 @@ help() {
 		Options:
 		  -h  Display this help.
 
-		Arguments:
-		  message  Confirmation message.
+		Message:
+		  Confirmation message.
 	EOT
 }
 
