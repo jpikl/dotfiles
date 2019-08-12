@@ -106,4 +106,4 @@ export PATH=$PATH:$NPM_LIB_DIR     # Windows
 export EDITOR=vim
 
 # Init SSH agent
-command -v ssh-agent >/dev/null && eval "$(sshinitag)"
+command -v ssh-agent >/dev/null && eval "$(sshinit)"
