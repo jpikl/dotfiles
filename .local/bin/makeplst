@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Make playlist using MPD database.
+
+		Usage:
+		  $(self) [options] <tag> [value...]
+
+		Options:
+		  -o  Overwrite existing files without prompting.
+		  -v  Verbose mode with additional output.
+		  -h  Display this help.
+
+		Tag:
+		  One of Artist|AlbumArtist|Album|Genre|Date.
+
+		Value:
+		  Zero or more tag values. If not specified, playlist
+		  will be created for every tag value in MPD database.
+
+		Examples:
+		  Make playlists for year 2000 and 2001:
+		  $(self) Date 2000 2001
+
+		  Make playlist for every year:
+		  $(self) Date
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":ovh" opt; do
+    case "$opt" in
+      o) overwrite=true ;;
+      v) verbose=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ $# -ge 1 ]]; then
+    tag=$1
+    shift
+    values=("$@")
+  else
+    die_missing_arg
+  fi
+}
+
+run() {
+  [[ ${PLAYLISTS_DIR:-} ]] || die "PLAYLISTS_DIR environment variable is not set"
+  [[ ${MUSIC_DIR:-} ]] || die "MUSIC_DIR environment variable is not set"
+
+  [[ -d $PLAYLISTS_DIR ]] || die "PLAYLISTS_DIR=$PLAYLISTS_DIR is not a directory"
+  [[ -d $MUSIC_DIR ]] || die "MUSIC_DIR=$MUSIC_DIR is not a directory"
+
+  if [[ $verbose == true ]]; then
+    echo "Updating MPD database"
+  fi
+
+  mpc update --wait --quiet # Check mpd is running + update database
+
+  if [[ ${#values[@]} -eq 0 ]]; then
+    mapfile -t values < <(mpc list "$tag")
+
+    if [[ ${#values[@]} -eq 1 && ! ${values[0]} ]]; then
+      die "no value for tag $tag"
+    fi
+  fi
+
+  local target_dir="$PLAYLISTS_DIR/$tag"
+  mkdir -p "$target_dir"
+
+  # The generated output is currently optimized for "FiiO X1" device.
+  # 1) Replace '/' in prefix by '\' because X1 cannot handle paths like '../..'.
+  # 2) Keep '/' in the rest of the path, so X1 displays it instead of track title.
+
+  local prefix
+  prefix=$(realpath --relative-to="$target_dir" "$MUSIC_DIR")/
+  prefix=${prefix//\//\\\\}
+
+  for value in "${values[@]}"; do
+    local target="$target_dir/${value//\//+}.m3u"
+
+    if [[ $verbose == true ]]; then
+      echo "Generating $target"
+    fi
+
+    if [[ $overwrite == true || ! -e $target ]] || confirm "Overwrite $target?"; then
+      echo "#EXTM3U" > "$target"
+
+      # shellcheck disable=SC1003
+      mpc search "$tag" "$value" \
+        | awk -v prefix="$prefix" '{print prefix $0}' \
+        >> "$target"
+    fi
+  done
+
+  mpc --quiet clear
+}
+
+function main() {
+  local overwrite=false
+  local verbose=false
+  local tag
+  local values
+
+  init "$@"
+  run
+}
+
+main "$@"
