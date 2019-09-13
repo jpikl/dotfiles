@@ -49,7 +49,7 @@ create_dirs() {
   create_dir "$CACHE_DIR"
   create_dir "$CONFIG_DIR"
   create_dir "$DATA_DIR"
-  create_dir "$DATA_DIR/mpd" # Has to exist otherwise mpd would not start.
+  create_dir "$DATA_DIR/mpd/playlists"
   create_dir "$DESKTOP_DIR"
   create_dir "$DOCUMENTS_DIR"
   create_dir "$DOWNLOAD_DIR"
