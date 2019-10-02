@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Fast-forward git branches.
+
+		Usage:
+		  $(self) [options] [--] branch...
+
+		Options:
+		  -a  Fast-forward all local branches.
+		  -h  Display this help.
+
+		Branch:
+		  One or more branches to fast-forward.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":ah" opt; do
+    case "$opt" in
+      a) all=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  branches=("$@")
+}
+
+run() {
+  if [[ $all = true ]]; then
+    mapfile -t branches < <(git for-each-ref --format='%(refname:short)' refs/heads/)
+  fi
+
+  local current_branch
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+  for branch in "${branches[@]}"; do
+    if [[ $branch != "$current_branch" ]]; then
+      git fetch origin "$branch:$branch"
+    fi
+  done
+}
+
+function main() {
+  local all=false
+  local branches
+
+  init "$@"
+  run
+}
+
+main "$@"
