@@ -48,6 +48,12 @@ alias findsshkeys='find ~/.ssh -name "*.key"'
 alias wclip='xclip -in -selection clipboard'
 alias rclip='xclip -out -selection clipboard'
 
+# Git
+alias gitcb='git rev-parse --abbrev-ref HEAD' # Print current branch
+alias gitf='git fetch --all --prune'
+alias gitl='git log'
+alias gitladog='gitl --all --decorate --oneline --graph'
+
 # Npm
 alias npmg='npm --global'
 alias npmgl='npmg --depth=0 list'
