@@ -83,7 +83,7 @@ alias sshi='eval $(sshinit)'
 alias ssha='ssh-add $(xargs --null --arg-file=<(findsshkeys -print0) choose -p "Select SSH key:")'
 
 # Backup
-alias bakmuslist='dirtree $MUSIC_DIR > $BACKUP_DIR/music.txt'
+alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Other
 alias fitterm='cut --characters=-$COLUMNS'

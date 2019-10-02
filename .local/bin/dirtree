@@ -15,6 +15,7 @@ help() {
 
 		Options:
 		  -f  Print also files.
+		  -s  Sort directory entries by name.
 		  -h  Display this help.
 
 		Path:
@@ -31,9 +32,10 @@ set_path() {
 init() {
   local opt
 
-  while getopts ":fh" opt; do
+  while getopts ":fsh" opt; do
     case "$opt" in
       f) files=true ;;
+      s) sort=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -60,9 +62,14 @@ run() {
   # Sed expressions:
   # 1) Replace leading dirs by spaces.
   # 2) Remove extra left padding.
+  # 3) Add newlines.
 
   find "${find_args[@]}" \
-    | sort --zero-terminated \
+    | if [[ $sort == true ]]; then 
+        sort --zero-terminated
+      else 
+        cat
+      fi \
     | sed --null-data \
           --expression "s/[^\/]*\//  /g" \
           --expression "s/^  //" \
@@ -73,6 +80,7 @@ run() {
 function main() {
   local path=$PWD
   local files=false
+  local sort=false
 
   init "$@"
   run
