@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		List or delete git branches that are gone from remote.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -d  Delete branches that are gone.
+		  -f  Force branch deletion.
+		  -h  Display this help.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":dfh" opt; do
+    case "$opt" in
+      d) delete=true ;;
+      f) force=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+}
+
+run() {
+  local branch
+  while IFS= read -r branch; do
+    if [[ $delete = true ]]; then
+      local opts=()
+      if [[ $force = true ]]; then
+        local opts=("--force")
+      fi
+      git branch -d "${opts[@]}" "$branch"
+    else
+      echo "$branch"
+    fi
+  done < <(git branch --verbose | cut --characters=2- | grep --fixed-strings '[gone]' | awk '{print $1}')
+}
+
+function main() {
+  local delete=false
+  local force=false
+
+  init "$@"
+  run
+}
+
+main "$@"
