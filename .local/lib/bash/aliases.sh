@@ -79,8 +79,8 @@ alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
 # SSH
-alias sshi='eval $(sshinit)'
-alias ssha='ssh-add $(findsshkeys -print0 | choose -0ip "Select SSH key:")'
+alias sshinit='eval $(sshstart)'
+alias sshadd='ssh-add $(findsshkeys -print0 | choose -0ip "Select SSH key:")'
 
 # Backup
 alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'

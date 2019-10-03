@@ -49,7 +49,7 @@ run() {
     if ! is_valid_pid || ! is_valid_sock; then
       rm "$vars_file"
       is_valid_pid && kill "$SSH_AGENT_PID"
-      is_valid_sock && rm -f "$SSH_AUTH_SOCK "
+      is_valid_sock && rm -f "$SSH_AUTH_SOCK"
     fi
   fi
 
