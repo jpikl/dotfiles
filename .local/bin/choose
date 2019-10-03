@@ -4,10 +4,15 @@ set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
+
+readonly ERR_NO_VALUES=2
+readonly ERR_CANCELED=3
 
 help() {
   cat <<-EOT
 		Let user select one from multiple values and print it.
+    Uses fzf command by default if available.
 
 		Usage:
 		  $(self) [options] [--] [value]...
@@ -15,26 +20,35 @@ help() {
 		Options:
 		  -p <prompt>   Message to print as a prompt.
 		  -d <default>  Default value to print if no values are available.
-		  -b            Use basic interface instead of fullscreen mode.
+		  -i            Read lines from stdin as values.
+		  -0            Expect stdin values to be separated by null character.
+		  -b            Use basic interface instead of fzf.
 		  -h            Display this help.
 
 		Value:
 		  Zero or more values to select from.
+      Ignored when the -i option is used.
 
 		Exit status:
-		  0  Value was selected.
-		  1  Error occurred.
-		  2  No value was selected.
+		  0  Normal exit.
+		  1  Error.
+		  2  No values.
+		  3  Canceled by user.
+
+		Links:
+		  fzf  https://github.com/junegunn/fzf
 	EOT
 }
 
 init() {
   local opt
 
-  while getopts "p:d:bh" opt; do
+  while getopts "p:d:i0bh" opt; do
     case "$opt" in
       p) prompt=$OPTARG ;;
       d) default=$OPTARG ;;
+      i) stdin=true ;;
+      0) null=true ;;
       b) basic=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -42,189 +56,85 @@ init() {
   done
 
   shift $((OPTIND - 1))
-
   values=("$@")
 }
 
 run() {
-  trap on_exit EXIT
+  local result=
 
-  if [[ ${#values[@]} -eq 0 ]]; then
-    result=$default
-  elif [[ ${#values[@]} -eq 1 ]]; then
-    result=${values[0]}
-  elif [[ $basic = true ]] || ! fullscreen_mode; then
+  if [[ $basic = false ]] && is_command fzf; then
+    fzf_mode
+  else
     basic_mode
   fi
-}
-
-on_exit() {
-  {
-    [[ $fullscreen_on == true ]] && tput rmcup
-    [[ $app_mode_on == true ]] && tput rmkx
-    [[ $invisible_cursor_on == true ]] && tput cnorm
-  } >&2
-
-  [[ $stty_orig_state ]] && stty "$stty_orig_state"
 
   if [[ $result ]]; then
     echo "$result"
+  elif [[ $default ]]; then
+    echo "$default"
   else
-    return 2
+    exit $ERR_NO_VALUES
+  fi
+}
+
+fzf_mode() {
+  local opts=("--layout=reverse" "--select-1")
+
+  if [[ $stdin = true ]]; then
+    export FZF_DEFAULT_COMMAND=cat # To force reading from stdin
+  else
+    exec < <(printf "%s\0" "${values[@]}")
+  fi
+
+  if [[ $stdin = false || $null = true ]]; then
+    opts+=("--read0")
+  fi
+
+  if [[ $prompt ]]; then
+    opts+=("--prompt=$prompt ")
+  fi
+
+  local error=
+  result=$(fzf "${opts[@]}") || error=$?
+
+  if [[ $error -eq 130 ]]; then
+    exit $ERR_CANCELED
+  elif [[ $error -gt 1 ]]; then
+    exit "$ERR_GENERIC"
   fi
 }
 
 basic_mode() {
-  if [[ $prompt ]]; then
-    echo "$prompt"
-  fi
-  local reply
-  select reply in "${values[@]}"; do
-    if [[ $reply ]]; then
-      result=$reply
-      return
+  if [[ $stdin = true ]]; then
+    if [[ $null = true ]]; then
+      mapfile -t -d '' values
+    else
+      mapfile -t values
     fi
-  done
-}
-
-fullscreen_mode() {
-  tput smcup 2>/dev/null && fullscreen_on=true || return 1
-  tput smkx 2>/dev/null && app_mode_on=true
-  tput civis 2>/dev/null && invisible_cursor_on=true
-
-  stty_orig_state=$(stty -g)
-  stty -echo
-
-  local value_max_width
-  local page_length
-  local page_count
-  local selection=0
-
-  compute_and_render_all
-  trap compute_and_render_all WINCH
-
-  while true; do
-    case $(readkey -t1) in # Timeout to allow to execute WINCH trap
-      up)    set_selection $((selection - 1)) ;;
-      down)  set_selection $((selection + 1)) ;;
-      ppage) set_selection $((selection - 10)) ;;
-      npage) set_selection $((selection + 10)) ;;
-      home)  set_selection 0 ;;
-      end)   set_selection $((${#values[@]} - 1)) ;;
-      enter|space) result=${values[$selection]}; return ;;
-      escape)      return ;;
-    esac
-  done
-}
-
-compute_and_render_all() {
-  local screen_width
-  local screen_height
-
-  screen_width=$(tput cols)
-  screen_height=$(tput lines)
-
-  value_max_width=$((screen_width - 2))
-
-  if [[ $value_max_width -lt 0 ]]; then
-    value_max_width=0
+    [[ $TTY ]] || die "expected TTY variable to be defined" # Defined in .bashrc
+    exec < "$TTY"  # Redirect stdin back to tty
   fi
 
-  page_length=$((screen_height - 2))
-
-  if [[ $page_length -lt 1 ]]; then
-    page_length=1
-  fi
-
-  page_count=$((${#values[@]} / page_length))
-
-  if ((${#values[@]} % page_length > 0)); then
-    ((page_count++)) || true
-  fi
-
-  render_all
-}
-
-render_all() {
-  tput clear
-  tput home
-
-  local page=$((selection / page_length))
-
-  if [[ $page_count -gt 1 || $prompt ]]; then
-    if [[ $page_count -gt 1 ]]; then
-      printf "[Page %d/%d]" "$((page + 1))" "$page_count"
-      [[ $prompt ]] && printf " "
-    fi
-    [[ $prompt ]] && printf "%s" "$prompt"
-    echo
-  fi
-
-  local page_start=$((page * page_length))
-  local page_end=$((page_start + page_length))
-
-  if [[ $page_end -gt ${#values[@]} ]]; then
-    page_end=${#values[@]}
-  fi
-
-  local i
-
-  for ((i = page_start; i < page_end; i++)); do
-    echo "  ${values[i]::$value_max_width}"
-  done
-
-  render_cursor
-}
-
-render_cursor() {
-  local y=$((selection % page_length))
-  if [[ $page_count -gt 1 || $prompt ]]; then
-    ((y++)) || true
-  fi
-  tput cup "$y" 0
-  printf "%s" "${1:->}"
-}
-
-clear_cursor() {
-  render_cursor " "
-}
-
-set_selection() {
-  local new_selection=$1
-
-  if [[ $new_selection -lt 0 ]]; then
-    new_selection=0
-  elif [[ $new_selection -ge ${#values[@]} ]]; then
-    new_selection=$((${#values[@]} - 1))
-  fi
-
-  local page=$((selection / page_length))
-  local new_page=$((new_selection / page_length))
-
-  if [[ $new_page != "$page" ]]; then
-    selection=$new_selection
-    render_all
-  elif [[ $new_selection != "$selection" ]]; then
-    clear_cursor
-    selection=$new_selection
-    render_cursor
+  if [[ ${#values[@]} -eq 1 ]]; then
+    result=${values[0]}
+  elif [[ ${#values[@]} -gt 1 ]]; then
+    [[ $prompt ]] && echo "$prompt" >&2
+    select result in "${values[@]}"; do
+      [[ $result ]] && break
+    done || exit $ERR_CANCELED
   fi
 }
 
 main() {
   local prompt=
   local default=
+  local stdin=false
+  local null=false
   local basic=false
   local values
 
   init "$@"
-  run >&2
+  run
 }
-
-declare fullscreen_on=false
-declare app_mode_on=false
-declare invisible_cursor_on=false
-declare stty_orig_state=
-declare result=
 
 main "$@"

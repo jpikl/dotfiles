@@ -24,7 +24,7 @@ alias cdmed='cd "$MEDIA_DIR"'
 alias cdmus='cd "$MUSIC_DIR"'
 alias cdmvnlib='cd "$MAVEN_LIB_DIR"'
 alias cdmvnroot='cd "$(findmvnroot)"'
-alias cdnpmdir='cd "$(xargs --null --arg-file=<(findnpmdirs -0) choose -p "Select a directory:")"'
+alias cdnpmdir='cd "$(findnpmdirs -0 | choose -0ip "Select NPM directory:")"'
 alias cdnpmlib='cd "$NPM_LIB_DIR"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplist='cd "$PLAYLISTS_DIR"'
@@ -80,7 +80,7 @@ alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
 # SSH
 alias sshi='eval $(sshinit)'
-alias ssha='ssh-add $(xargs --null --arg-file=<(findsshkeys -print0) choose -p "Select SSH key:")'
+alias ssha='ssh-add $(findsshkeys -print0 | choose -0ip "Select SSH key:")'
 
 # Backup
 alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
