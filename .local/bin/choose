@@ -78,7 +78,7 @@ run() {
 }
 
 fzf_mode() {
-  local opts=("--layout=reverse" "--select-1")
+  local opts=("--layout=reverse" "--select-1" "--exact")
 
   if [[ $stdin = true ]]; then
     export FZF_DEFAULT_COMMAND=cat # To force reading from stdin
