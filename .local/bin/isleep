@@ -6,6 +6,8 @@ source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
 source "$BASH_LIB_DIR/utils.sh"
 
+readonly ERR_CANCELED=2
+
 help() {
   cat <<-EOT
 		Cancelable sleep with displayed progress.
@@ -23,9 +25,9 @@ help() {
 		  Message to display during sleep.
 
 		Exit status:
-		  0  Sleep finished without error.
-		  1  Error occurred.
-		  2  User canceled sleep.
+		  0  Normal exit.
+		  1  Error.
+		  2  Canceled by user.
 	EOT
 }
 
@@ -57,7 +59,7 @@ init() {
 
 run() {
   local time_left=$duration
-  local exit_status=0
+  local error=$ERR_OK
 
   tput sc # Save the cursor position.
   tput civis || true # Set to cursor to be invisible (may not be supported by terminal).
@@ -70,7 +72,7 @@ run() {
     printf " [Press any key to skip] " # Extra space at the end for case the previous line was 1 char longer.
 
     if read -rsn1 -t1; then
-      exit_status=2
+      error=$ERR_CANCELED
       break
     fi
 
@@ -81,7 +83,7 @@ run() {
   tput ed # Clear from the cursor to the end of the screen.
   tput cnorm || true # Set the cursor to its normal state (may not be supported by terminal).
 
-  exit $exit_status
+  exit $error
 }
 
 function main() {
