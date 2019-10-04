@@ -81,6 +81,18 @@ Use `bashfiles` command to validate Bash scripts with [shellcheck](https://shell
 bashfiles check
 ```
 
+## Troubleshooting
+
+### Character Set Not Supported
+
+Some commands internally use [fzf](https://github.com/junegunn/fzf) which
+[does not work well](https://github.com/junegunn/fzf/issues/963) in combination
+with ConEmu and bash on Windows.
+
+To work around this, `bash` needs to be executed using `winpty` command.
+
+`winpty bash -i -l`
+
 ## License
 
 Everything in this repository is licensed under the [MIT license](LICENSE.md).
