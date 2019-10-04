@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Generate SSH key.
+
+		Usage:
+		  $(self) [options] [hostname]
+
+		Options:
+		  -h  Display this help.
+		
+		Hostname:
+		  Remote hostname the SSH key will be used for.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  if [[ $# -ge 1 ]]; then
+    remote_hostname=$1
+  fi
+}
+
+run() {
+  local key_type
+
+  key_type=$(choose -bp "Key type:" ed25519 rsa)
+  read -rep "Remote hostname: " -i "$remote_hostname" remote_hostname
+
+  key_name="id_$key_type"
+
+  if [[ $remote_hostname ]]; then
+    key_name+="_$remote_hostname"
+  fi
+
+  local key_file="$HOME/.ssh/$key_name.key"
+  local key_file_pub="$HOME/.ssh/$key_name.pub"
+
+  if [[ -e $key_file || -e $key_file_pub ]] && ! confirm "Override existing $key_name.{key,pub}?"; then
+    return
+  fi
+
+  local passphrase
+  local passphrase_again
+  local passphrase_set=
+
+  while [[ -z $passphrase_set ]]; do
+    read -rsep "Passphrase: " passphrase
+    echo
+
+    if [[ $passphrase ]]; then
+      read -rsep "Passphrase (again): " passphrase_again
+      echo
+
+      if [[ $passphrase == "$passphrase_again" ]]; then
+        passphrase_set=yes
+      else
+        echo "Passphrases do not match."
+      fi
+    else
+      passphrase_set=no
+    fi
+  done
+
+  local local_hostname
+  local local_username
+  local local_organization
+  
+  read -rep "Local username: " -i "$(whoami)" local_username
+  read -rep "Local hostname: " -i "$(hostname)" local_hostname
+  read -rep "Local organization: " local_organization
+
+  local comment
+
+  comment+=$local_username
+  [[ $local_username && ( $local_hostname || $local_organization ) ]] && comment+=@
+  comment+=$local_organization
+  [[ $local_hostname && $local_organization ]] && comment+=/
+  comment+=$local_hostname
+
+  read -rep "Comment: " -i "$comment" comment
+
+  echo
+  echo "[Summary]"
+  echo "Key type:    $key_type"
+  echo "Passphrase:  $passphrase_set"
+  echo "Private key: $key_file"
+  echo "Public key:  $key_file_pub"
+  echo "Comment:     $comment"
+  echo
+
+  confirm "Generate key files?" || return 0
+
+  local tmp_key_file
+  local tmp_key_file_pub
+
+  tmp_key_file=$(mktemp --dry-run)
+  tmp_key_file_pub="$tmp_key_file.pub"
+
+  local opts=(
+    "-q" 
+    "-t" "$key_type" 
+    "-f" "$tmp_key_file"
+    "-N" "$passphrase" # Must be passed even when it is empty, otherwise it would be requested
+  )
+
+  [[ $key_type = rsa ]] && opts+=("-b" 4096)
+  [[ $comment ]] && opts+=("-C" "$comment")
+
+  ssh-keygen "${opts[@]}"
+
+  mv "$tmp_key_file" "$key_file" || true
+  mv "$tmp_key_file_pub" "$key_file_pub" || true
+
+  rm -f "$tmp_key_file" "$tmp_key_file_pub"
+}
+
+function main() {
+  local remote_hostname=
+
+  init "$@"
+  run
+}
+
+main "$@"
