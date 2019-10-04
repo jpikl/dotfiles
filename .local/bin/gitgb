@@ -34,13 +34,14 @@ init() {
 
 run() {
   local branch
+  
   while IFS= read -r branch; do
     if [[ $delete = true ]]; then
-      local opts=()
       if [[ $force = true ]]; then
-        local opts=("--force")
+        git branch --delete --force "$branch"
+      else
+        git branch --delete "$branch"
       fi
-      git branch -d "${opts[@]}" "$branch"
     else
       echo "$branch"
     fi
