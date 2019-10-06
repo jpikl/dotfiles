@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+readonly FORMAT="--format=%(refname:short)"
+
+help() {
+  cat <<-EOT
+		List git branches.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -c  Include current branch.
+		  -l  Include local branches.
+		  -r  Include remote branches.
+		  -g  Include tracking branches no longer on remote.
+		  -x  Remove remote prefix from branch name.
+		  -h  Display this help.
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":clrgxh" opt; do
+    case "$opt" in
+      c) current=true ;;
+      l) local=true ;;
+      r) remote=true ;;
+      g) gone=true ;;
+      x) no_prefix=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+}
+
+
+list_local() {
+  if [[ $current = true ]]; then
+    git branch --show-current $FORMAT
+  fi
+
+  if [[ $local = true ]]; then
+    git branch $FORMAT \
+      | grep --invert-match 'HEAD detached' || true
+  fi
+
+  if [[ $gone = true ]]; then
+    git branch --verbose \
+      | cut --characters=2- \
+      | grep --fixed-strings '[gone]' || true \
+      | awk '{print $1}'
+  fi
+}
+
+list_remote() {
+  if [[ $remote = true ]]; then
+    git branch --remote $FORMAT \
+      | grep --invert-match '/HEAD$' || true
+  fi
+}
+
+run() {
+  if [[ $no_prefix = true ]]; then
+    { # We want to print mix of local and remote branches.
+      list_local
+      list_remote | sed --regexp-extended --expression='s/^.*\///'
+    } | LC_ALL=C sort | LC_ALL=C uniq
+  else
+    # We want to print local branches before the remote ones.
+    list_local | LC_ALL=C sort | LC_ALL=C uniq
+    list_remote | LC_ALL=C sort
+  fi
+}
+
+function main() {
+  local current=false
+  local local=false
+  local remote=false
+  local gone=false
+  local no_prefix=false
+
+  init "$@"
+  run
+}
+
+main "$@"

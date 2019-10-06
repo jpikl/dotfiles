@@ -7,7 +7,7 @@ source "$BASH_LIB_DIR/args.sh"
 
 help() {
   cat <<-EOT
-		List or delete git branches that are gone from remote.
+		List or delete git tracking branches that are no longer on remote.
 
 		Usage:
 		  $(self) [options]
@@ -34,7 +34,7 @@ init() {
 
 run() {
   local branch
-  
+
   while IFS= read -r branch; do
     if [[ $delete = true ]]; then
       if [[ $force = true ]]; then
@@ -45,7 +45,7 @@ run() {
     else
       echo "$branch"
     fi
-  done < <(git branch --verbose | cut --characters=2- | grep --fixed-strings '[gone]' | awk '{print $1}')
+  done < <(gitlsb -g)
 }
 
 function main() {
