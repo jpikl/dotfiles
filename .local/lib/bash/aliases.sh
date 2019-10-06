@@ -48,9 +48,11 @@ alias wclip='xclip -in -selection clipboard'
 alias rclip='xclip -out -selection clipboard'
 
 # Git
-alias gitcb='git rev-parse --abbrev-ref HEAD' # Print current branch
-alias gitfa='git fetch --all --prune'
+alias gitcb='git checkout "$(gitlsb -lrx | choose -ip "Git branch to checkout:")"'
+alias gitct='git checkout "$(git tag | choose -ip "Git tag to checkout:")"'
+alias gitfap='git fetch --all --prune'
 alias gitladog='git log --all --decorate --oneline --graph'
+alias gitmb='git merge "$(gitlsb -lr | choose -ip "Git branch to merge:")"'
 
 # Npm
 alias npmg='npm --global'
@@ -78,7 +80,7 @@ alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
 # SSH
 alias sshinit='eval $(sshstart)'
-alias sshadd='ssh-add $(choose -p "Select SSH key:" ~/.ssh/*.key)'
+alias sshadd='ssh-add "$(choose -p "SSH key to add:" ~/.ssh/*.key)"'
 
 # Backup
 alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
