@@ -42,7 +42,6 @@ alias fgrep='grep --fixed-strings'
 
 # Find
 alias findsrc='genfindexpr -s | xargs find'
-alias findsshkeys='find ~/.ssh -name "*.key"'
 
 # Clipboard
 alias wclip='xclip -in -selection clipboard'
@@ -50,9 +49,8 @@ alias rclip='xclip -out -selection clipboard'
 
 # Git
 alias gitcb='git rev-parse --abbrev-ref HEAD' # Print current branch
-alias gitf='git fetch --all --prune'
-alias gitl='git log'
-alias gitladog='gitl --all --decorate --oneline --graph'
+alias gitfa='git fetch --all --prune'
+alias gitladog='git log --all --decorate --oneline --graph'
 
 # Npm
 alias npmg='npm --global'
@@ -80,7 +78,7 @@ alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
 # SSH
 alias sshinit='eval $(sshstart)'
-alias sshadd='ssh-add $(findsshkeys -print0 | choose -0ip "Select SSH key:")'
+alias sshadd='ssh-add $(choose -p "Select SSH key:" ~/.ssh/*.key)'
 
 # Backup
 alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
