@@ -43,7 +43,8 @@ init() {
 
 list_local() {
   if [[ $current = true ]]; then
-    git branch --show-current $FORMAT
+    # "git branch --show-current" requires git >=2.21
+    git rev-parse --abbrev-ref HEAD
   fi
 
   if [[ $local = true ]]; then
