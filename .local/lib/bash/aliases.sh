@@ -51,6 +51,7 @@ alias rclip='xclip -out -selection clipboard'
 alias gitcb='git checkout "$(gitlsb -lrx | choose -ip "Git branch to checkout:")"'
 alias gitct='git checkout "$(git tag | choose -ip "Git tag to checkout:")"'
 alias gitfap='git fetch --all --prune'
+alias gitffb='gitff $(gitlsb -l | choose -imp "Git branches to fast-forward:")'
 alias gitladog='git log --all --decorate --oneline --graph'
 alias gitmb='git merge "$(gitlsb -lr | choose -ip "Git branch to merge:")"'
 
