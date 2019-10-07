@@ -49,3 +49,14 @@ join_values() {
   done
   echo "$result"
 }
+
+remove_value() {
+  local value=$1
+  shift
+  printf "%s\0" "$@" | grep --null \
+                            --null-data \
+                            --invert-match \
+                            --line-regexp \
+                            --fixed-strings \
+                            "$value"
+}

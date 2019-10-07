@@ -104,6 +104,7 @@ export PATH=$PATH:$NPM_LIB_DIR     # Windows
 
 # Other
 export EDITOR=vim
+export FZF_DEFAULT_OPTS="--layout=reverse --exact --cycle"
 
 # Init SSH agent
 command -v ssh-agent >/dev/null && eval "$(sshstart)"
