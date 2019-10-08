@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+mankier.com() {
+  echo "https://www.mankier.com/$1/$2"
+}
+
+linux.die.net() {
+  echo "https://linux.die.net/man/$1/$2"
+}
+
+manned.org() {
+  echo "https://manned.org/$2.$1"
+}
+
+readonly sources=(
+  mankier.com
+  linux.die.net
+  manned.org
+)
+
+print_sources() {
+  for ((i = 0; i < ${#sources[@]}; ++i)); do
+    echo "  $i  ${sources[$i]}"
+  done
+}
+
+help() {
+  cat <<-EOT
+		Open man page in web browser.
+
+		Usage:
+		  $(self) [options] [--] <command>[.section]
+
+		Options:
+		  -012..9  Use specific source (default: 0).
+		  -h       Display this help.
+
+		Command:
+		  Command name.
+
+		Section:
+		  Section number.
+		  If not specified, try man page in every section.
+
+		Sources:
+		$(print_sources)
+	EOT
+}
+
+init() {
+  local opt
+
+  while getopts ":h0123456789" opt; do
+    case "$opt" in
+      [0-9]) source_indices+=("$opt") ;;
+          h) help; exit ;;
+          *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ $# -ge 1 ]]; then
+    cmd_and_section=$1
+  else
+    die_missing_arg
+  fi
+
+  if [[ ${#source_indices[@]} -eq 0 ]]; then
+    source_indices=(0)
+  fi
+}
+
+web_page_exists() {
+  local status
+  status=$(curl --head --silent --output /dev/null --write-out "%{http_code}" --max-time 5 "$1")
+  [[ $status == 200 ]]
+}
+
+run() {
+  local cmd
+  local section
+  local sections
+
+  IFS=. read -r cmd section <<< "$cmd_and_section"
+
+  if [[ $section ]]; then
+    sections=("$section")
+  else
+    sections=({1..8})
+  fi
+
+  for source_index in "${source_indices[@]}"; do
+    if [[ "$source_index" -lt ${#sources[@]} ]]; then
+      local source=${sources[$source_index]}
+      for section in "${sections[@]}"; do
+        local url
+        url=$($source "$section" "$cmd")
+        web_page_exists "$url" && open "$url" &
+      done
+    fi
+  done
+
+  wait
+}
+
+function main() {
+  local source_indices=()
+  local cmd_and_section
+
+  init "$@"
+  run
+}
+
+main "$@"
