@@ -29,6 +29,10 @@ is_command() {
   command -v "$1" >/dev/null
 }
 
+is_mingw() {
+   [[ $(uname) =~ ^MINGW ]]
+}
+
 repeat_value() {
   local i
   for (( i = 0; i < $1; i++ )); do

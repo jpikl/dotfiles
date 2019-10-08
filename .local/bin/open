@@ -4,6 +4,7 @@ set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/args.sh"
+source "$BASH_LIB_DIR/utils.sh"
 
 help() {
   cat <<-EOT
@@ -42,15 +43,26 @@ init() {
 }
 
 open() {
-  local -r item=$1
+  local -r cmd=$1
+  local -r item=$2
 
   echo "Opening '$item'"
-  xdg-open "$item" || [[ $skip_errors = true ]] || die
+  "$cmd" "$item" || [[ $skip_errors = true ]] || die
 }
 
 run() {
+  local cmd
+
+  if is_command xdg-open; then
+    cmd=xdg-open
+  elif is_mingw && is_command start; then
+    cmd=start
+  else
+    die "unable to detect native open command"
+  fi
+
   for item in "${items[@]}"; do
-    open "$item"
+    open "$cmd" "$item"
   done
 }
 
