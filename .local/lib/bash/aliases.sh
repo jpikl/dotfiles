@@ -47,6 +47,9 @@ alias findsrc='genfindexpr -s | xargs find'
 alias wclip='xclip -in -selection clipboard'
 alias rclip='xclip -out -selection clipboard'
 
+# Fzf
+alias fzfbat='fzf --preview="bat --color=always {}"'
+
 # Git
 alias gitcb='git checkout "$(gitlsb -lrx | choose -ip "Git branch to checkout:")"'
 alias gitct='git checkout "$(git tag | choose -ip "Git tag to checkout:")"'
