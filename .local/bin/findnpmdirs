@@ -63,7 +63,7 @@ run() {
   fi
 }
 
-function main() {
+main() {
   local zero_terminated=false
   local path=$PWD
 

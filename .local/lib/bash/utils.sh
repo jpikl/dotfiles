@@ -17,7 +17,7 @@ is_printable() {
 }
 
 is_one_of() {
-  local -r value=$1
+  local value=$1
   shift
   for item in "$@"; do
     [[ $item == "$value" ]] && return 0
@@ -41,7 +41,7 @@ repeat_value() {
 }
 
 join_values() {
-  local -r separator=$1
+  local separator=$1
   local result=
   shift
   for item in "$@"; do

@@ -57,7 +57,7 @@ run() {
   done
 }
 
-function main() {
+main() {
   local path=$PWD
   local expression=("-maxdepth" "1")
 

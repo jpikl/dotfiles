@@ -108,7 +108,7 @@ run() {
   mpc --quiet clear
 }
 
-function main() {
+main() {
   local overwrite=false
   local verbose=false
   local tag

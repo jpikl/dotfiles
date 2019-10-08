@@ -81,8 +81,8 @@ run() {
       opts+=("--modify-window=1" "--exclude='System Volume Information'")
   fi
 
-  local -r opts_info=("--itemize-changes" "--stats")
-  local -r opts_progress=("--info=progress2")
+  local opts_info=("--itemize-changes" "--stats")
+  local opts_progress=("--info=progress2")
 
   if [[ $force = true ]]; then
     echo "Synchronizing '$source' to '$destination'"
@@ -99,7 +99,7 @@ run() {
   fi
 }
 
-function main() {
+main() {
   local times_only=false
   local exfat=false
   local force=false

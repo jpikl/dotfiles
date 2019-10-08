@@ -75,7 +75,7 @@ run() {
   done
 }
 
-function main() {
+main() {
   local rerun_on_failure=false
   local rerun_delay=30
   local scripts

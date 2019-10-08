@@ -109,7 +109,7 @@ run() {
   wait
 }
 
-function main() {
+main() {
   local source_indices=()
   local cmd_and_section
 

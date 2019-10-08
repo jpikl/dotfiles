@@ -78,14 +78,14 @@ init() {
 }
 
 run() {
-  local -r fg_width=$(( width * value / max_value ))
-  local -r bg_width=$(( width - fg_width ))
+  local fg_width=$(( width * value / max_value ))
+  local bg_width=$(( width - fg_width ))
 
   repeat_value "$fg_width" "$fg_char"
   repeat_value "$bg_width" "$bg_char"
 }
 
-function main() {
+main() {
   local value
   local max_value=100
   local width=80

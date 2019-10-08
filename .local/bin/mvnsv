@@ -67,7 +67,7 @@ run() {
   mvn "${args[@]}"
 }
 
-function main() {
+main() {
   local backup=false
   local verbose=false
   local version

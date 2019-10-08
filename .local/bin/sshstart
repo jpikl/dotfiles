@@ -39,7 +39,7 @@ is_valid_sock() {
 run() {
   is_valid_pid && is_valid_sock && exit
 
-  local -r vars_file=/tmp/ssh-agent-vars-$UID
+  local vars_file=/tmp/ssh-agent-vars-$UID
 
   if [[ -f $vars_file ]]; then
     unset SSH_AGENT_PID
@@ -60,7 +60,7 @@ run() {
   cat "$vars_file"
 }
 
-function main() {
+main() {
   init "$@"
   run
 }

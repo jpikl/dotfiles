@@ -86,7 +86,7 @@ run() {
   exit $error
 }
 
-function main() {
+main() {
   local duration
   local message
 

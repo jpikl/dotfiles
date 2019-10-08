@@ -86,7 +86,7 @@ run() {
   fi
 }
 
-function main() {
+main() {
   lines=false
   ignore_git=false
   ignore_project=false

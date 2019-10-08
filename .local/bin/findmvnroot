@@ -59,7 +59,7 @@ run() {
   fi
 }
 
-function main() {
+main() {
   local path=$PWD
 
   init "$@"

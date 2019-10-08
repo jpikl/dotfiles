@@ -55,8 +55,8 @@ handle_error() {
 }
 
 extract_tar() {
-  local -r input=$1
-  local -r compression=${2:-}
+  local input=$1
+  local compression=${2:-}
 
   local opts=(
     "--extract"     # Do extraction.
@@ -81,7 +81,7 @@ extract_tar() {
 }
 
 extract_gz() {
-  local -r input=$1
+  local input=$1
   local opts=("--keep") # Don't delete the input file.
 
   if [[ $overwrite = true ]]; then
@@ -98,8 +98,8 @@ extract_gz() {
 }
 
 extract_bz2() {
-  local -r input=$1
-  local -r output=${input%.*} # Remove .bz2 extension.
+  local input=$1
+  local output=${input%.*} # Remove .bz2 extension.
   local opts=("--keep") # Don't delete the input file.
 
   # bunzip2 does not prompt for overwrite, we have to do it ourselves.
@@ -119,8 +119,8 @@ extract_bz2() {
 }
 
 extract_xz() {
-  local -r input=$1
-  local -r output=${input%.*} # Remove .xz extension.
+  local input=$1
+  local output=${input%.*} # Remove .xz extension.
   local opts=("--keep") # Don't delete the input file.
 
   # unxz does not prompt for overwrite, we have to do it ourselves.
@@ -140,8 +140,8 @@ extract_xz() {
 }
 
 extract_z() {
-  local -r input=$1
-  local -r output=${input%.*} # Remove .z extension.
+  local input=$1
+  local output=${input%.*} # Remove .z extension.
   local opts=("-c") # Write to standard output, don't delete the input file.
 
   # uncompress cannot prompt for overwrite, we have to do it ourselves.
@@ -159,7 +159,7 @@ extract_z() {
 }
 
 extract_zip() {
-  local -r input=$1
+  local input=$1
   local opts=()
 
   if [[ $overwrite = true ]]; then
@@ -174,7 +174,7 @@ extract_zip() {
 }
 
 extract_rar() {
-  local -r input=$1
+  local input=$1
   local opts=()
 
   if [[ $overwrite = true ]]; then
@@ -189,7 +189,7 @@ extract_rar() {
 }
 
 extract_7z() {
-  local -r input=$1
+  local input=$1
   local opts=()
 
   if [[ $overwrite = true ]]; then
@@ -216,7 +216,7 @@ extract_7z() {
 }
 
 extract() {
-  local -r file=$1
+  local file=$1
 
   echo "Extracting '$file'"
 
@@ -248,7 +248,7 @@ run() {
   done
 }
 
-function main() {
+main() {
   local overwrite=false
   local verbose=false
   local skip_errors=false

@@ -14,7 +14,7 @@ help() {
 
 		Options:
 		  -h  Display this help.
-		
+
 		Hostname:
 		  Remote hostname the SSH key will be used for.
 	EOT
@@ -79,7 +79,7 @@ run() {
   local local_hostname
   local local_username
   local local_organization
-  
+
   read -rep "Local username: " -i "$(whoami)" local_username
   read -rep "Local hostname: " -i "$(hostname)" local_hostname
   read -rep "Local organization: " local_organization
@@ -112,8 +112,8 @@ run() {
   tmp_key_file_pub="$tmp_key_file.pub"
 
   local opts=(
-    "-q" 
-    "-t" "$key_type" 
+    "-q"
+    "-t" "$key_type"
     "-f" "$tmp_key_file"
     "-N" "$passphrase" # Must be passed even when it is empty, otherwise it would be requested
   )
@@ -129,7 +129,7 @@ run() {
   rm -f "$tmp_key_file" "$tmp_key_file_pub"
 }
 
-function main() {
+main() {
   local remote_hostname=
 
   init "$@"

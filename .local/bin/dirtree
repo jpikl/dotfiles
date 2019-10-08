@@ -65,9 +65,9 @@ run() {
   # 3) Add newlines.
 
   find "${find_args[@]}" \
-    | if [[ $sort == true ]]; then 
+    | if [[ $sort == true ]]; then
         sort --zero-terminated
-      else 
+      else
         cat
       fi \
     | sed --null-data \
@@ -77,7 +77,7 @@ run() {
     | tr --delete '\000'
 }
 
-function main() {
+main() {
   local path=$PWD
   local files=false
   local sort=false

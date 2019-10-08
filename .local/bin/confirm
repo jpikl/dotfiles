@@ -54,7 +54,7 @@ run() {
   [[ $reply =~ [YyZz] ]]
 }
 
-function main() {
+main() {
   local message
 
   init "$@"

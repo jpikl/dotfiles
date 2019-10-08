@@ -33,7 +33,7 @@ run() {
   npm run | grep '^  \S' | cut --characters=3-
 }
 
-function main() {
+main() {
   init "$@"
   run
 }

@@ -80,7 +80,7 @@ run() {
   fi
 }
 
-function main() {
+main() {
   local current=false
   local local=false
   local remote=false

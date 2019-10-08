@@ -62,7 +62,7 @@ run() {
     | LC_ALL=C sort --reverse
 }
 
-function main() {
+main() {
   local messages=false
   local file=
 

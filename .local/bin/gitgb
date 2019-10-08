@@ -48,7 +48,7 @@ run() {
   done < <(gitlsb -g)
 }
 
-function main() {
+main() {
   local delete=false
   local force=false
 

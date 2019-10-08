@@ -43,8 +43,8 @@ init() {
 }
 
 open() {
-  local -r cmd=$1
-  local -r item=$2
+  local cmd=$1
+  local item=$2
 
   echo "Opening '$item'"
   "$cmd" "$item" || [[ $skip_errors = true ]] || die
@@ -66,7 +66,7 @@ run() {
   done
 }
 
-function main() {
+main() {
   local skip_errors=false
   local items
 

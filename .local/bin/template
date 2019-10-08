@@ -46,7 +46,7 @@ run() {
   echo "args=${args[*]}"
 }
 
-function main() {
+main() {
   local flag=false
   local args
 
