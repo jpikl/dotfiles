@@ -13,7 +13,6 @@ help() {
 		  $(self) [options] [--] <argument>
 
 		Options:
-		  -f  Flag description.
 		  -h  Display this help.
 
 		Argument:
