@@ -38,7 +38,6 @@ main() {
   [[ $# -eq 0 ]] && die_missing_arg
 
   local cmd
-
   if is_command xdg-open; then
     cmd=xdg-open
   elif is_mingw && is_command start; then
@@ -47,6 +46,7 @@ main() {
     die "unable to detect native open command"
   fi
 
+  local item
   for item; do
     echo "Opening '$item'"
     "$cmd" "$item" || [[ $skip_errors = true ]] || die

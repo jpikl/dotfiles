@@ -84,9 +84,11 @@ main() {
     source_indices=(0)
   fi
 
+  local source_index
   for source_index in "${source_indices[@]}"; do
     if [[ "$source_index" -lt ${#sources[@]} ]]; then
       local source=${sources[$source_index]}
+      local section
       for section in "${sections[@]}"; do
         local url
         url=$($source "$section" "$cmd")

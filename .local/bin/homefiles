@@ -127,6 +127,7 @@ profile_export() {
 }
 
 download_fonts() {
+  local file
   for file in "Literation Mono Nerd Font Complete"{," Mono"}{," Windows Compatible"}.ttf; do
     download_font "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/LiberationMono/complete/$file"
   done

@@ -85,6 +85,7 @@ main() {
   prefix=$(realpath --relative-to="$target_dir" "$MUSIC_DIR")/
   prefix=${prefix//\//\\\\}
 
+  local value
   for value in "${values[@]}"; do
     local target="$target_dir/${value//\//+}.m3u"
 

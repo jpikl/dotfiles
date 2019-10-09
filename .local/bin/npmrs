@@ -49,6 +49,7 @@ main() {
 
   mapfile -t available_scripts < <(npmls)
 
+  local script
   for script in "${scripts[@]}"; do
     if is_one_of "$script" "${available_scripts[@]}"; then
       target_script=$script

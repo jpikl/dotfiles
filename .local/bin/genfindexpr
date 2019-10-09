@@ -74,6 +74,7 @@ main() {
   fi
 
   local expression=()
+  local dir
 
   for dir in "${ignored_dirs[@]}"; do
     expression+=("-not" "(" "-path" "*/$dir/*" "-prune" ")")

@@ -36,14 +36,12 @@ main() {
   shift $((OPTIND - 1))
 
   local branches=("$@")
-
-  if [[ $all = true ]]; then
-    mapfile -t branches < <(gitlsb -l)
-  fi
+  [[ $all = true ]] && mapfile -t branches < <(gitlsb -l)
 
   local current_branch
   current_branch=$(gitlsb -c)
 
+  local branch
   for branch in "${branches[@]}"; do
     if [[ $branch != "$current_branch" ]]; then
       git fetch origin "$branch:$branch"
