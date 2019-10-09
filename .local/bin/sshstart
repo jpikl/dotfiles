@@ -17,7 +17,7 @@ help() {
 	EOT
 }
 
-init() {
+main() {
   local opt
 
   while getopts ":h" opt; do
@@ -26,17 +26,7 @@ init() {
       *) die_invalid_opt "$opt" ;;
     esac
   done
-}
 
-is_valid_pid() {
-  [[ ${SSH_AGENT_PID:-} ]] && kill -0 "$SSH_AGENT_PID" &>/dev/null
-}
-
-is_valid_sock() {
-  [[ ${SSH_AUTH_SOCK:-} && -S $SSH_AUTH_SOCK ]]
-}
-
-run() {
   is_valid_pid && is_valid_sock && exit
 
   local vars_file=/tmp/ssh-agent-vars-$UID
@@ -60,9 +50,12 @@ run() {
   cat "$vars_file"
 }
 
-main() {
-  init "$@"
-  run
+is_valid_pid() {
+  [[ ${SSH_AGENT_PID:-} ]] && kill -0 "$SSH_AGENT_PID" &>/dev/null
+}
+
+is_valid_sock() {
+  [[ ${SSH_AUTH_SOCK:-} && -S $SSH_AUTH_SOCK ]]
 }
 
 main "$@"

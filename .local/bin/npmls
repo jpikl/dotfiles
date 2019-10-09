@@ -17,7 +17,7 @@ help() {
 	EOT
 }
 
-init() {
+main() {
   local opt
 
   while getopts ":h" opt; do
@@ -26,16 +26,9 @@ init() {
       *) die_invalid_opt "$opt" ;;
     esac
   done
-}
 
-run() {
   # Lines with script names start with 2 spaces which we need to cut off.
   npm run | grep '^  \S' | cut --characters=3-
-}
-
-main() {
-  init "$@"
-  run
 }
 
 main "$@"

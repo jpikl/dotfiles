@@ -26,22 +26,10 @@ help() {
 	EOT
 }
 
-set_source() {
-  [[ -d $1 ]] || die "'$1' is not a directory"
-
-  if [[ $1 == */ ]]; then
-    source=$1
-  else
-    source=$1/ # Source directory MUST end with /.
-  fi
-}
-
-set_destination() {
-  [[ -d $1 ]] || die "'$1' is not a directory"
-  destination=$1
-}
-
-init() {
+main() {
+  local times_only=false
+  local exfat=false
+  local force=false
   local opt
 
   while getopts ":tefh" opt; do
@@ -56,15 +44,19 @@ init() {
 
   shift $((OPTIND - 1))
 
-  if [[ $# -ge 2 ]]; then
-    set_source "$1"
-    set_destination "$2"
-  else
-    die_missing_arg
-  fi
-}
+  [[ $# -lt 2 ]] && die_missing_arg
+  [[ -d $1 ]] || die "'$1' is not a directory"
+  [[ -d $2 ]] || die "'$2' is not a directory"
 
-run() {
+  local source
+  local destination=$2
+
+  if [[ $1 == */ ]]; then
+    source=$1
+  else
+    source=$1/ # Source directory MUST end with /.
+  fi
+
   if [[ $source -ef $destination ]]; then
     die "'$source' and '$destination' point to the same directory"
   fi
@@ -97,17 +89,6 @@ run() {
         rsync "${opts[@]}" "${opts_progress[@]}" -- "$source" "$destination"
     fi
   fi
-}
-
-main() {
-  local times_only=false
-  local exfat=false
-  local force=false
-  local source
-  local destination
-
-  init "$@"
-  run
 }
 
 main "$@"

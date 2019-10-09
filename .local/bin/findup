@@ -23,13 +23,8 @@ help() {
 	EOT
 }
 
-set_path() {
-  [[ -d $1 ]] || die "'$1' is not a directory"
-  path=$1
-}
-
-init() {
-  for arg in "$@"; do
+main() {
+  for arg do
     if [[ $arg == '-h' || $arg == '-help' || $arg == '--help' ]]; then
       help
       exit
@@ -37,32 +32,19 @@ init() {
   done
 
   if [[ $# -gt 0 && $1 != -* ]]; then
-    set_path "$1"
+    [[ -d $1 ]] || die "'$1' is not a directory"
+    cd "$1"
     shift
   fi
 
-  expression+=("$@")
-}
-
-run() {
-  cd "$path"
-
   while true; do
-    find "$PWD" "${expression[@]}"
+    find "$PWD" "-maxdepth" "1" "$@"
     if [[ $PWD == / ]]; then
       break;
     else
       cd ..
     fi
   done
-}
-
-main() {
-  local path=$PWD
-  local expression=("-maxdepth" "1")
-
-  init "$@"
-  run
 }
 
 main "$@"

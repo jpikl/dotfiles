@@ -22,12 +22,8 @@ help() {
 	EOT
 }
 
-set_file() {
-  [[ -f "$1" ]] || die "'$1' is not a file"
-  file=$1
-}
-
-init() {
+main() {
+  local messages=false
   local opt
 
   while getopts ":mh" opt; do
@@ -41,13 +37,8 @@ init() {
   shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
-    set_file "$1"
-  fi
-}
-
-run() {
-  if [[ $file ]]; then
-    exec <"$file"
+    [[ -f "$1" ]] || die "'$1' is not a file"
+    exec <"$1"
   fi
 
   local pattern='^((\w|\$)+\.)*(\w|\$)+(Exception|Throwable|Error)'
@@ -60,14 +51,6 @@ run() {
     | LC_ALL=C sort \
     | LC_ALL=C uniq --count  \
     | LC_ALL=C sort --reverse
-}
-
-main() {
-  local messages=false
-  local file=
-
-  init "$@"
-  run
 }
 
 main "$@"

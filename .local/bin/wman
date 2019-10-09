@@ -52,7 +52,8 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local source_indices=()
   local opt
 
   while getopts ":h0123456789" opt; do
@@ -64,35 +65,23 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    cmd_and_section=$1
-  else
-    die_missing_arg
-  fi
-
-  if [[ ${#source_indices[@]} -eq 0 ]]; then
-    source_indices=(0)
-  fi
-}
-
-web_page_exists() {
-  local status
-  status=$(curl --head --silent --output /dev/null --write-out "%{http_code}" --max-time 5 "$1")
-  [[ $status == 200 ]]
-}
-
-run() {
   local cmd
   local section
-  local sections
 
-  IFS=. read -r cmd section <<< "$cmd_and_section"
+  IFS=. read -r cmd section <<< "$1"
+
+  local sections
 
   if [[ $section ]]; then
     sections=("$section")
   else
     sections=({1..8})
+  fi
+
+  if [[ ${#source_indices[@]} -eq 0 ]]; then
+    source_indices=(0)
   fi
 
   for source_index in "${source_indices[@]}"; do
@@ -109,12 +98,10 @@ run() {
   wait
 }
 
-main() {
-  local source_indices=()
-  local cmd_and_section
-
-  init "$@"
-  run
+web_page_exists() {
+  local status
+  status=$(curl --head --silent --output /dev/null --write-out "%{http_code}" --max-time 5 "$1")
+  [[ $status == 200 ]]
 }
 
 main "$@"

@@ -30,7 +30,12 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local lines=false
+  local ignore_git=false
+  local ignore_project=false
+  local ignore_libs=false
+  local ignore_compiled=false
   local opt
 
   while getopts ":lGPLOsh" opt; do
@@ -49,9 +54,7 @@ init() {
       *) die_invalid_opt "$opt" ;;
     esac
   done
-}
 
-run() {
   local ignored_dirs=()
 
   if [[ $ignore_git = true ]]; then
@@ -76,7 +79,6 @@ run() {
     expression+=("-not" "(" "-path" "*/$dir/*" "-prune" ")")
   done
 
-
   if [[ ${#expression[@]} -gt 0 ]]; then
     if [[ $lines = true ]]; then
       printf "%s\n" "${expression[@]}"
@@ -84,17 +86,6 @@ run() {
       echo "${expression[@]}"
     fi
   fi
-}
-
-main() {
-  lines=false
-  ignore_git=false
-  ignore_project=false
-  ignore_libs=false
-  ignore_compiled=false
-
-  init "$@"
-  run
 }
 
 main "$@"

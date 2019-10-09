@@ -33,7 +33,9 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local overwrite=false
+  local verbose=false
   local opt
 
   while getopts ":ovh" opt; do
@@ -46,17 +48,12 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    tag=$1
-    shift
-    values=("$@")
-  else
-    die_missing_arg
-  fi
-}
+  local tag=$1
+  shift
+  local values=("$@")
 
-run() {
   [[ ${PLAYLISTS_DIR:-} ]] || die "PLAYLISTS_DIR environment variable is not set"
   [[ ${MUSIC_DIR:-} ]] || die "MUSIC_DIR environment variable is not set"
 
@@ -106,16 +103,6 @@ run() {
   done
 
   mpc --quiet clear
-}
-
-main() {
-  local overwrite=false
-  local verbose=false
-  local tag
-  local values
-
-  init "$@"
-  run
 }
 
 main "$@"

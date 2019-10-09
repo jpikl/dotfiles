@@ -20,7 +20,7 @@ help() {
 	EOT
 }
 
-init() {
+main() {
   local opt
 
   while getopts ":fh" opt; do
@@ -31,17 +31,11 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    message=$1
-  else
-    die_missing_arg
-  fi
-}
+  printf "%s [y/n]: " "$1"
 
-run() {
   local reply
-  printf "%s [y/n]: " "$message"
 
   while true; do
     read -rsn1 reply
@@ -52,13 +46,6 @@ run() {
   done
 
   [[ $reply =~ [YyZz] ]]
-}
-
-main() {
-  local message
-
-  init "$@"
-  run
 }
 
 main "$@"

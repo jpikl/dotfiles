@@ -21,7 +21,11 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local directories=false
+  local symbolic_links=false
+  local local_config=false
+  local fonts=false
   local opt
 
   while getopts ":dscfh" opt; do
@@ -34,13 +38,14 @@ init() {
       *) die_invalid_opt "$opt" ;;
     esac
   done
-}
 
-create_dir() {
-  if [[ ! -d $1 ]]; then
-    echo "Creating directory '$1'"
-    mkdir "$1"
-  fi
+  [[ $directories = true ]] && create_dirs
+  [[ $symbolic_links = true ]] && create_sym_links
+  [[ $local_config = true ]] && create_profile_local
+  [[ $local_config = true ]] && create_bashrc_local
+  [[ $fonts = true ]] && download_fonts
+
+  true # To reset exit code
 }
 
 create_dirs() {
@@ -65,10 +70,10 @@ create_dirs() {
   create_dir "$WORKSPACE_DIR"
 }
 
-create_sym_link() {
-  if [[ ! -L $1 ]]; then
-    echo "Creating symbolic link '$1' to '$2'"
-    ln --symbolic --no-target-directory "$2" "$1"
+create_dir() {
+  if [[ ! -d $1 ]]; then
+    echo "Creating directory '$1'"
+    mkdir "$1"
   fi
 }
 
@@ -82,12 +87,11 @@ create_sym_links() {
   create_sym_link "$VOLUMES_LINK" "$VOLUMES_DIR"
 }
 
-profile_export() {
-  grep --extended-regexp --only-matching "$1" ~/.profile \
-    | grep --extended-regexp --invert-match "${2:-#}" \
-    | sort \
-    | uniq \
-    | xargs printf "#export %s=\n"
+create_sym_link() {
+  if [[ ! -L $1 ]]; then
+    echo "Creating symbolic link '$1' to '$2'"
+    ln --symbolic --no-target-directory "$2" "$1"
+  fi
 }
 
 create_profile_local() {
@@ -114,6 +118,20 @@ create_bashrc_local() {
   fi
 }
 
+profile_export() {
+  grep --extended-regexp --only-matching "$1" ~/.profile \
+    | grep --extended-regexp --invert-match "${2:-#}" \
+    | sort \
+    | uniq \
+    | xargs printf "#export %s=\n"
+}
+
+download_fonts() {
+  for file in "Literation Mono Nerd Font Complete"{," Mono"}{," Windows Compatible"}.ttf; do
+    download_font "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/LiberationMono/complete/$file"
+  done
+}
+
 download_font() {
   local font
   font=$(basename "$1")
@@ -128,31 +146,6 @@ download_font() {
     wget --no-verbose --output-document="$file" "$1" || rm --force "$file" # Clean up unfinished download.
     echo
   fi
-}
-
-download_fonts() {
-  for file in "Literation Mono Nerd Font Complete"{," Mono"}{," Windows Compatible"}.ttf; do
-    download_font "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/LiberationMono/complete/$file"
-  done
-}
-
-run() {
-  [[ $directories = true ]] && create_dirs
-  [[ $symbolic_links = true ]] && create_sym_links
-  [[ $local_config = true ]] && create_profile_local
-  [[ $local_config = true ]] && create_bashrc_local
-  [[ $fonts = true ]] && download_fonts
-  true # To reset exit code
-}
-
-main() {
-  local directories=false
-  local symbolic_links=false
-  local local_config=false
-  local fonts=false
-
-  init "$@"
-  run
 }
 
 main "$@"

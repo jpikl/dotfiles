@@ -24,7 +24,12 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local current=false
+  local local=false
+  local remote=false
+  local gone=false
+  local no_prefix=false
   local opt
 
   while getopts ":clrgxh" opt; do
@@ -38,8 +43,18 @@ init() {
       *) die_invalid_opt "$opt" ;;
     esac
   done
-}
 
+  if [[ $no_prefix = true ]]; then
+    { # We want to print mix of local and remote branches.
+      list_local
+      list_remote | sed --regexp-extended --expression='s/^[^/]*\///'
+    } | LC_ALL=C sort | LC_ALL=C uniq
+  else
+    # We want to print local branches before the remote ones.
+    list_local | LC_ALL=C sort | LC_ALL=C uniq
+    list_remote | LC_ALL=C sort
+  fi
+}
 
 list_local() {
   if [[ $current = true ]]; then
@@ -65,30 +80,6 @@ list_remote() {
     git branch --remote $FORMAT \
       | grep --invert-match '/HEAD$' || true
   fi
-}
-
-run() {
-  if [[ $no_prefix = true ]]; then
-    { # We want to print mix of local and remote branches.
-      list_local
-      list_remote | sed --regexp-extended --expression='s/^[^/]*\///'
-    } | LC_ALL=C sort | LC_ALL=C uniq
-  else
-    # We want to print local branches before the remote ones.
-    list_local | LC_ALL=C sort | LC_ALL=C uniq
-    list_remote | LC_ALL=C sort
-  fi
-}
-
-main() {
-  local current=false
-  local local=false
-  local remote=false
-  local gone=false
-  local no_prefix=false
-
-  init "$@"
-  run
 }
 
 main "$@"

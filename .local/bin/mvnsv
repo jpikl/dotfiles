@@ -23,12 +23,9 @@ help() {
 	EOT
 }
 
-set_version() {
-  is_printable "$1" || die "version is blank"
-  version=$1
-}
-
-init() {
+main() {
+  local backup=false
+  local verbose=false
   local opt
 
   while getopts ":bvh" opt; do
@@ -41,39 +38,18 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    set_version "$1"
-  else
-    die_missing_arg
-  fi
-}
+  is_printable "$1" || die "version is blank"
+  local version=$1
 
-run() {
   [[ -f pom.xml ]] || die "no pom.xml in the current directory"
 
-  local args=()
-
-  if [[ $verbose = false ]]; then
-    args+=("--quiet")
-  fi
-
-  args+=("versions:set" "-DgenerateBackupPoms=$backup")
-
-  if [[ $version ]]; then
-    args+=("-DnewVersion=$version")
-  fi
+  local args=("versions:set" "-DgenerateBackupPoms=$backup")
+  [[ $verbose = false ]] && args+=("--quiet")
+  [[ $version ]] && args+=("-DnewVersion=$version")
 
   mvn "${args[@]}"
-}
-
-main() {
-  local backup=false
-  local verbose=false
-  local version
-
-  init "$@"
-  run
 }
 
 main "$@"

@@ -20,7 +20,7 @@ help() {
 	EOT
 }
 
-init() {
+main() {
   local opt
 
   while getopts ":h" opt; do
@@ -30,22 +30,14 @@ init() {
     esac
   done
 
-  if [[ $# -ge 1 ]]; then
-    remote_hostname=$1
-  fi
-}
-
-run() {
   local key_type
+  local remote_hostname=${1:-}
 
   key_type=$(choose -bp "Key type:" ed25519 rsa)
   read -rep "Remote hostname: " -i "$remote_hostname" remote_hostname
 
-  key_name="id_$key_type"
-
-  if [[ $remote_hostname ]]; then
-    key_name+="_$remote_hostname"
-  fi
+  local key_name="id_$key_type"
+  [[ $remote_hostname ]] && key_name+="_$remote_hostname"
 
   local key_file="$HOME/.ssh/$key_name.key"
   local key_file_pub="$HOME/.ssh/$key_name.pub"
@@ -127,13 +119,6 @@ run() {
   mv "$tmp_key_file_pub" "$key_file_pub" || true
 
   rm -f "$tmp_key_file" "$tmp_key_file_pub"
-}
-
-main() {
-  local remote_hostname=
-
-  init "$@"
-  run
 }
 
 main "$@"

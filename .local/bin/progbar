@@ -25,75 +25,44 @@ help() {
 	EOT
 }
 
-set_value() {
-  # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid value '$1'"
-  value=$1
-}
-
-set_max_value() {
-  # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 1 ]] || die "invalid max value '$1'"
-  max_value=$1
-}
-
-set_width() {
-  # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 1 ]] || die "invalid width '$1'"
-  width=$1
-}
-
-set_fg_char() {
-  # shellcheck disable=SC2015
-  is_character "$1" || die "invalid foreground character '$1'"
-  fg_char=$1
-}
-
-set_bg_char() {
-  is_character "$1" || die "invalid background character '$1'"
-  bg_char=$1
-}
-
-init() {
-  local opt
-
-  while getopts ":w:m:f:b:h" opt; do
-    case "$opt" in
-      w) set_width "$OPTARG" ;;
-      m) set_max_value "$OPTARG" ;;
-      f) set_fg_char "$OPTARG" ;;
-      b) set_bg_char "$OPTARG" ;;
-      h) help; exit ;;
-      *) die_invalid_opt "$opt" ;;
-    esac
-  done
-
-  shift $((OPTIND - 1))
-
-  if [[ $# -ge 1 ]]; then
-    set_value "$1"
-  else
-    die_missing_arg
-  fi
-}
-
-run() {
-  local fg_width=$(( width * value / max_value ))
-  local bg_width=$(( width - fg_width ))
-
-  repeat_value "$fg_width" "$fg_char"
-  repeat_value "$bg_width" "$bg_char"
-}
-
 main() {
   local value
   local max_value=100
   local width=80
   local fg_char="#"
   local bg_char="-"
+  local opt
 
-  init "$@"
-  run
+  while getopts ":w:m:f:b:h" opt; do
+    case "$opt" in
+      w) # shellcheck disable=SC2015
+         is_integer "$OPTARG" && [[ $OPTARG -ge 1 ]] || die "invalid width '$OPTARG'"
+         width=$OPTARG ;;
+      m) # shellcheck disable=SC2015
+         is_integer "$OPTARG" && [[ $OPTARG -ge 1 ]] || die "invalid max value '$OPTARG'"
+         max_value=$OPTARG ;;
+      f) # shellcheck disable=SC2015
+         is_character "$OPTARG" || die "invalid foreground character '$OPTARG'"
+         fg_char=$OPTARG ;;
+      b) is_character "$OPTARG" || die "invalid background character '$OPTARG'"
+         bg_char=$OPTARG ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  # shellcheck disable=SC2015
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "Invalid value '$1'"
+  local value=$1
+
+  local fg_width=$(( width * value / max_value ))
+  local bg_width=$(( width - fg_width ))
+
+  repeat_value "$fg_width" "$fg_char"
+  repeat_value "$bg_width" "$bg_char"
 }
 
 main "$@"

@@ -31,13 +31,7 @@ help() {
 	EOT
 }
 
-set_duration() {
-  # shellcheck disable=SC2015
-  is_integer "$1" && [[ $1 -ge 0 ]] || die "invalid duration '$1'"
-  duration=$1
-}
-
-init() {
+main() {
   local opt
 
   while getopts ":h" opt; do
@@ -48,17 +42,14 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    set_duration "$1"
-    message=${2:-}
-  else
-    die_missing_arg
-  fi
-}
+  # shellcheck disable=SC2015
+  is_integer "$1" && [[ $1 -ge 0 ]] || die "invalid duration '$1'"
 
-run() {
+  local duration=$1
   local time_left=$duration
+  local message=${2:-}
   local error=$ERR_OK
 
   tput sc # Save the cursor position.
@@ -84,14 +75,6 @@ run() {
   tput cnorm || true # Set the cursor to its normal state (may not be supported by terminal).
 
   exit $error
-}
-
-main() {
-  local duration
-  local message
-
-  init "$@"
-  run
 }
 
 main "$@"

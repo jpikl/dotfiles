@@ -19,7 +19,7 @@ is_printable() {
 is_one_of() {
   local value=$1
   shift
-  for item in "$@"; do
+  for item; do
     [[ $item == "$value" ]] && return 0
   done
   return 1
@@ -44,7 +44,7 @@ join_values() {
   local separator=$1
   local result=
   shift
-  for item in "$@"; do
+  for item; do
     if [[ $result ]]; then
       result=$result$separator$item
     else

@@ -10,7 +10,7 @@ help() {
 		Command description.
 
 		Usage:
-		  $(self) [options] [--] <argument>...
+		  $(self) [options] [--] <argument>
 
 		Options:
 		  -f  Flag description.
@@ -21,37 +21,18 @@ help() {
 	EOT
 }
 
-init() {
+main() {
   local opt
 
-  while getopts ":fh" opt; do
+  while getopts ":h" opt; do
     case "$opt" in
-      f) flag=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
 
   shift $((OPTIND - 1))
-
-  if [[ $# -ge 1 ]]; then
-    args=("$@")
-  else
-    die_missing_arg
-  fi
-}
-
-run() {
-  echo "flag=$flag"
-  echo "args=${args[*]}"
-}
-
-main() {
-  local flag=false
-  local args
-
-  init "$@"
-  run
+  echo "$@"
 }
 
 main "$@"

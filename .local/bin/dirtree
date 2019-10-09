@@ -24,12 +24,9 @@ help() {
 	EOT
 }
 
-set_path() {
-  [[ -d $1 ]] || die "'$1' is not a directory"
-  path=$1
-}
-
-init() {
+main() {
+  local files=false
+  local sort=false
   local opt
 
   while getopts ":fsh" opt; do
@@ -44,12 +41,9 @@ init() {
   shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
-    set_path "$1"
+    [[ -d $1 ]] || die "'$1' is not a directory"
+    cd "$1"
   fi
-}
-
-run() {
-  cd "$path"
 
   local find_args=("-mindepth" "1")
 
@@ -75,15 +69,6 @@ run() {
           --expression "s/^  //" \
           --expression "s/$/\n/" \
     | tr --delete '\000'
-}
-
-main() {
-  local path=$PWD
-  local files=false
-  local sort=false
-
-  init "$@"
-  run
 }
 
 main "$@"

@@ -22,7 +22,8 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local skip_errors=false
   local opt
 
   while getopts ":sh" opt; do
@@ -34,23 +35,8 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    items=("$@")
-  else
-    die_missing_arg
-  fi
-}
-
-open() {
-  local cmd=$1
-  local item=$2
-
-  echo "Opening '$item'"
-  "$cmd" "$item" || [[ $skip_errors = true ]] || die
-}
-
-run() {
   local cmd
 
   if is_command xdg-open; then
@@ -61,17 +47,10 @@ run() {
     die "unable to detect native open command"
   fi
 
-  for item in "${items[@]}"; do
-    open "$cmd" "$item"
+  for item; do
+    echo "Opening '$item'"
+    "$cmd" "$item" || [[ $skip_errors = true ]] || die
   done
-}
-
-main() {
-  local skip_errors=false
-  local items
-
-  init "$@"
-  run
 }
 
 main "$@"

@@ -40,7 +40,14 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local prompt=
+  local default=
+  local multi=false
+  local stdin=false
+  local null_in=false
+  local null_out=false
+  local basic=false
   local opt
 
   while getopts ":p:d:mizZbh" opt; do
@@ -58,10 +65,8 @@ init() {
   done
 
   shift $((OPTIND - 1))
-  values=("$@")
-}
 
-run() {
+  local values=("$@")
   local results=()
 
   if [[ $basic = false ]] && is_command fzf; then
@@ -134,19 +139,5 @@ basic_mode() {
     done
   fi
 } >&2
-
-main() {
-  local prompt=
-  local default=
-  local multi=false
-  local stdin=false
-  local null_in=false
-  local null_out=false
-  local basic=false
-  local values
-
-  init "$@"
-  run
-}
 
 main "$@"

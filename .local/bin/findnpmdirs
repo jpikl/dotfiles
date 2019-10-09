@@ -22,12 +22,8 @@ help() {
 	EOT
 }
 
-set_path() {
-  [[ -d $1 ]] || die "'$1' is not a directory"
-  path=$1
-}
-
-init() {
+main() {
+  local zero_terminated=false
   local opt
 
   while getopts ":Zh" opt; do
@@ -41,12 +37,9 @@ init() {
   shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
-    set_path "$1"
+    [[ -d $1 ]] || die "'$1' is not a directory"
+    cd "$1"
   fi
-}
-
-run() {
-  cd "$path"
 
   local expression
   local npm_dirs
@@ -61,14 +54,6 @@ run() {
   else
     printf "%s\n" "${npm_dirs[@]}"
   fi
-}
-
-main() {
-  local zero_terminated=false
-  local path=$PWD
-
-  init "$@"
-  run
 }
 
 main "$@"

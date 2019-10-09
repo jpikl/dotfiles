@@ -23,7 +23,10 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local overwrite=false
+  local verbose=false
+  local skip_errors=false
   local opt
 
   while getopts ":ovsh" opt; do
@@ -37,21 +40,38 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    files=("$@")
-  else
-    die_missing_arg
+  for file; do
+    extract "$file"
+  done
+}
+
+extract() {
+  local file=$1
+
+  echo "Extracting '$file'"
+
+  if [[ ! -f "$file" ]]; then
+    handle_error "'$file' is not a file"
+    return
   fi
-}
 
-confirm_overwrite() {
-  confirm "Overwrite '$1'?"
-}
-
-handle_error() {
-  [[ ${1:-} ]] && alert "$1" >&2
-  [[ $skip_errors = true ]] || die
+  case "${1,,}" in # To lower case.
+    *.tar)            extract_tar "$file" ;;
+    *.tar.gz|*.tgz)   extract_tar "$file" "gzip" ;;
+    *.tar.bz2|*.tbz2) extract_tar "$file" "bzip2" ;;
+    *.tar.xz|*.txz)   extract_tar "$file" "xz" ;;
+    *.tar.z|*.tz)     extract_tar "$file" "uncompress" ;;
+    *.gz)             extract_gz  "$file" ;;
+    *.bz2)            extract_bz2 "$file" ;;
+    *.xz)             extract_xz  "$file" ;;
+    *.z)              extract_z   "$file" ;;
+    *.zip|*.jar)      extract_zip "$file" ;;
+    *.rar)            extract_rar "$file" ;;
+    *.7z)             extract_7z  "$file" ;;
+    *)                handle_error "'$file' has unsupported archive extension" ;;
+  esac
 }
 
 extract_tar() {
@@ -215,47 +235,13 @@ extract_7z() {
 
 }
 
-extract() {
-  local file=$1
-
-  echo "Extracting '$file'"
-
-  if [[ ! -f "$file" ]]; then
-    handle_error "'$file' is not a file"
-    return
-  fi
-
-  case "${1,,}" in # To lower case.
-    *.tar)            extract_tar "$file" ;;
-    *.tar.gz|*.tgz)   extract_tar "$file" "gzip" ;;
-    *.tar.bz2|*.tbz2) extract_tar "$file" "bzip2" ;;
-    *.tar.xz|*.txz)   extract_tar "$file" "xz" ;;
-    *.tar.z|*.tz)     extract_tar "$file" "uncompress" ;;
-    *.gz)             extract_gz  "$file" ;;
-    *.bz2)            extract_bz2 "$file" ;;
-    *.xz)             extract_xz  "$file" ;;
-    *.z)              extract_z   "$file" ;;
-    *.zip|*.jar)      extract_zip "$file" ;;
-    *.rar)            extract_rar "$file" ;;
-    *.7z)             extract_7z  "$file" ;;
-    *)                handle_error "'$file' has unsupported archive extension" ;;
-  esac
+confirm_overwrite() {
+  confirm "Overwrite '$1'?"
 }
 
-run() {
-  for file in "${files[@]}"; do
-    extract "$file"
-  done
-}
-
-main() {
-  local overwrite=false
-  local verbose=false
-  local skip_errors=false
-  local files=()
-
-  init "$@"
-  run
+handle_error() {
+  [[ ${1:-} ]] && alert "$1" >&2
+  [[ $skip_errors = true ]] || die
 }
 
 main "$@"

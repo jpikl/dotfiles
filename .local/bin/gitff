@@ -21,7 +21,8 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local all=false
   local opt
 
   while getopts ":ah" opt; do
@@ -34,10 +35,8 @@ init() {
 
   shift $((OPTIND - 1))
 
-  branches=("$@")
-}
+  local branches=("$@")
 
-run() {
   if [[ $all = true ]]; then
     mapfile -t branches < <(gitlsb -l)
   fi
@@ -50,14 +49,6 @@ run() {
       git fetch origin "$branch:$branch"
     fi
   done
-}
-
-main() {
-  local all=false
-  local branches
-
-  init "$@"
-  run
 }
 
 main "$@"

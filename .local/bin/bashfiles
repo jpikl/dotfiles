@@ -11,7 +11,7 @@ readonly FILES=(
   ~/.local/lib/bash/*.sh
 )
 
-readonly SC_EXCLUDE=SC1090
+readonly SC_EXCLUDE=SC1090 # Can't follow non-constant source.
 
 help() {
   cat <<-EOT
@@ -29,6 +29,14 @@ help() {
 	EOT
 }
 
+main() {
+  case "${1:-}" in
+    list)  list ;;
+    check) check ;;
+    *)     help ;;
+  esac
+}
+
 list() {
   printf "%s\n" "${FILES[@]}"
 }
@@ -36,14 +44,6 @@ list() {
 check() {
   shellcheck --exclude=$SC_EXCLUDE "${FILES[@]}"
   echo "All Bash files are valid."
-}
-
-main() {
-  case "${1:-}" in
-    list)  list ;;
-    check) check ;;
-    *)     help ;;
-  esac
 }
 
 main "$@"

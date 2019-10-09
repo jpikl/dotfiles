@@ -22,7 +22,8 @@ help() {
 	EOT
 }
 
-init() {
+main() {
+  local verbose=false
   local opt
 
   while getopts ":vh" opt; do
@@ -34,11 +35,25 @@ init() {
   done
 
   shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
 
-  if [[ $# -ge 1 ]]; then
-    name=$1
+  local name=$1
+
+  if [[ $verbose = true ]]; then
+    verbose_mode
   else
-    die_missing_arg
+    quiet_mode
+  fi
+}
+
+verbose_mode() {
+  if is_command pacman; then
+    pacman --query --search -- "$name" || true
+    pacman --sync --search -- "$name" || true
+  fi
+
+  if is_command pacaur; then
+    pacaur --sync --search --aur -- "$name" || true
   fi
 }
 
@@ -67,33 +82,6 @@ quiet_mode() {
 
     pacaur --sync --search --aur --quiet -- "$name" | grep -- "$name" | sort || true
   fi
-}
-
-verbose_mode() {
-  if is_command pacman; then
-    pacman --query --search -- "$name" || true
-    pacman --sync --search -- "$name" || true
-  fi
-
-  if is_command pacaur; then
-    pacaur --sync --search --aur -- "$name" || true
-  fi
-}
-
-run() {
-  if [[ $verbose = true ]]; then
-    verbose_mode
-  else
-    quiet_mode
-  fi
-}
-
-main() {
-  local verbose=false
-  local name
-
-  init "$@"
-  run
 }
 
 main "$@"
