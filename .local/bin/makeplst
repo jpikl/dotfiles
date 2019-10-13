@@ -53,11 +53,11 @@ main() {
   shift
   local values=("$@")
 
-  [[ ${PLAYLISTS_DIR:-} ]] || die "PLAYLISTS_DIR environment variable is not set"
-  [[ ${MUSIC_DIR:-} ]] || die "MUSIC_DIR environment variable is not set"
+  [[ ${PLAYLISTS_DIR:-} ]] || die_no_var PLAYLISTS_DIR
+  [[ ${MUSIC_DIR:-} ]] || die_no_var MUSIC_DIR
 
-  [[ -d $PLAYLISTS_DIR ]] || die "PLAYLISTS_DIR=$PLAYLISTS_DIR is not a directory"
-  [[ -d $MUSIC_DIR ]] || die "MUSIC_DIR=$MUSIC_DIR is not a directory"
+  [[ -d $PLAYLISTS_DIR ]] || die "'$PLAYLISTS_DIR' is not a directory"
+  [[ -d $MUSIC_DIR ]] || die "'$MUSIC_DIR' is not a directory"
 
   if [[ $verbose == true ]]; then
     echo "Updating MPD database"

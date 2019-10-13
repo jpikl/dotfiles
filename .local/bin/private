@@ -34,8 +34,8 @@ main() {
   shift $((OPTIND - 1))
   [[ $# -eq 0 ]] && die_missing_arg
 
-  [[ ${PRIVATE_ENCRYPTED_DIR:-} ]] || die "PRIVATE_ENCRYPTED_DIR environment variable is not set"
-  [[ ${PRIVATE_DIR:-} ]] || die "PRIVATE_DIR environment variable is not set"
+  [[ ${PRIVATE_ENCRYPTED_DIR:-} ]] || die_no_var PRIVATE_ENCRYPTED_DIR
+  [[ ${PRIVATE_DIR:-} ]] || die_no_var PRIVATE_DIR
 
   case "$1" in
     status) status ;;

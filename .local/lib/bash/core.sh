@@ -34,3 +34,7 @@ die_invalid_opt() {
 die_missing_arg() {
   die_help "missing required argument"
 }
+
+die_no_var() {
+  die "$1 variable is not set"
+}
