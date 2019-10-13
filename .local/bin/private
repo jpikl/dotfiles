@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/args.sh"
+
+help() {
+  cat <<-EOT
+		Mount or unmount encrypted private directory.
+
+		Usage:
+		  $(self) [options] [--] <action>
+
+		Options:
+		  -h  Display this help.
+
+		Action:
+		  status   Print directories and mount status.
+		  mount    Mout private directory.
+		  unmount  Unmout private directory.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  [[ ${PRIVATE_ENCRYPTED_DIR:-} ]] || die "PRIVATE_ENCRYPTED_DIR environment variable is not set"
+  [[ ${PRIVATE_DIR:-} ]] || die "PRIVATE_DIR environment variable is not set"
+
+  case "$1" in
+    status) status ;;
+    mount)  mount ;;
+    umount|unmount) unmount ;;
+    *)      die_help "invalid action '$1'" ;;
+  esac
+}
+
+status() {
+  echo "PRIVATE_ENCRYPTED_DIR: $PRIVATE_ENCRYPTED_DIR"
+  echo "PRIVATE_DIR: $PRIVATE_DIR"
+
+  if is_mounted; then
+    echo "PRIVATE_DIR is mounted."
+  else
+    echo "PRIVATE_DIR is unmounted."
+  fi
+}
+
+is_mounted() {
+  mountpoint --quiet "$PRIVATE_DIR"
+}
+
+mount() {
+  is_mounted && die "'$PRIVATE_DIR' is already mounted"
+  [[ -d "$PRIVATE_ENCRYPTED_DIR" ]] || die "'$PRIVATE_ENCRYPTED_DIR' is not a directory"
+  mkdir -p "$PRIVATE_DIR"
+  encfs "$PRIVATE_ENCRYPTED_DIR" "$PRIVATE_DIR"
+}
+
+unmount() {
+  is_mounted || die "'$PRIVATE_DIR' is not mounted"
+  fusermount -u --unmount "$PRIVATE_DIR"
+}
+
+main "$@"
