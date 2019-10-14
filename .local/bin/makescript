@@ -6,16 +6,16 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Command description.
+		Create new bash script from this template.
 
 		Usage:
-		  $(self) [options] [--] <argument>
+		  $(self) [options] [--] <name>
 
 		Options:
 		  -h  Display this help.
 
-		Argument:
-		  Argument decription.
+		Name:
+		  Name of a new script.
 	EOT
 }
 
@@ -30,7 +30,11 @@ main() {
   done
 
   shift $((OPTIND - 1))
-  echo "$@"
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  cd "$BINARIES_DIR"
+  cp "$(self)" "$1"
+  chmod +x "$1"
 }
 
 main "$@"
