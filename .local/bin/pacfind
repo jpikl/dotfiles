@@ -7,79 +7,107 @@ source "$BASH_LIB_DIR/utils.sh"
 
 help() {
   cat <<-EOT
-		Find packages using pacman or pacaur.
+		Find pacman packages.
 
 		Usage:
-		  $(self) [options] [--] <name>...
+		  $(self) [options] [--] [name]
 
 		Options:
-		  -v  Verbose mode with additional output.
+		  -i  Include installed packages.
+		  -r  Include pacakges from repositories.
+		  -a  Include packages from AUR.
+		  -q  Print package names only.
 		  -h  Display this help.
 
 		Name:
-		  Package name.
+		  Package name to find.
+		  If not specified, all packages are printed.
 	EOT
 }
 
 main() {
-  local verbose=false
+  local installed=false
+  local repos=false
+  local aur=false
+  local quiet=false
   local opt
 
-  while getopts ":vh" opt; do
+  while getopts ":iraqch" opt; do
     case "$opt" in
-      v) verbose=true ;;
+      i) installed=true ;;
+      r) repos=true ;;
+      a) aur=true ;;
+      q) quiet=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
 
   shift $((OPTIND - 1))
-  [[ $# -eq 0 ]] && die_missing_arg
 
-  local name=$1
-
-  if [[ $verbose = true ]]; then
-    verbose_mode
+  if [[ $quiet == true ]]; then
+    print | filter "${1:-}" | LC_ALL=C sort | LC_ALL=C uniq
   else
-    quiet_mode
+    print | filter "${1:-}"
   fi
 }
 
-verbose_mode() {
-  if is_command pacman; then
-    pacman --query --search -- "$name" || true
-    pacman --sync --search -- "$name" || true
-  fi
+print() {
+  [[ $installed == true ]] && print_installed
+  [[ $repos == true ]] && print_repos
+  [[ $aur == true ]] && print_aur
+  [[ $quiet == false ]] && tput sgr0
+  true
+}
 
-  if is_command pacaur; then
-    pacaur --sync --search --aur -- "$name" || true
+print_installed() {
+  if [[ $quiet == true ]]; then
+    pacman --query --quiet
+  else
+    local prefix
+    prefix="$(tput bold)$(tput setaf 5)installed "
+    pacman --query --color=always | sed --expression="s/^/$prefix/"
   fi
 }
 
-quiet_mode() {
-  if is_command pacman; then
-    tput setaf 2
-    echo "[local]"
-    tput sgr0
-
-    pacman --query --quiet  | grep -- "$name" | sort || true
-
-    echo
-    tput setaf 6
-    echo "[repositories]"
-    tput sgr0
-
-    pacman --sync --list --quiet | grep -- "$name" | sort || true
+print_repos() {
+  local opts=("--sync" "--list")
+  if [[ $quiet == true ]]; then
+    opts+=("--quiet")
+  else
+    opts+=("--color=always")
   fi
+  pacman "${opts[@]}"
+}
 
-  if is_command pacaur; then
-    is_command pacman && echo
+print_aur() {
+  if [[ $quiet == true ]]; then
+    print_aur_quiet
+  else
+    local prefix
+    prefix="$(tput bold)$(tput setaf 5)aur $(tput sgr0)$(tput bold)"
+    print_aur_quiet | sed --expression="s/^/$prefix/"
+  fi
+}
 
-    tput setaf 5
-    echo "[aur]"
-    tput sgr0
+print_aur_quiet() {
+  curl --silent https://aur.archlinux.org/packages.gz \
+    | gunzip \
+    | tail --lines=+2 \
+    | LC_ALL=C sort
+}
 
-    pacaur --sync --search --aur --quiet -- "$name" | grep -- "$name" | sort || true
+filter() {
+  if [[ $1 ]]; then
+    local opts=("--extended-regexp" "--color=never")
+    if [[ $quiet == true ]]; then
+      opts=("$1")
+    else
+      opts=("^.* .*$1") # We need to exclude prefix
+    fi
+    grep "${opts[@]}"
+  else
+    cat
   fi
 }
 
