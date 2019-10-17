@@ -37,16 +37,18 @@ main() {
   done
 
   shift $((OPTIND - 1))
+
   [[ $# -eq 0 ]] && die_missing_arg
-
-  is_printable "$1" || die "version is blank"
-  local version=$1
-
+  [[ $1 =~ [^[:space:]] ]] || die "version is blank"
   [[ -f pom.xml ]] || die "no pom.xml in the current directory"
 
-  local args=("versions:set" "-DgenerateBackupPoms=$backup")
+  local args=(
+    "versions:set"
+    "-DnewVersion=$1"
+    "-DgenerateBackupPoms=$backup"
+  )
+
   [[ $verbose = false ]] && args+=("--quiet")
-  [[ $version ]] && args+=("-DnewVersion=$version")
 
   mvn "${args[@]}"
 }
