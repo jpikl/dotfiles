@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/utils.sh"
+
+help() {
+  cat <<-EOT
+		Run script of a npm package.
+
+		Usage:
+		  $(self) [options] [--] <script>...
+
+		Options:
+		  -h  Display this help.
+
+		Script:
+		  One or more script names.
+		  First script defined in package.json will be run.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  [[ $# -eq 0 ]] && die_missing_arg
+  [[ -f package.json ]] || die "no package.json in current directory"
+
+  # Lines with script names start with 2 spaces which we need to cut off.
+  local scripts
+  mapfile -t scripts < <(npm run | grep '^  \S' | cut --characters=3-)
+
+  local script
+  for script; do
+    if is_one_of "$script" "${scripts[@]}"; then
+      npm run --silent "$script"
+      return
+    fi
+  done
+
+  die "missing scripts: $(join_values ", " "$@")"
+}
+
+main "$@"
