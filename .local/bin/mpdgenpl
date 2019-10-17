@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Make playlist using MPD database.
+		Make playlist from MPD database.
 
 		Usage:
 		  $(self) [options] <tag> [value...]

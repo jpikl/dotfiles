@@ -23,8 +23,8 @@ alias cdlib='cd "$LIBRARIES_DIR"'
 alias cdmed='cd "$MEDIA_DIR"'
 alias cdmus='cd "$MUSIC_DIR"'
 alias cdmvnlib='cd "$MAVEN_LIB_DIR"'
-alias cdmvnroot='cd "$(findmvnroot)"'
-alias cdnpmdir='cd "$(findnpmdirs -Z | choose -izp "NPM directory:")"'
+alias cdmvnroot='cd "$(mvnroot)"'
+alias cdnpmdir='cd "$(npmdirs -Z | choose -izp "NPM directory:")"'
 alias cdnpmlib='cd "$NPM_LIB_DIR"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplist='cd "$PLAYLISTS_DIR"'
@@ -87,7 +87,7 @@ alias sshinit='eval $(sshstart)'
 alias sshadd='ssh-add "$(choose -p "SSH key to add:" ~/.ssh/*.key)"'
 
 # Backup
-alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
+alias bakmusl='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Other
 alias fitterm='cut --characters=-$COLUMNS'

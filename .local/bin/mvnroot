@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Find root directory of a maven project.
+		Find root directory of a Maven project.
 
 		Usage:
 		  $(self) [options] [--] [path]

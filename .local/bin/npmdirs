@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Find directories of node projects.
+		Find directories of Node.js modules.
 
 		Usage:
 		  $(self) [options] [--] [path]
