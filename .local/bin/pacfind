@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/utils.sh"
 
 help() {
   cat <<-EOT
@@ -14,6 +13,7 @@ help() {
 
 		Options:
 		  -i  Include installed packages.
+		  -g  Include installed packages that are gone from repositories / AUR.
 		  -r  Include pacakges from repositories.
 		  -a  Include packages from AUR.
 		  -q  Print package names only.
@@ -27,14 +27,16 @@ help() {
 
 main() {
   local installed=false
+  local gone=false
   local repos=false
   local aur=false
   local quiet=false
   local opt
 
-  while getopts ":iraqch" opt; do
+  while getopts ":igraqch" opt; do
     case "$opt" in
       i) installed=true ;;
+      g) gone=true ;;
       r) repos=true ;;
       a) aur=true ;;
       q) quiet=true ;;
@@ -54,6 +56,7 @@ main() {
 
 print() {
   [[ $installed == true ]] && print_installed
+  [[ $gone == true ]] && print_gone
   [[ $repos == true ]] && print_repos
   [[ $aur == true ]] && print_aur
   [[ $quiet == false ]] && tput sgr0
@@ -61,7 +64,7 @@ print() {
 }
 
 print_installed() {
-  if [[ $quiet == true ]]; then
+  if [[ $quiet == true || "${1:-}" == quiet ]]; then
     pacman --query --quiet
   else
     local prefix
@@ -70,9 +73,34 @@ print_installed() {
   fi
 }
 
+print_gone() {
+  if [[ $quiet == true ]]; then
+    print_gone_quiet
+  else
+    local prefix
+    prefix="$(tput bold)$(tput setaf 5)gone $(tput sgr0)$(tput bold)"
+    print_gone_quiet | sed --expression="s/^/$prefix/"
+  fi
+}
+
+print_gone_quiet() {
+  print_installed quiet \
+    | grep --fixed-strings \
+           --line-regexp \
+           --invert-match \
+           --file=<(print_repos_aur_quiet)
+}
+
+print_repos_aur_quiet() {
+  {
+    print_repos quiet
+    print_aur_quiet
+  } | LC_ALL=C sort | LC_ALL=C uniq
+}
+
 print_repos() {
   local opts=("--sync" "--list")
-  if [[ $quiet == true ]]; then
+  if [[ $quiet == true || "${1:-}" == quiet ]]; then
     opts+=("--quiet")
   else
     opts+=("--color=always")
