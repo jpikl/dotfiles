@@ -7,7 +7,7 @@ readonly PURELINE_CONFIG=$CONFIG_DIR/pureline.conf
 if [[ -f $PURELINE_SCRIPT ]]; then
   conemu_cwd_module() {
     # shellcheck disable=SC2154
-    [[ $ConEmuPID ]] && ConEmuC -StoreCWD
+    [[ $ConEmuPID ]] && (ConEmuC -StoreCWD &) &>/dev/null
   }
   source "$PURELINE_SCRIPT" "$PURELINE_CONFIG"
 else
