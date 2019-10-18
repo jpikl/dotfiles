@@ -73,6 +73,14 @@ alias npmd='npmr webpack-dev dev'
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
 
+# Pacman / pacaur
+alias pacref='pacaur -Sy'
+alias pacup='pacaur -Syu'
+# shellcheck disable=SC2142
+alias pacsel='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | awk "{print \$2}"'
+alias pacin='pacfind -ra | pacsel | xargs --no-run-if-empty retty pacaur -S'
+alias pacun='pacfind -i | pacsel | xargs --no-run-if-empty retty pacaur -Rsc'
+
 # React Native
 alias rndebug='adb shell input keyevent 82'
 
