@@ -43,7 +43,7 @@ main() {
   local expression
   local npm_dirs
 
-  mapfile -t expression < <(genfindexpr -ls)
+  mapfile -t expression < <(findexpr -ls)
   mapfile -td '' npm_dirs < <(find . "${expression[@]}" -name package.json -printf "%h\0")
 
   [[ ${#npm_dirs[@]} -gt 0 ]] || die "unable to find any package.json"

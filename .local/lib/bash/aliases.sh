@@ -41,7 +41,7 @@ alias egrep='grep --extended-regexp'
 alias fgrep='grep --fixed-strings'
 
 # Find
-alias findsrc='genfindexpr -s | xargs find'
+alias findsrc='findexpr -s | xargs find'
 
 # Clipboard
 alias wclip='xclip -in -selection clipboard'
