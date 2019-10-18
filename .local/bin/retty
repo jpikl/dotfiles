@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Execute command with current TTY as stdin.
+		Expects TTY variable to contain current TTY filename.
+
+		Usage:
+		  $(self) [options] [--] <command> [args]
+
+		Options:
+		  -h  Display this help.
+
+		Command:
+		  Command to execute.
+
+		Args:
+		  Command arguments.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  [[ $# -eq 0 ]] && die_missing_arg
+  [[ $TTY ]] || die "expected TTY variable to be defined" # Defined in .bashrc
+
+  if [[ $(readlink -f /dev/stdin) != "$TTY" ]]; then
+    "$@" < "$TTY"  # Redirect stdin back to tty
+  else
+    "$@"
+  fi
+}
+
+main "$@"
