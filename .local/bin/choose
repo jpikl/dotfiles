@@ -10,7 +10,7 @@ readonly ERR_NO_VALUES=2
 help() {
   cat <<-EOT
 		Let user select one from multiple values and print it.
-    Uses fzf command by default if available.
+    Uses fzf by default if available.
 
 		Usage:
 		  $(self) [options] [--] [value]...
@@ -33,6 +33,10 @@ help() {
 		  0  Normal exit.
 		  1  Error.
 		  2  No values.
+
+		Environment variables:
+		  TTY  Filename of a current TTY device.
+		       Used by basic interface when reading from stdin.
 
 		Links:
 		  fzf  https://github.com/junegunn/fzf
@@ -115,7 +119,7 @@ basic_mode() {
     else
       mapfile -t values
     fi
-    [[ $TTY ]] || die "expected TTY variable to be defined" # Defined in .bashrc
+    [[ ${TTY:-} ]] || die_no_var TTY # Defined in .bashrc
     exec < "$TTY"  # Redirect stdin back to tty
   fi
 

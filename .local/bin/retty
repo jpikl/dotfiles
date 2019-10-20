@@ -7,10 +7,9 @@ source "$BASH_LIB_DIR/core.sh"
 help() {
   cat <<-EOT
 		Execute command with current TTY as stdin.
-		Expects TTY variable to contain current TTY filename.
 
 		Usage:
-		  $(self) [options] [--] <command> [args]
+		  $(self) [options] [--] <command> [argument]...
 
 		Options:
 		  -h  Display this help.
@@ -18,8 +17,11 @@ help() {
 		Command:
 		  Command to execute.
 
-		Args:
-		  Command arguments.
+		Argument:
+		  Zero or more command arguments.
+
+		Environment variables:
+		  TTY  Filename of a current TTY device.
 	EOT
 }
 
@@ -36,10 +38,10 @@ main() {
   shift $((OPTIND - 1))
 
   [[ $# -eq 0 ]] && die_missing_arg
-  [[ $TTY ]] || die "expected TTY variable to be defined" # Defined in .bashrc
+  [[ ${TTY:-} ]] || die_no_var TTY # Defined in .bashrc
 
   if [[ $(readlink -f /dev/stdin) != "$TTY" ]]; then
-    "$@" < "$TTY"  # Redirect stdin back to tty
+    "$@" < "$TTY"
   else
     "$@"
   fi

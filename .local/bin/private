@@ -18,6 +18,10 @@ help() {
 		  status   Print directories and mount status.
 		  mount    Mout private directory.
 		  unmount  Unmout private directory.
+
+		Environment variables:
+		  PRIVATE_ENCRYPTED_DIR  Path to a directory with encrypted data.
+		  PRIVATE_DIR            Path to a directory with decrypted data.
 	EOT
 }
 
@@ -39,9 +43,9 @@ main() {
 
   case "$1" in
     status) status ;;
-    mount)  mount ;;
+    mount) mount ;;
     umount|unmount) unmount ;;
-    *)      die_help "invalid action '$1'" ;;
+    *) die_help "invalid action '$1'" ;;
   esac
 }
 
