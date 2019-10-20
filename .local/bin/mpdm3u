@@ -6,40 +6,32 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Make playlist from MPD database.
+		Generate M3U playlists from MPD database.
+		Playlists structure is "{PLAYLIST_DIR}/{YEAR}/{ARTIST} - {ALBUM}.m3u"
 
 		Usage:
-		  $(self) [options] <tag> [value...]
+		  $(self) [options] [year]...
 
 		Options:
-		  -o  Overwrite existing files without prompting.
 		  -v  Verbose mode with additional output.
 		  -h  Display this help.
 
-		Tag:
-		  One of Artist|AlbumArtist|Album|Genre|Date.
+		Year:
+		  Zero or more years for which generate playlists.
+		  If not specified, every year found in MPD datebase will be used.
 
-		Value:
-		  Zero or more tag values. If not specified, playlist
-		  will be created for every tag value in MPD database.
-
-		Examples:
-		  Make playlists for year 2000 and 2001:
-		  $(self) Date 2000 2001
-
-		  Make playlist for every year:
-		  $(self) Date
+		Environment variables:
+		  MUSIC_DIR      Directory where MPD expects to be music.
+		  PLAYLISTS_DIR  Directory where to generate playlists.
 	EOT
 }
 
 main() {
-  local overwrite=false
   local verbose=false
   local opt
 
-  while getopts ":ovh" opt; do
+  while getopts ":vh" opt; do
     case "$opt" in
-      o) overwrite=true ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -47,11 +39,6 @@ main() {
   done
 
   shift $((OPTIND - 1))
-  [[ $# -eq 0 ]] && die_missing_arg
-
-  local tag=$1
-  shift
-  local values=("$@")
 
   [[ ${PLAYLISTS_DIR:-} ]] || die_no_var PLAYLISTS_DIR
   [[ ${MUSIC_DIR:-} ]] || die_no_var MUSIC_DIR
@@ -59,50 +46,69 @@ main() {
   [[ -d $PLAYLISTS_DIR ]] || die "'$PLAYLISTS_DIR' is not a directory"
   [[ -d $MUSIC_DIR ]] || die "'$MUSIC_DIR' is not a directory"
 
-  if [[ $verbose == true ]]; then
-    echo "Updating MPD database"
-  fi
-
+  [[ $verbose == true ]] && echo "Updating MPD database"
   mpc update --wait --quiet # Check mpd is running + update database
 
-  if [[ ${#values[@]} -eq 0 ]]; then
-    mapfile -t values < <(mpc list "$tag")
+  local years=("$@")
 
-    if [[ ${#values[@]} -eq 1 && ! ${values[0]} ]]; then
-      die "no value for tag $tag"
+  if [[ ${#years[@]} -eq 0 ]]; then
+    mapfile -t years < <(mpc list Date)
+
+    if [[ ${#years[@]} -eq 1 && ! ${years[0]} ]]; then
+      die "no years fround in MPD database"
     fi
   fi
 
-  local target_dir="$PLAYLISTS_DIR/$tag"
-  mkdir -p "$target_dir"
+  local year
+  for year in "${years[@]}"; do
+    gen_playlists_year "$year"
+  done
+}
 
-  # The generated output is currently optimized for "FiiO X1" device.
-  # 1) Replace '/' in prefix by '\' because X1 cannot handle paths like '../..'.
-  # 2) Keep '/' in the rest of the path, so X1 displays it instead of track title.
+gen_playlists_year() {
+  local year=$1
+  local artist album
+
+  while IFS='␝' read -r artist album; do
+    gen_playlist_album "$year" "$artist" "$album"
+  done < <(mpc --format='%artist%␝%album%' search Date "$year" | uniq)
+}
+
+gen_playlist_album() {
+  local year=$1
+  local artist=$2
+  local album=$3
+
+  artist=$(sanitize_name "$artist")
+  album=$(sanitize_name "$album")
+
+  local playlist_dir=$PLAYLISTS_DIR/$year
+  mkdir --parents "$playlist_dir"
+
+  local playlist_file="$playlist_dir/$artist - $album.m3u"
+  [[ $verbose == true ]] && echo "Generating $playlist_file"
 
   local prefix
-  prefix=$(realpath --relative-to="$target_dir" "$MUSIC_DIR")/
-  prefix=${prefix//\//\\\\}
+  prefix=$(realpath --relative-to="$playlist_dir" "$MUSIC_DIR")/
+  prefix=${prefix//\//\\\\} # '/' to '\'
 
-  local value
-  for value in "${values[@]}"; do
-    local target="$target_dir/${value//\//+}.m3u"
+  {
+    echo "#EXTM3U"
+    mpc search Date "$year" Artist "$artist" Album "$album" \
+      | sed --regexp-extended \
+            --expression="s/^/$prefix/" \
+            --expression='s/\//\\/g' # '/' to '\'
+  } > "$playlist_file"
+}
 
-    if [[ $verbose == true ]]; then
-      echo "Generating $target"
-    fi
+sanitize_name() {
+  local name=$1
 
-    if [[ $overwrite == true || ! -e $target ]] || confirm "Overwrite $target?"; then
-      echo "#EXTM3U" > "$target"
+  name=${name//\//-} # '/' to '-'
+  name=${name//:/ -} # ':' to ' -'
+  name=${name//\?/}  # Remove '?'
 
-      # shellcheck disable=SC1003
-      mpc search "$tag" "$value" \
-        | awk -v prefix="$prefix" '{print prefix $0}' \
-        >> "$target"
-    fi
-  done
-
-  mpc --quiet clear
+  echo "$name"
 }
 
 main "$@"
