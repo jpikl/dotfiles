@@ -22,7 +22,7 @@ help() {
 main() {
   local opt
 
-  while getopts ":fh" opt; do
+  while getopts ":h" opt; do
     case "$opt" in
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
