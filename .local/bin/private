@@ -46,13 +46,27 @@ main() {
 }
 
 status() {
-  echo "PRIVATE_ENCRYPTED_DIR: $PRIVATE_ENCRYPTED_DIR"
-  echo "PRIVATE_DIR: $PRIVATE_DIR"
+  echo "PRIVATE_ENCRYPTED_DIR"
+  echo "  path:   $PRIVATE_ENCRYPTED_DIR"
+  echo -n "  status: "
+
+  if [ -d "$PRIVATE_ENCRYPTED_DIR" ]; then
+    echo "exists"
+  elif [ -e "$PRIVATE_ENCRYPTED_DIR" ]; then
+    echo "not a directory"
+  else
+    echo "not exists"
+  fi
+
+  echo
+  echo "PRIVATE_DIR"
+  echo "  path:  $PRIVATE_DIR"
+  echo -n "  status: "
 
   if is_mounted; then
-    echo "PRIVATE_DIR is mounted."
+    echo "mounted"
   else
-    echo "PRIVATE_DIR is unmounted."
+    echo "unmounted"
   fi
 }
 
