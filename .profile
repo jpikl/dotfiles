@@ -32,7 +32,7 @@ LIBRARIES_DIR=$(normalize_path "${LIBRARIES_DIR:-"$HOME/.local/lib"}")
 MUSIC_DIR=$(normalize_path "${MUSIC_DIR:-"$HOME/Music"}")
 PICTURES_DIR=$(normalize_path "${PICTURES_DIR:-"$HOME/Pictures"}")
 PLAYLISTS_DIR=$(normalize_path "${PLAYLISTS_DIR:-"$HOME/Playlists"}")
-PRIVATE_DIR=$(normalize_path "${PRIVATE_DIR:-"$HOME/Private"}")
+PRIVATE_DECRYPTED_DIR=$(normalize_path "${PRIVATE_DECRYPTED_DIR:-"$HOME/Private"}")
 PRIVATE_ENCRYPTED_DIR=$(normalize_path "${PRIVATE_ENCRYPTED_DIR:-"$HOME/.private"}")
 PUBLIC_DIR=$(normalize_path "${PUBLIC_DIR:-"$HOME/Public"}")
 TEMP_DIR=$(normalize_path "${TEMP_DIR:-"$HOME/Temp"}")
@@ -72,7 +72,7 @@ export LIBRARIES_DIR
 export MUSIC_DIR
 export PICTURES_DIR
 export PLAYLISTS_DIR
-export PRIVATE_DIR
+export PRIVATE_DECRYPTED_DIR
 export PRIVATE_ENCRYPTED_DIR
 export PUBLIC_DIR
 export TEMP_DIR

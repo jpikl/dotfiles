@@ -16,12 +16,13 @@ help() {
 
 		Action:
 		  status   Print directories and mount status.
-		  mount    Mout private directory.
+		  mount    Mount private directory. Directories are created
+		           and encryption is configured if they do not exist.
 		  unmount  Unmout private directory.
 
 		Environment variables:
 		  PRIVATE_ENCRYPTED_DIR  Path to a directory with encrypted data.
-		  PRIVATE_DIR            Path to a directory with decrypted data.
+		  PRIVATE_DECRYPTED_DIR  Path to a directory with decrypted data.
 	EOT
 }
 
@@ -39,12 +40,12 @@ main() {
 
   [[ $# -eq 0 ]] && die_missing_arg
   [[ ${PRIVATE_ENCRYPTED_DIR:-} ]] || die_no_var PRIVATE_ENCRYPTED_DIR
-  [[ ${PRIVATE_DIR:-} ]] || die_no_var PRIVATE_DIR
+  [[ ${PRIVATE_DECRYPTED_DIR:-} ]] || die_no_var PRIVATE_DECRYPTED_DIR
 
   case "$1" in
-    status) status ;;
-    mount) mount ;;
-    umount|unmount) unmount ;;
+    s|status) status ;;
+    m|mount) mount ;;
+    u|umount|unmount) unmount ;;
     *) die_help "invalid action '$1'" ;;
   esac
 }
@@ -63,31 +64,36 @@ status() {
   fi
 
   echo
-  echo "PRIVATE_DIR"
-  echo "  path:  $PRIVATE_DIR"
+  echo "PRIVATE_DECRYPTED_DIR"
+  echo "  path:  $PRIVATE_DECRYPTED_DIR"
   echo -n "  status: "
 
-  if is_mounted; then
-    echo "mounted"
+  if [ -d "$PRIVATE_ENCRYPTED_DIR" ]; then
+    if is_mounted; then
+      echo "mounted"
+    else
+      echo "unmounted"
+    fi
+  elif [ -e "$PRIVATE_ENCRYPTED_DIR" ]; then
+    echo "not a directory"
   else
-    echo "unmounted"
+    echo "not exists"
   fi
 }
 
 is_mounted() {
-  mountpoint --quiet "$PRIVATE_DIR"
+  mountpoint --quiet "$PRIVATE_DECRYPTED_DIR"
 }
 
 mount() {
-  is_mounted && die "'$PRIVATE_DIR' is already mounted"
-  [[ -d "$PRIVATE_ENCRYPTED_DIR" ]] || die "'$PRIVATE_ENCRYPTED_DIR' is not a directory"
-  mkdir -p "$PRIVATE_DIR"
-  encfs "$PRIVATE_ENCRYPTED_DIR" "$PRIVATE_DIR"
+  is_mounted && die "'$PRIVATE_DECRYPTED_DIR' is already mounted"
+  mkdir --parent "$PRIVATE_ENCRYPTED_DIR" "$PRIVATE_DECRYPTED_DIR"
+  encfs "$PRIVATE_ENCRYPTED_DIR" "$PRIVATE_DECRYPTED_DIR"
 }
 
 unmount() {
-  is_mounted || die "'$PRIVATE_DIR' is not mounted"
-  fusermount -u --unmount "$PRIVATE_DIR"
+  is_mounted || die "'$PRIVATE_DECRYPTED_DIR' is not mounted"
+  fusermount -u --unmount "$PRIVATE_DECRYPTED_DIR"
 }
 
 main "$@"

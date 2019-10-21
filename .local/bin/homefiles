@@ -61,7 +61,7 @@ create_dirs() {
   create_dir "$MUSIC_DIR"
   create_dir "$PICTURES_DIR"
   create_dir "$PLAYLISTS_DIR"
-  create_dir "$PRIVATE_DIR"
+  create_dir "$PRIVATE_DECRYPTED_DIR"
   create_dir "$PRIVATE_ENCRYPTED_DIR"
   create_dir "$PUBLIC_DIR"
   create_dir "$TEMP_DIR"
