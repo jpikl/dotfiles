@@ -45,40 +45,50 @@ main() {
 
   if [[ $no_prefix = true ]]; then
     { # We want to print mix of local and remote branches.
-      list_local
-      list_remote | sed --regexp-extended --expression='s/^[^/]*\///'
-    } | LC_ALL=C sort | LC_ALL=C uniq
+      print_enabled_local
+      print_enabled_remote | remove_remote_prefix
+    } | LC_ALL=C sort | uniq
   else
     # We want to print local branches before the remote ones.
-    list_local | LC_ALL=C sort | LC_ALL=C uniq
-    list_remote | LC_ALL=C sort
+    print_enabled_local | sort | uniq
+    print_enabled_remote | sort
   fi
 }
 
-list_local() {
-  if [[ $current = true ]]; then
-    # "git branch --show-current" requires git >=2.21
-    git rev-parse --abbrev-ref HEAD
-  fi
-
-  if [[ $local = true ]]; then
-    git branch $FORMAT \
-      | grep --invert-match 'HEAD detached' || true
-  fi
-
-  if [[ $gone = true ]]; then
-    git branch --verbose \
-      | cut --characters=2- \
-      | grep --fixed-strings '[gone]' || true \
-      | awk '{print $1}'
-  fi
+print_enabled_local() {
+  [[ $current = true ]] && print_current
+  [[ $local = true ]] && print_local
+  [[ $gone = true ]] && print_gone
+  true
 }
 
-list_remote() {
-  if [[ $remote = true ]]; then
-    git branch --remote $FORMAT \
-      | grep --invert-match '/HEAD$' || true
-  fi
+print_enabled_remote() {
+  [[ $remote = true ]] && print_remote
+  true
+}
+
+print_current() {
+  # "git branch --show-current" requires git >=2.21
+  git rev-parse --abbrev-ref HEAD
+}
+
+print_local() {
+  git branch $FORMAT | grep --invert-match 'HEAD detached' || true
+}
+
+print_remote() {
+  git branch --remote $FORMAT | grep --invert-match '/HEAD$' || true
+}
+
+print_gone() {
+  print_local | grep --fixed-strings \
+                     --line-regexp \
+                     --invert-match \
+                     --file=<(print_remote | remove_remote_prefix)
+}
+
+remove_remote_prefix() {
+  sed --regexp-extended --expression='s/^[^/]*\///'
 }
 
 main "$@"
