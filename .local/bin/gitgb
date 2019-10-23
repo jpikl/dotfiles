@@ -12,8 +12,8 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -d  Delete branches that are gone.
-		  -f  Force branch deletion.
+		  -d  Delete gone branches.
+		  -D  Force deletion of gone branches.
 		  -h  Display this help.
 	EOT
 }
@@ -23,10 +23,11 @@ main() {
   local force=false
   local opt
 
-  while getopts ":dfh" opt; do
+  while getopts ":dDh" opt; do
     case "$opt" in
       d) delete=true ;;
-      f) force=true ;;
+      D) delete=true
+         force=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
