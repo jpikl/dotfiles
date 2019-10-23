@@ -70,6 +70,8 @@ alias npmu='npm uninstall'
 alias npmd='npmr webpack-dev dev'
 
 # Maven
+alias mvni='mvn install'
+alias mvnist='mvn install -Dmaven.test.skip=true'
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
 
