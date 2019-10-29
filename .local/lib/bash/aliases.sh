@@ -105,3 +105,4 @@ alias bakmusl='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Other
 alias fitterm='cut --characters=-$COLUMNS'
+alias exifbrowse='fzf --preview="exiftool {}"'
