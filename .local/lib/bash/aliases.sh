@@ -46,6 +46,17 @@ alias rclip='xclip -out -selection clipboard'
 
 # Fzf
 alias fzfbat='fzf --preview="bat --color=always {}"'
+alias fzfls='fzf --preview="ls -l --almost-all --human-readable --color=always {}"'
+alias fzfexif='fzf --preview="exiftool {}"'
+
+# Fzf (inverse)
+alias batfzf='bat $(find -type f | fzfbat)'
+alias batfzfsrc='bat $(findsrc -type f | fzfbat)'
+alias cdfzf='cd $(find -type d | fzfls)'
+alias cdfzfsrc='cd $(findsrc -type d | fzfls)'
+alias exiffzf='exiftool $(find -type f | fzfexif)'
+alias xargsfzf='fzf --multi | xargs'
+alias xargsfzfsrc='findsrc | xargsfzf'
 
 # Git
 alias gitcb='git checkout "$(gitlsb -lrx | choose -ip "Git branch to checkout:")"'
@@ -98,8 +109,7 @@ alias sshinit='eval $(sshstart)'
 alias sshadd='ssh-add "$(choose -p "SSH key to add:" ~/.ssh/*.key)"'
 
 # Backup
-alias bakmusl='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
+alias bakmuslist='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Other
 alias fitterm='cut --characters=-$COLUMNS'
-alias exifbrowse='fzf --preview="exiftool {}"'
