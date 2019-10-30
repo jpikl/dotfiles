@@ -41,8 +41,8 @@ WORKSPACE_DIR=$(normalize_path "${WORKSPACE_DIR:-"$HOME/Workspace"}")
 
 # Library directories
 BASH_LIB_DIR=$(normalize_path "${BASH_LIB_DIR:-"$LIBRARIES_DIR/bash"}")
-MAVEN_LIB_DIR=$(normalize_path "${MAVEN_LIB_DIR:-"$LIBRARIES_DIR/maven"}")
-NPM_LIB_DIR=$(normalize_path "${NPM_LIB_DIR:-"$LIBRARIES_DIR/npm"}")
+NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
+MAVEN_LOCAL_REPO=$(normalize_path "${MAVEN_LOCAL_REPO:-"$LIBRARIES_DIR/maven"}")
 
 # System directories
 MEDIA_DIR="/var/run/media/$USER"
@@ -81,8 +81,8 @@ export WORKSPACE_DIR
 
 # Library directories
 export BASH_LIB_DIR
-export MAVEN_LIB_DIR
-export NPM_LIB_DIR
+export NPM_PREFIX
+export MAVEN_LOCAL_REPO
 
 # System directories
 export MEDIA_DIR
@@ -98,9 +98,15 @@ export MEDIA_LINK
 export VOLUMES_LINK
 
 # Path
-export PATH=$PATH:$BINARIES_DIR
-export PATH=$PATH:$NPM_LIB_DIR/bin # Unix
-export PATH=$PATH:$NPM_LIB_DIR     # Windows
+PATH=$PATH:$BINARIES_DIR
+
+if [[ $(uname) =~ ^MINGW ]]; then
+  PATH=$PATH:$NPM_PREFIX # Npm on Windows puts symlinks to binaries here
+elif [[ $NPM_PREFIX != "$LOCAL_DIR" ]]; then
+  PATH=$PATH:$NPM_PREFIX/bin
+fi
+
+export path
 
 # Other
 export EDITOR=vim
