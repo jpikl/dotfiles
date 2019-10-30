@@ -105,6 +105,8 @@ export PATH=$PATH:$NPM_LIB_DIR     # Windows
 # Other
 export EDITOR=vim
 export FZF_DEFAULT_OPTS="--layout=reverse --exact --cycle"
+export LUAROCKS_CONFIG="$CONFIG_DIR/luarocks/config.lua"
 
-# Init SSH agent
+# Commands that set enviroment variables
+command -v luarocks >/dev/null && eval "$(luarocks path --append)"
 command -v ssh-agent >/dev/null && eval "$(sshstart)"
