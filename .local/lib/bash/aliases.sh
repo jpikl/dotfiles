@@ -48,6 +48,7 @@ alias rclip='xclip -out -selection clipboard'
 alias fzfbat='fzf --preview="bat --color=always {}"'
 alias fzfls='fzf --preview="ls -l --almost-all --human-readable --color=always {}"'
 alias fzfexif='fzf --preview="exiftool {}"'
+alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-if-empty'
 
 # Fzf (inverse)
 alias batfzf='bat $(find -type f | fzfbat)'
@@ -55,8 +56,8 @@ alias batfzfsrc='bat $(findsrc -type f | fzfbat)'
 alias cdfzf='cd $(find -type d | fzfls)'
 alias cdfzfsrc='cd $(findsrc -type d | fzfls)'
 alias exiffzf='exiftool $(find -type f | fzfexif)'
-alias xargsfzf='fzf --multi | xargs'
-alias xargsfzfsrc='findsrc | xargsfzf'
+alias xargsfzf='find -print0 | fzfxargs'
+alias xargsfzfsrc='findsrc -print0 | fzfxargs'
 
 # Git
 alias gitcb='git checkout "$(gitlsb -lrx | choose -ip "Git branch to checkout:")"'
