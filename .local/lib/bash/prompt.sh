@@ -13,8 +13,8 @@ if [[ -f $PURELINE_SCRIPT ]]; then
 else
   {
     echo
-    echo "Unable to setup prompt: pureline not installed!"
-    echo "You can install pureline with:"
+    echo "Unable to setup pureline prompt!"
+    echo "Install pureline with:"
     echo "  dotfiles submodule update $PURELINE_DIR"
     echo
   } >&2

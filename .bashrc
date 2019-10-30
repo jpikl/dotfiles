@@ -1,31 +1,28 @@
 # shellcheck shell=bash
 
-# Interactive mode check
+# Check interactive mode
 if [[ $- != *i* ]]; then
-  echo "${BASH_SOURCE[0]}: Attempt to source file in non-interactive mode!"
+  echo "${BASH_SOURCE[0]} sourced in non-interactive bash mode" >&2
   return
 fi
 
-# History control
-# - Ignore commands with space before.
-# - Erase duplicates.
+# Bash history (start with space to ignore command + erase duplicates)
 export HISTCONTROL=ignorespace:erasedups
 
-# Remember current tty device
-TTY=$(tty) || TTY=
+# Current tty device
+TTY=$(tty)
 export TTY
 
-# Binaries
-eval "$(dircolors --bourne-shell)"
+# Tools that initialize environment
+command -v dircolors >/dev/null && eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"
 
-# Sources
+# Source libraries
 if [[ $BASH_LIB_DIR ]]; then
   source "$BASH_LIB_DIR/aliases.sh"
   source "$BASH_LIB_DIR/prompt.sh"
 else
-  echo "${BASH_SOURCE[0]}: Environment variable BASH_LIB_DIR is not set!"
-  echo "${BASH_SOURCE[0]}: ~/.profile was probably not sourced before!"
+  echo "${BASH_SOURCE[0]}: BASH_LIB_DIR variable was not set by .profile" >&2
 fi
 
 # Local override not committed in git

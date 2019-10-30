@@ -32,9 +32,9 @@ main() {
   shift $((OPTIND - 1))
 
   [[ $# -eq 0 ]] && die_missing_arg
-  [[ ${BINARIES_DIR:-} ]] || die_no_var BINARIES_DIR
+  [[ ${LOCAL_BIN_DIR:-} ]] || die_no_var LOCAL_BIN_DIR
 
-  cd "$BINARIES_DIR"
+  cd "$LOCAL_BIN_DIR"
   cp "$(self)" "$1"
   chmod +x "$1"
 }
