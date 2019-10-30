@@ -2,15 +2,6 @@
 
 set -euo pipefail
 
-readonly FILES=(
-  ~/.bash_logout
-  ~/.bash_profile
-  ~/.bashrc
-  ~/.profile
-  ~/.local/bin/*
-  ~/.local/lib/bash/*.sh
-)
-
 readonly SC_EXCLUDE=SC1090 # Can't follow non-constant source.
 
 help() {
@@ -31,18 +22,41 @@ help() {
 
 main() {
   case "${1:-}" in
-    list)  list ;;
-    check) check ;;
+    list)  list_files ;;
+    check) check_files ;;
     *)     help ;;
   esac
 }
 
-list() {
-  printf "%s\n" "${FILES[@]}"
+list_files() {
+  list_possible_files | grep --fixed-strings \
+                             --file=<(list_commited_files)
 }
 
-check() {
-  shellcheck --exclude=$SC_EXCLUDE "${FILES[@]}"
+list_possible_files() {
+  local files=(
+    ~/.bash_logout
+    ~/.bash_profile
+    ~/.bashrc
+    ~/.profile
+    ~/.local/bin/*
+    ~/.local/lib/bash/*.sh
+  )
+  printf "%s\n" "${files[@]}"
+}
+
+list_commited_files() {
+  git --git-dir="$HOME/.dotfiles.git" \
+      --work-tree="$HOME" \
+      ls-files \
+      --full-name \
+    | sed "s,^,$HOME/,"
+}
+
+check_files() {
+  local files
+  mapfile -t files < <(list_files)
+  shellcheck --exclude=$SC_EXCLUDE "${files[@]}"
   echo "All Bash files are valid."
 }
 
