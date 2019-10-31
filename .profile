@@ -83,10 +83,14 @@ export FZF_DEFAULT_OPTS="--layout=reverse --exact --cycle"
 export LUAROCKS_CONFIG="$CONFIG_DIR/luarocks/config.lua"
 
 # Configurable tool variables
+IDEA_PROPERTIES=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/idea.properties"}")
+IDEA_VM_OPTIONS=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/idea.vmoptions"}")
 NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
 MAVEN_LOCAL_REPO=$(normalize_path "${MAVEN_LOCAL_REPO:-"$LOCAL_LIB_DIR/maven"}")
 
 # Export configured tool variables
+export IDEA_PROPERTIES
+export IDEA_VM_OPTIONS
 export NPM_PREFIX
 export MAVEN_LOCAL_REPO
 
