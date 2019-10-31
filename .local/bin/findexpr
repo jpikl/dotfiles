@@ -12,79 +12,69 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -l  Print expressions on separate lines.
 		  -G  Exclude .git directories.
 		  -P  Exclude project metadata.
 		  -L  Exclude libraries.
 		  -O  Exclude compilation output.
-		  -s  Include source file only. Same as -GPLO.
+		  -s  Include source files only. Same as -GPLO.
 		  -h  Display this help.
 
 		Examples:
 		  Find HEAD files outside .git directory:
-		  $(self) -G | xargs -t find . -name HEAD
+		  find \$($(self) -G) -name HEAD
 
 		  Find *.xml files between source files:
-		  $(self) -s | xargs -t find . -name '*.xml'
+		  find \$($(self) -s) -name '*.xml'
 	EOT
 }
 
 main() {
-  local lines=false
-  local ignore_git=false
-  local ignore_project=false
-  local ignore_libs=false
-  local ignore_compiled=false
+  local exclude_git=false
+  local exclude_project=false
+  local exclude_libs=false
+  local exclude_compiled=false
   local opt
 
-  while getopts ":lGPLOsh" opt; do
+  while getopts ":GPLOsh" opt; do
     case "$opt" in
-      l) lines=true ;;
-      G) ignore_git=true ;;
-      P) ignore_project=true ;;
-      L) ignore_libs=true ;;
-      O) ignore_compiled=true ;;
-      s) ignore_git=true
-         ignore_project=true
-         ignore_libs=true
-         ignore_compiled=true
+      G) exclude_git=true ;;
+      P) exclude_project=true ;;
+      L) exclude_libs=true ;;
+      O) exclude_compiled=true ;;
+      s) exclude_git=true
+         exclude_project=true
+         exclude_libs=true
+         exclude_compiled=true
          ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
 
-  local ignored_dirs=()
+  local excluded_dirs=()
 
-  if [[ $ignore_git = true ]]; then
-    ignored_dirs+=(".git")
+  if [[ $exclude_git = true ]]; then
+    excluded_dirs+=(".git")
   fi
 
-  if [[ $ignore_project = true ]]; then
-    ignored_dirs+=(".idea")
+  if [[ $exclude_project = true ]]; then
+    excluded_dirs+=(".idea")
   fi
 
-  if [[ $ignore_libs = true ]]; then
-    ignored_dirs+=("node_modules" "!dependsrc")
+  if [[ $exclude_libs = true ]]; then
+    excluded_dirs+=("node_modules" "!dependsrc")
   fi
 
-  if [[ $ignore_compiled = true ]]; then
-    ignored_dirs+=("target" ".happypack")
+  if [[ $exclude_compiled = true ]]; then
+    excluded_dirs+=("target" ".happypack")
   fi
 
-  local expression=()
-  local dir
-
-  for dir in "${ignored_dirs[@]}"; do
-    expression+=("-not" "(" "-path" "*/$dir/*" "-prune" ")")
-  done
-
-  if [[ ${#expression[@]} -gt 0 ]]; then
-    if [[ $lines = true ]]; then
-      printf "%s\n" "${expression[@]}"
-    else
-      echo "${expression[@]}"
+  if [[ ${#excluded_dirs[@]} -gt 0 ]]; then
+    printf -- "-not ( -type d ( -name %s" "${excluded_dirs[0]}"
+    if [[ ${#excluded_dirs[@]} -gt 1 ]]; then
+      printf -- " -or -name %s" "${excluded_dirs[@]:1}"
     fi
+    printf -- " ) -prune )\n"
   fi
 }
 

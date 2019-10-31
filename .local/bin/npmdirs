@@ -40,19 +40,24 @@ main() {
     cd "$1"
   fi
 
-  local expression
-  local npm_dirs
-
-  mapfile -t expression < <(findexpr -ls)
-  mapfile -td '' npm_dirs < <(find . "${expression[@]}" -name package.json -printf "%h\0")
-
-  [[ ${#npm_dirs[@]} -gt 0 ]] || die "unable to find any package.json"
+  local printf_arg="%h"
+  local grep_args=
 
   if [[ $zero_terminated = true ]]; then
-    printf "%s\0" "${npm_dirs[@]}"
+    printf_arg+="\0"
+    grep_args=("--null-data" "--null")
   else
-    printf "%s\n" "${npm_dirs[@]}"
+    printf_arg+="\n"
+    grep_args=()
   fi
+
+  # We use grep to raise error when nothing is found
+  # shellcheck disable=SC2046
+  find $(findexpr -s) \
+       -name package.json \
+       -printf "$printf_arg" \
+    | grep "${grep_args[@]}" '.' \
+    || die "unable to find any package.json"
 }
 
 main "$@"
