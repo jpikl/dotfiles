@@ -29,6 +29,7 @@ main() {
 }
 
 list_files() {
+  cd "$HOME"
   list_possible_files | grep --fixed-strings \
                              --file=<(list_commited_files)
 }
