@@ -26,7 +26,7 @@ alias cdlib='cd "$LOCAL_LIB_DIR"'
 alias cdmed='cd "$MEDIA_DIR"'
 alias cdmus='cd "$MUSIC_DIR"'
 alias cdmvnroot='cd "$(mvnroot)"'
-alias cdnpmdir='cd "$(npmdirs -Z | choose -izp "NPM directory:")"'
+alias cdnpmdir='cd "$(npmdirs -Z | choose -izp "Change working directory:")"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplay='cd "$PLAYLISTS_DIR"'
 alias cdplst='cdplay'
@@ -68,14 +68,14 @@ alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-i
 alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | awk "{print \$2}"'
 
 # Git
-alias gitcb='gitlsb -lrx | choose -ip "Git branch to checkout:" | xargs --no-run-if-empty git checkout'
-alias gitct='git tag | choose -ip "Git tag to checkout:" | xargs --no-run-if-empty git checkout'
-alias gitdb='gitlsb -l | choose -imp "Git branches to delete:" | xargs --no-run-if-empty git branch --delete'
+alias gitcb='gitlsb -lrx | choose -ip "Checkout branch:" | xargs --no-run-if-empty git checkout'
+alias gitct='git tag | choose -ip "Checkout tag:" | xargs --no-run-if-empty git checkout'
+alias gitdb='gitlsb -l | choose -imp "Delete branche(s):" | xargs --no-run-if-empty git branch --delete'
 alias gitdbf='gitdb --force'
 alias gitfap='git fetch --all --prune'
-alias gitffb='gitlsb -l | choose -imp "Git branches to fast-forward:" | xargs --no-run-if-empty gitff'
+alias gitffb='gitlsb -l | choose -imp "Fast-forward branche(s):" | xargs --no-run-if-empty gitff'
 alias gitladog='git log --all --decorate --oneline --graph'
-alias gitmb='gitlsb -lrC | choose -ip "Git branch to merge to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
+alias gitmb='gitlsb -lrC | choose -ip "Merge branch to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
 
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'
@@ -122,7 +122,7 @@ alias pacup='pacaur -Syu'
 alias rndebug='adb shell input keyevent 82'
 
 # SSH
-alias ssha='ssh-add "$(choose -p "SSH key to add:" ~/.ssh/*.key)"'
+alias ssha='ssh-add "$(choose -p "Add SSH key:" ~/.ssh/*.key)"'
 alias sshi='eval $(sshstart)'
 
 # Terminal
