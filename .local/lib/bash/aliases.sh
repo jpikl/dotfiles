@@ -74,14 +74,14 @@ alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-i
 alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | awk "{print \$2}"'
 
 # Git
-alias gitcb='git checkout "$(gitlsb -lrx | choose -ip "Git branch to checkout:")"'
-alias gitct='git checkout "$(git tag | choose -ip "Git tag to checkout:")"'
-alias gitDb='gitdb --force'
-alias gitdb='git branch --delete "$(gitlsb -l | choose -imp "Git branches to delete:")"'
+alias gitcb='gitlsb -lrx | choose -ip "Git branch to checkout:" | xargs --no-run-if-empty git checkout'
+alias gitct='git tag | choose -ip "Git tag to checkout:" | xargs --no-run-if-empty git checkout'
+alias gitdb='gitlsb -l | choose -imp "Git branches to delete:" | xargs --no-run-if-empty git branch --delete'
+alias gitdbf='gitdb --force'
 alias gitfap='git fetch --all --prune'
-alias gitffb='gitff $(gitlsb -l | choose -imp "Git branches to fast-forward:")'
+alias gitffb='gitlsb -l | choose -imp "Git branches to fast-forward:" | xargs --no-run-if-empty gitff'
 alias gitladog='git log --all --decorate --oneline --graph'
-alias gitmb='git merge "$(gitlsb -lr | choose -ip "Git branch to merge to \""$(gitlsb -c)"\":")"'
+alias gitmb='gitlsb -lr | choose -ip "Git branch to merge to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
 
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'
