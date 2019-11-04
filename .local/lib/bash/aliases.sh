@@ -1,20 +1,11 @@
 # shellcheck shell=bash
 
-# Git for dotfiles
-alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
-
 # Backup
 alias bakmusls='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Bat
 alias batfzf='bat $(find -type f | fzfbat)'
 alias batfzfsrc='bat $(findsrc -type f | fzfbat)'
-
-# Ls
-alias ls='ls --color=auto'
-alias la='ls --almost-all'
-alias ll='ls -l --human-readable'
-alias lla='ll --almost-all'
 
 # Cd
 alias cdbak='cd "$BACKUP_DIR"'
@@ -53,6 +44,9 @@ alias cdwrk='cdwork'
 alias clipi='xclip -in -selection clipboard'
 alias clipo='xclip -out -selection clipboard'
 
+# Dotfiles
+alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
+
 # Exif
 alias exiffzf='exiftool $(find -type f | fzfexif)'
 
@@ -89,6 +83,18 @@ alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
 alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
+# Ls
+alias ls='ls --color=auto'
+alias la='ls --almost-all'
+alias ll='ls -l --human-readable'
+alias lla='ll --almost-all'
+
+# Maven
+alias mvnci='mvn clean install'
+alias mvncist='mvnci -Dmaven.test.skip=true'
+alias mvni='mvn install'
+alias mvnist='mvni -Dmaven.test.skip=true'
+
 # Npm
 alias npmd='npmr webpack-dev dev'
 alias npmg='npm --global'
@@ -102,13 +108,7 @@ alias npml='npm --depth=0 list'
 alias npmun='npm uninstall'
 alias npmup='npm update'
 
-# Maven
-alias mvnci='mvn clean install'
-alias mvncist='mvnci -Dmaven.test.skip=true'
-alias mvni='mvn install'
-alias mvnist='mvni -Dmaven.test.skip=true'
-
-# Pacman / pacaur
+# Pacman / Pacaur
 alias paci='pacfind -ra | fzfpac | xargs --no-run-if-empty retty pacaur -S'
 alias pacr='pacaur -Sy'
 alias pacri='pacr && paci'
