@@ -1,4 +1,3 @@
-
 rocks_trees = {
     {
         name = "user",
