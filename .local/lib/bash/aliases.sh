@@ -89,6 +89,9 @@ alias la='ls --almost-all'
 alias ll='ls -l --human-readable'
 alias lla='ll --almost-all'
 
+# Man
+command -v man >/dev/null || alias man=wman # MinGW does not have man
+
 # Maven
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
