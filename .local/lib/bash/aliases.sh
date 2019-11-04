@@ -75,7 +75,7 @@ alias gitdbf='gitdb --force'
 alias gitfap='git fetch --all --prune'
 alias gitffb='gitlsb -l | choose -imp "Git branches to fast-forward:" | xargs --no-run-if-empty gitff'
 alias gitladog='git log --all --decorate --oneline --graph'
-alias gitmb='gitlsb -lr | choose -ip "Git branch to merge to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
+alias gitmb='gitlsb -lrC | choose -ip "Git branch to merge to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
 
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'

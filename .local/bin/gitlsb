@@ -15,25 +15,28 @@ help() {
 
 		Options:
 		  -c  Include current branch.
+		  -C  Exclude current branch.
 		  -l  Include local branches.
 		  -r  Include remote branches.
 		  -g  Include tracking branches no longer on remote.
-		  -x  Remove remote prefix from branch name.
+		  -x  Remove remote prefix from branch names.
 		  -h  Display this help.
 	EOT
 }
 
 main() {
   local current=false
+  local no_current=false
   local local=false
   local remote=false
   local gone=false
   local no_prefix=false
   local opt
 
-  while getopts ":clrgxh" opt; do
+  while getopts ":cClrgxh" opt; do
     case "$opt" in
       c) current=true ;;
+      C) no_current=true ;;
       l) local=true ;;
       r) remote=true ;;
       g) gone=true ;;
@@ -47,10 +50,10 @@ main() {
     { # We want to print mix of local and remote branches.
       print_enabled_local
       print_enabled_remote | remove_remote_prefix
-    } | LC_ALL=C sort | uniq
+    } | LC_ALL=C sort | uniq | remove_enabled_current
   else
     # We want to print local branches before the remote ones.
-    print_enabled_local | sort | uniq
+    print_enabled_local | sort | uniq | remove_enabled_current
     print_enabled_remote | sort
   fi
 }
@@ -85,6 +88,14 @@ print_gone() {
                      --line-regexp \
                      --invert-match \
                      --file=<(print_remote | remove_remote_prefix)
+}
+
+remove_enabled_current() {
+  if [[ $no_current = true ]]; then
+    grep --fixed-strings --line-regexp --invert-match "$(print_current)"
+  else
+    cat
+  fi
 }
 
 remove_remote_prefix() {
