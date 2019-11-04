@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Print property of a Maven project in Git branches.
+
+		Usage:
+		  $(self) [options] [--] <property> [branch]...
+
+		Options:
+		  -h  Display this help.
+
+		Property:
+		  Name of a property defined in pom.xml file.
+		  The pom.xml is expected to be in the current working directory.  
+
+		Branch:
+		  Zero or more Git branches.
+		  If none is passed then branches are read as lines from stdin.  
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  [[ $# -eq 0 ]] && die_missing_arg 
+  local property=$1
+
+  shift 1
+  local branches=("$@")
+
+  if [[ ${#branches[@]} -eq 0 ]]; then
+    mapfile -t branches
+  fi
+
+  for branch in "${branches[@]}"; do
+    print_table_row "$branch" "$property"
+  done | format_table
+}
+
+print_table_row() {
+  local value
+  value=$(print_property_value "$1" "$2") || value="?"
+  printf "%s;%s\n" "$value" "$1"
+}
+
+print_property_value() {
+  git grep --fixed-strings "<$2>" "$1" -- pom.xml \
+    | sed --regexp-extended 's/.*>(.*)<\/.*/\1/' 
+}
+
+format_table() {
+  column  --table --separator ";" | sort --version-sort
+}
+
+main "$@"
