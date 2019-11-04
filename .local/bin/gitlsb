@@ -46,6 +46,16 @@ main() {
     esac
   done
 
+  if [[ $current == false 
+     && $local == false 
+     && $remote == false 
+     && $gone == false ]]; then
+     die_help "nothing to do"
+  fi
+
+  # Just to check we are in a git repository.
+  git status >/dev/null
+
   if [[ $no_prefix = true ]]; then
     { # We want to print mix of local and remote branches.
       print_enabled_local
@@ -87,12 +97,12 @@ print_gone() {
   print_local | grep --fixed-strings \
                      --line-regexp \
                      --invert-match \
-                     --file=<(print_remote | remove_remote_prefix)
+                     --file=<(print_remote | remove_remote_prefix) || true
 }
 
 remove_enabled_current() {
   if [[ $no_current = true ]]; then
-    grep --fixed-strings --line-regexp --invert-match "$(print_current)"
+    grep --fixed-strings --line-regexp --invert-match "$(print_current)" || true
   else
     cat
   fi
