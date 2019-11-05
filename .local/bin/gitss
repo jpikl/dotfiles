@@ -12,15 +12,18 @@ help() {
 		  $(self) [options]
 
 		Options:
+		  -a  Print all information.
 		  -h  Display this help.
 	EOT
 }
 
 main() {
   local opt
+  local all=false
 
-  while getopts ":h" opt; do
+  while getopts ":ah" opt; do
     case "$opt" in
+      a) all=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -56,7 +59,7 @@ main() {
 
   print_info_table | format_table
 
-  if [[ "$(git status --porcelain)" ]]; then
+  if [[ $all == true || "$(git status --porcelain)" ]]; then
     echo
     print_changes_table | format_table
   fi
@@ -83,7 +86,7 @@ print_remote_branch() {
 print_commits_ahead() {
   local count
   count=$(git rev-list --count --right-only '@{upstream}...HEAD' 2>/dev/null)
-  if [[ $count -gt 0 ]]; then
+  if [[ $count -gt 0 || $all == true ]]; then
     printf "Ahead%s:;%s\n" "${icons[ahead]:-}" "$count"
   fi
 }
@@ -91,7 +94,7 @@ print_commits_ahead() {
 print_commits_behind() {
   local count
   count=$(git rev-list --count --left-only '@{upstream}...HEAD' 2>/dev/null)
-  if [[ $count -gt 0 ]]; then
+  if [[ $count -gt 0 || $all == true ]]; then
     printf "Behind%s:;%s\n" "${icons[behind]:-}" "$count"
   fi
 }
@@ -99,7 +102,7 @@ print_commits_behind() {
 print_stash_size() {
   local size
   size=$(git stash list 2>/dev/null | wc --lines)
-  if [[ $size -gt 0 ]]; then
+  if [[ $size -gt 0 || $all == true ]]; then
     printf "Stash%s:;%s\n" "${icons[stash]:-}" "$size"
   fi
 }
@@ -125,9 +128,9 @@ print_changed() {
   wtree_count=$(git diff --name-only --diff-filter="$1" 2>/dev/null | wc --lines)
   stage_count=$(git diff --name-only --diff-filter="$1" --staged 2>/dev/null | wc --lines)
 
-  if [[ $wtree_count -gt 0 || $stage_count -gt 0 ]]; then
-    [[ $wtree_count -eq 0 ]] && wtree_count=
-    [[ $stage_count -eq 0 ]] && stage_count=
+  if [[ $wtree_count -gt 0 || $stage_count -gt 0 || $all == true ]]; then
+    [[ $wtree_count -eq 0 && $all == false ]] && wtree_count=
+    [[ $stage_count -eq 0 && $all == false ]] && stage_count=
     printf "%s%s:;%s;%s\n" "$2" "${icons[$3]:-}" "$wtree_count" "$stage_count"
   fi
 }
@@ -135,7 +138,7 @@ print_changed() {
 print_untracked() {
   local count
   count="$(git ls-files --other --exclude-standard  2>/dev/null | wc --lines)"
-  if [[ $count -gt 0 ]]; then
+  if [[ $count -gt 0 || $all == true ]]; then
     printf "Untracked%s:;%s\n" "${icons[untracked]:-}" "$count"
   fi
 }
