@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Git super status.
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -h  Display this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  declare -A icons=(
+    [index]="I"
+    [wtree]="W"
+  )
+
+  if [[ $TERM != linux ]]; then
+    icons[branch]="  "
+    icons[remote]=" 歷"
+    icons[ahead]="  "
+    icons[behind]="  "
+    icons[wtree]="פּ"
+    icons[index]=""
+    icons[stash]="  "
+    icons[added]="  "
+    icons[copied]="  "
+    icons[deleted]="  "
+    icons[modified]="  "
+    icons[renamed]="  "
+    icons[retyped]="  "
+    icons[unmerged]="  "
+    icons[unknown]=" ? "
+    icons[broken]="  "
+    icons[untracked]="  "
+  fi
+
+  print_info_table | format_table
+
+  if [[ "$(git status --porcelain)" ]]; then
+    echo
+    print_changes_table | format_table
+  fi
+}
+
+print_info_table() {
+  print_current_branch
+  print_remote_branch
+  print_commits_ahead
+  print_commits_behind
+  print_stash_size
+}
+
+print_current_branch() {
+  printf "Branch%s:;" "${icons[branch]:-}"
+  git rev-parse --abbrev-ref HEAD
+}
+
+print_remote_branch() {
+  printf "Remote%s:;" "${icons[remote]:-}"
+  git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}'
+}
+
+print_commits_ahead() {
+  local count
+  count=$(git rev-list --count --right-only '@{upstream}...HEAD')
+  if [[ $count -gt 0 ]]; then
+    printf "Ahead%s:;%s\n" "${icons[ahead]:-}" "$count"
+  fi
+}
+
+print_commits_behind() {
+  local count
+  count=$(git rev-list --count --left-only '@{upstream}...HEAD')
+  if [[ $count -gt 0 ]]; then
+    printf "Behind%s:;%s\n" "${icons[behind]:-}" "$count"
+  fi
+}
+
+print_stash_size() {
+  local size
+  size=$(git stash list | wc --lines)
+  if [[ $size -gt 0 ]]; then
+    printf "Stash%s:;%s\n" "${icons[stash]:-}" "$size"
+  fi
+}
+
+print_changes_table() {
+  printf "[Work/Index];%s;%s\n" "${icons[wtree]}" "${icons[index]}"
+  print_changed "A" "Addded" "added"
+  print_changed "C" "Copied" "copied"
+  print_changed "D" "Deleted" "deleted"
+  print_changed "M" "Modified" "modified"
+  print_changed "R" "Renamed" "renamed"
+  print_changed "T" "Retyped" "retyped"
+  print_changed "U" "Unmerged" "unmerged"
+  print_changed "X" "Unknown" "unknown"
+  print_changed "B" "Broken" "broken"
+  print_untracked
+}
+
+print_changed() {
+  local wtree_count
+  local stage_count
+
+  wtree_count=$(git diff --name-only --diff-filter="$1" | wc --lines)
+  stage_count=$(git diff --name-only --diff-filter="$1" --staged | wc --lines)
+
+  if [[ $wtree_count -gt 0 || $stage_count -gt 0 ]]; then
+    [[ $wtree_count -eq 0 ]] && wtree_count=
+    [[ $stage_count -eq 0 ]] && stage_count=
+    printf "%s%s:;%s;%s\n" "$2" "${icons[$3]:-}" "$wtree_count" "$stage_count"
+  fi
+}
+
+print_untracked() {
+  local count
+  count="$(git ls-files --other --exclude-standard | wc --lines)"
+  if [[ $count -gt 0 ]]; then
+    printf "Untracked%s:;%s\n" "${icons[untracked]:-}" "$count"
+  fi
+}
+
+format_table() {
+  column --table --table-right=1 --separator=';' --output-separator=' '
+}
+
+main "$@"
