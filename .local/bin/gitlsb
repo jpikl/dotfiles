@@ -54,7 +54,7 @@ main() {
   fi
 
   # Just to check we are in a git repository.
-  git status >/dev/null
+  git status --porcelain >/dev/null
 
   if [[ $no_prefix = true ]]; then
     { # We want to print mix of local and remote branches.

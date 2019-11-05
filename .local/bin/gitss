@@ -26,6 +26,9 @@ main() {
     esac
   done
 
+  # Just to check we are in a git repository.
+  git status --porcelain >/dev/null
+
   declare -A icons=(
     [index]="I"
     [wtree]="W"
