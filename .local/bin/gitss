@@ -72,17 +72,17 @@ print_info_table() {
 
 print_current_branch() {
   printf "Branch%s:;" "${icons[branch]:-}"
-  git rev-parse --abbrev-ref HEAD
+  git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
 print_remote_branch() {
   printf "Remote%s:;" "${icons[remote]:-}"
-  git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}'
+  git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null
 }
 
 print_commits_ahead() {
   local count
-  count=$(git rev-list --count --right-only '@{upstream}...HEAD')
+  count=$(git rev-list --count --right-only '@{upstream}...HEAD' 2>/dev/null)
   if [[ $count -gt 0 ]]; then
     printf "Ahead%s:;%s\n" "${icons[ahead]:-}" "$count"
   fi
@@ -90,7 +90,7 @@ print_commits_ahead() {
 
 print_commits_behind() {
   local count
-  count=$(git rev-list --count --left-only '@{upstream}...HEAD')
+  count=$(git rev-list --count --left-only '@{upstream}...HEAD' 2>/dev/null)
   if [[ $count -gt 0 ]]; then
     printf "Behind%s:;%s\n" "${icons[behind]:-}" "$count"
   fi
@@ -98,7 +98,7 @@ print_commits_behind() {
 
 print_stash_size() {
   local size
-  size=$(git stash list | wc --lines)
+  size=$(git stash list 2>/dev/null | wc --lines)
   if [[ $size -gt 0 ]]; then
     printf "Stash%s:;%s\n" "${icons[stash]:-}" "$size"
   fi
@@ -122,8 +122,8 @@ print_changed() {
   local wtree_count
   local stage_count
 
-  wtree_count=$(git diff --name-only --diff-filter="$1" | wc --lines)
-  stage_count=$(git diff --name-only --diff-filter="$1" --staged | wc --lines)
+  wtree_count=$(git diff --name-only --diff-filter="$1" 2>/dev/null | wc --lines)
+  stage_count=$(git diff --name-only --diff-filter="$1" --staged 2>/dev/null | wc --lines)
 
   if [[ $wtree_count -gt 0 || $stage_count -gt 0 ]]; then
     [[ $wtree_count -eq 0 ]] && wtree_count=
@@ -134,7 +134,7 @@ print_changed() {
 
 print_untracked() {
   local count
-  count="$(git ls-files --other --exclude-standard | wc --lines)"
+  count="$(git ls-files --other --exclude-standard  2>/dev/null | wc --lines)"
   if [[ $count -gt 0 ]]; then
     printf "Untracked%s:;%s\n" "${icons[untracked]:-}" "$count"
   fi
