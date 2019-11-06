@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Find root directories of projects.
+
+		Usage:
+		  $(self) [options] [--] [path]
+
+		Options:
+		  -a  Include all types of projects.
+		  -m  Include Maven projects.
+		  -n  Include include_node.js projects.
+		  -u  Search upwards to find the topmost project root.
+		  -Z  Print results delimited by NUL character instead of newline.
+		  -h  Print this help.
+
+		Path:
+		  Search starting point.
+		  Default path is the current working directory.
+	EOT
+}
+
+main() {
+  local include_maven=false
+  local include_node=false
+  local upwards=
+  local null_out=false
+  local opt
+
+  while getopts ":amnuZh" opt; do
+    case "$opt" in
+      a) include_maven=true
+         include_node=true ;;
+      m) include_maven=true ;;
+      n) include_node=true ;;
+      u) upwards=true ;;
+      Z) null_out=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ $# -ge 1 ]]; then
+    [[ -d $1 ]] || die "'$1' is not a directory"
+    cd "$1"
+  fi
+
+  local root_files=()
+
+  [[ $include_maven == true ]] && root_files+=("pom.xml")
+  [[ $include_node == true ]] && root_files+=("package.json")
+  [[ ${#root_files[@]} -gt 0 ]] || die_help "no project type specified"
+
+  local find_opts+=(
+    "-type" "f" "("
+    "-name" "${root_files[0]}"
+  )
+
+  for root_file in "${root_files[@]:1}"; do
+    find_opts+=("-or" "-name" "$root_file")
+  done
+
+  find_opts+=(")" "-printf" "%h\0")
+
+  if [[ $upwards == true ]]; then
+    find_upwards
+  else
+    find_downards
+  fi
+}
+
+find_upwards() {
+  findup "${find_opts[@]}" \
+    | tail --zero-terminated --lines=1 \
+    | replace_line_endings \
+    | check_any_result \
+    || die "unable to find project root"
+}
+
+find_downards() {
+  # shellcheck disable=SC2046
+  find $(findexpr -s) "${find_opts[@]}" \
+    | replace_line_endings \
+    | check_any_result \
+    || die "unable find any project directory"
+}
+
+replace_line_endings() {
+  if [[ $null_out = false ]]; then
+    tr '\0' '\n'
+  else
+    cat
+  fi
+}
+
+check_any_result() {
+  # We use grep to raise error when nothing is found
+  if [[ $null_out = true ]]; then
+    grep --null-data --null '.'
+  else
+    grep '.'
+  fi
+}
+
+main "$@"
