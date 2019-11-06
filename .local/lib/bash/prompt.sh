@@ -5,9 +5,14 @@ readonly PURELINE_SCRIPT=$PURELINE_DIR/pureline
 readonly PURELINE_CONFIG=$CONFIG_DIR/pureline.conf
 
 if [[ -f $PURELINE_SCRIPT ]]; then
-  conemu_cwd_module() {
-    # shellcheck disable=SC2154
-    [[ $ConEmuPID ]] && (ConEmuC -StoreCWD &) &>/dev/null
+  term_title_module() {
+    local title="\033]0;"
+    local project_root
+    if project_root=$(findprj -au 2>/dev/null); then
+      title+="[$(basename "$project_root")] "
+    fi
+    title+="$PWD\007"
+    PS1+=$title
   }
   source "$PURELINE_SCRIPT" "$PURELINE_CONFIG"
 else
