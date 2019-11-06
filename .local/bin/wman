@@ -37,7 +37,7 @@ help() {
 
 		Options:
 		  -012..9  Use specific source (default: 0).
-		  -h       Display this help.
+		  -h       Print this help.
 
 		Command:
 		  Command name.

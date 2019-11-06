@@ -13,7 +13,7 @@ help() {
 		  $(self) [options] [--] <script>...
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Script:
 		  One or more script names.

@@ -12,15 +12,15 @@ help() {
 		  $(self) [options] [--] <property> [branch]...
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Property:
 		  Name of a property defined in pom.xml file.
-		  The pom.xml is expected to be in the current working directory.  
+		  The pom.xml is expected to be in the current working directory.
 
 		Branch:
 		  Zero or more Git branches.
-		  If none is passed then branches are read as lines from stdin.  
+		  If none is passed then branches are read as lines from stdin.
 	EOT
 }
 
@@ -36,7 +36,7 @@ main() {
 
   shift $((OPTIND - 1))
 
-  [[ $# -eq 0 ]] && die_missing_arg 
+  [[ $# -eq 0 ]] && die_missing_arg
   local property=$1
 
   shift 1
@@ -59,7 +59,7 @@ print_table_row() {
 
 print_property_value() {
   git grep --fixed-strings "<$2>" "$1" -- pom.xml \
-    | sed --regexp-extended 's/.*>(.*)<\/.*/\1/' 
+    | sed --regexp-extended 's/.*>(.*)<\/.*/\1/'
 }
 
 format_table() {

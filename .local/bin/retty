@@ -12,7 +12,7 @@ help() {
 		  $(self) [options] [--] <command> [argument]...
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Command:
 		  Command to execute.

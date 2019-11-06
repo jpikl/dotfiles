@@ -13,7 +13,7 @@ help() {
 
 		Options:
 		  -Z  Print results delimited by NUL character instead of newline.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Path:
 		  Search starting point.

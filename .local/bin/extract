@@ -15,7 +15,7 @@ help() {
 		  -o  Overwrite existing files without prompting.
 		  -v  Verbose mode with additional output.
 		  -s  Skip extraction errors.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		File:
 		  One or more files to extract.

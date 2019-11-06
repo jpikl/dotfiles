@@ -23,7 +23,7 @@ help() {
 		  -z            Read values delimited by NUL character instead of newline.
 		  -Z            Print results delimited by NUL character instead of newline.
 		  -b            Force basic interface instead of fzf.
-		  -h            Display this help.
+		  -h            Print this help.
 
 		Value:
 		  Zero or more values to select from.

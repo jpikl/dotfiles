@@ -12,7 +12,7 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 	EOT
 }
 

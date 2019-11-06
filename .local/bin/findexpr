@@ -17,7 +17,7 @@ help() {
 		  -L  Exclude libraries.
 		  -O  Exclude compilation output.
 		  -s  Include source files only. Same as -GPLO.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Examples:
 		  Find HEAD files outside .git directory:

@@ -15,7 +15,7 @@ help() {
 		  -d  Create directories.
 		  -l  Create symbolic links.
 		  -f  Download patched terminal fonts.
-		  -h  Display this help.
+		  -h  Print this help.
 	EOT
 }
 

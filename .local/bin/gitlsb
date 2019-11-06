@@ -20,7 +20,7 @@ help() {
 		  -r  Include remote branches.
 		  -g  Include tracking branches no longer on remote.
 		  -x  Remove remote prefix from branch names.
-		  -h  Display this help.
+		  -h  Print this help.
 	EOT
 }
 
@@ -46,9 +46,9 @@ main() {
     esac
   done
 
-  if [[ $current == false 
-     && $local == false 
-     && $remote == false 
+  if [[ $current == false
+     && $local == false
+     && $remote == false
      && $gone == false ]]; then
      die_help "nothing to do"
   fi

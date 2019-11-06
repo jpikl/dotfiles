@@ -14,7 +14,7 @@ help() {
 		Options:
 		  -d  Delete gone branches.
 		  -D  Force deletion of gone branches.
-		  -h  Display this help.
+		  -h  Print this help.
 	EOT
 }
 

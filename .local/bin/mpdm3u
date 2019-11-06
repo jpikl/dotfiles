@@ -14,7 +14,7 @@ help() {
 
 		Options:
 		  -v  Verbose mode with additional output.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Year:
 		  Zero or more years for which generate playlists.

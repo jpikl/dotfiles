@@ -14,7 +14,7 @@ help() {
 
 		Options:
 		  -s  Skip opening errors.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Item:
 		  One or more files or URLs to open.

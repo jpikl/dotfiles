@@ -17,7 +17,7 @@ help() {
 		  -r  Include pacakges from repositories.
 		  -a  Include packages from AUR.
 		  -q  Print package names only.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Name:
 		  Package name to find.

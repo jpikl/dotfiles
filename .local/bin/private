@@ -12,7 +12,7 @@ help() {
 		  $(self) [options] [--] <action>
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Action:
 		  status   Print directories and mount status.

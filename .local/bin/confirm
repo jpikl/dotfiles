@@ -12,7 +12,7 @@ help() {
 		  $(self) [options] [--] <message>
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Message:
 		  Confirmation message.

@@ -13,7 +13,7 @@ help() {
 
 		Options:
 		  -m  Include exception messages.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		File:
 		  Log file to read.

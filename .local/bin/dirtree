@@ -15,7 +15,7 @@ help() {
 		Options:
 		  -f  Print also files.
 		  -s  Sort directory entries by name.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Path:
 		  Root of a directory tree to print.

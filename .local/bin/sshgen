@@ -12,7 +12,7 @@ help() {
 		  $(self) [options] [hostname]
 
 		Options:
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Hostname:
 		  Remote hostname the SSH key will be used for.

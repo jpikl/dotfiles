@@ -13,7 +13,7 @@ help() {
 
 		Options:
 		  -a  Fast-forward all local branches.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Branch:
 		  One or more branches to fast-forward.

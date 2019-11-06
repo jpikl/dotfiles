@@ -13,7 +13,7 @@ help() {
 
 		Options:
 		  -a  Print all information.
-		  -h  Display this help.
+		  -h  Print this help.
 	EOT
 }
 

@@ -15,7 +15,7 @@ help() {
 		Options:
 		  -b  Create backup of original pom.xml files.
 		  -v  Verbose mode with additional output.
-		  -h  Display this help.
+		  -h  Print this help.
 
 		Version:
 		  Version to set.
