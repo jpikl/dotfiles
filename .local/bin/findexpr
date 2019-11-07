@@ -6,22 +6,22 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Generate expression for the find command.
+		Expression generator for the find command.
 
 		Usage:
 		  $(self) [options]
 
 		Options:
-		  -G  Exclude .git directories.
+		  -V  Exclude version control system.
 		  -P  Exclude project metadata.
 		  -L  Exclude libraries.
 		  -O  Exclude compilation output.
-		  -s  Include source files only. Same as -GPLO.
+		  -s  Include source files only. Same as -VPLO.
 		  -h  Print this help.
 
 		Examples:
 		  Find HEAD files outside .git directory:
-		  find \$($(self) -G) -name HEAD
+		  find \$($(self) -V) -name HEAD
 
 		  Find *.xml files between source files:
 		  find \$($(self) -s) -name '*.xml'
@@ -29,19 +29,19 @@ help() {
 }
 
 main() {
-  local exclude_git=false
+  local exclude_vcs=false
   local exclude_project=false
   local exclude_libs=false
   local exclude_compiled=false
   local opt
 
-  while getopts ":GPLOsh" opt; do
+  while getopts ":VPLOsh" opt; do
     case "$opt" in
-      G) exclude_git=true ;;
+      V) exclude_vcs=true ;;
       P) exclude_project=true ;;
       L) exclude_libs=true ;;
       O) exclude_compiled=true ;;
-      s) exclude_git=true
+      s) exclude_vcs=true
          exclude_project=true
          exclude_libs=true
          exclude_compiled=true
@@ -52,21 +52,40 @@ main() {
   done
 
   local excluded_dirs=()
+  local excluded_files=()
 
-  if [[ $exclude_git = true ]]; then
-    excluded_dirs+=(".git")
+  if [[ $exclude_vcs = true ]]; then
+    excluded_dirs+=(
+      ".git" # Git
+      ".hg"  # Mercurial
+      ".bzr" # Bazaar
+      ".svn" # Subversion
+    )
   fi
 
   if [[ $exclude_project = true ]]; then
-    excluded_dirs+=(".idea")
+    excluded_dirs+=(
+      ".idea"     # Intellij IDEA
+      ".metadata" # Eclipse
+      ".vscode"   # Visual Studio Code
+    )
+    excluded_files+=(
+      "*.iml" # Intellij IDEA
+    )
   fi
 
   if [[ $exclude_libs = true ]]; then
-    excluded_dirs+=("node_modules" "!dependsrc")
+    excluded_dirs+=(
+      "node_modules" # Node.js
+      "!dependsrc"   # Delphi
+    )
   fi
 
   if [[ $exclude_compiled = true ]]; then
-    excluded_dirs+=("target" ".happypack")
+    excluded_dirs+=(
+      "target"     # Maven
+      ".happypack" # Happypack (Webpack plugin)
+    )
   fi
 
   if [[ ${#excluded_dirs[@]} -gt 0 ]]; then
@@ -74,7 +93,23 @@ main() {
     if [[ ${#excluded_dirs[@]} -gt 1 ]]; then
       printf -- " -or -name %s" "${excluded_dirs[@]:1}"
     fi
-    printf -- " ) -prune )\n"
+    printf -- " ) -prune )"
+  fi
+
+  if [[ ${#excluded_dirs[@]} -gt 0 && ${#excluded_files[@]} -gt 0 ]]; then
+    printf " "
+  fi
+
+  if [[ ${#excluded_files[@]} -gt 0 ]]; then
+    printf -- "-not ( -type f ( -name %s" "${excluded_files[0]}"
+    if [[ ${#excluded_files[@]} -gt 1 ]]; then
+      printf -- " -or -name %s" "${excluded_files[@]:1}"
+    fi
+    printf -- " ) )"
+  fi
+
+  if [[ ${#excluded_dirs[@]} -gt 0 || ${#excluded_files[@]} -gt 0 ]]; then
+    printf "\n"
   fi
 }
 
