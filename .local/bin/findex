@@ -62,7 +62,7 @@ main() {
 
   # Consume paths
   local paths=()
-  while [[ $# -gt 0 && $1 != -* ]]; do
+  while [[ $# -gt 0 && $1 != -* && $1 != "(" ]]; do
     paths+=("$1")
     shift
   done
@@ -91,11 +91,11 @@ main() {
 }
 
 expand_exclude() {
-  local excluded_dirs=()
-  local excluded_files=()
+  local dirs=()
+  local files=()
 
   if [[ $1 == *v* ]]; then
-    excluded_dirs+=(
+    dirs+=(
       ".git" # Git
       ".hg"  # Mercurial
       ".bzr" # Bazaar
@@ -104,25 +104,25 @@ expand_exclude() {
   fi
 
   if [[ $1 == *p* ]]; then
-    excluded_dirs+=(
+    dirs+=(
       ".idea"     # Intellij IDEA
       ".metadata" # Eclipse
       ".vscode"   # Visual Studio Code
     )
-    excluded_files+=(
+    files+=(
       "*.iml" # Intellij IDEA
     )
   fi
 
   if [[ $1 == *l* ]]; then
-    excluded_dirs+=(
+    dirs+=(
       "node_modules" # Node.js
       "!dependsrc"   # Delphi
     )
   fi
 
   if [[ $1 == *o* ]]; then
-    excluded_dirs+=(
+    dirs+=(
       "target"     # Maven
       ".happypack" # Happypack (webpack plugin)
     )
@@ -130,20 +130,20 @@ expand_exclude() {
 
   local expression=("(")
 
-  if [[ ${#excluded_dirs[@]} -gt 0 ]]; then
+  if [[ ${#dirs[@]} -gt 0 ]]; then
     expression+=("-not" "(" "-type" "d" "(")
-    for (( i = 0; i < ${#excluded_dirs[@]}; i++ )); do
+    for (( i = 0; i < ${#dirs[@]}; i++ )); do
       [[ $i -gt 0 ]] && expression+=("-or")
-      expression+=("-name" "${excluded_dirs[$i]}")
+      expression+=("-name" "${dirs[$i]}")
     done
     expression+=(")" "-prune" ")")
   fi
 
-  if [[ ${#excluded_files[@]} -gt 0 ]]; then
+  if [[ ${#files[@]} -gt 0 ]]; then
     expression+=("-not" "(" "-type" "f" "(")
-    for (( i = 0; i < ${#excluded_files[@]}; i++ )); do
+    for (( i = 0; i < ${#files[@]}; i++ )); do
       [[ $i -gt 0 ]] && expression+=("-or")
-      expression+=("-name" "${excluded_files[$i]}")
+      expression+=("-name" "${files[$i]}")
     done
     expression+=(")" ")")
   fi

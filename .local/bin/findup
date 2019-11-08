@@ -51,7 +51,7 @@ main() {
 
   # Consume paths
   local paths=()
-  while [[ $# -gt 0 && $1 != -* ]]; do
+  while [[ $# -gt 0 && $1 != -* && $1 != "(" ]]; do
     paths+=("$1")
     shift
   done
