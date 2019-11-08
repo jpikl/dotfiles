@@ -6,43 +6,76 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Search upwards in directory tree.
+		Find command that searches upwards in directory tree.
 
 		Usage:
-		  $(self) [path] [expression]
+		  $(self) [options] [path...] [expression]
+
+		Options:
+		  Options accepted by the find command.
 
 		Path:
-		  Search starting point.
+		  Zero or more starting points.
 		  Default path is the current working directory.
 
 		Expression:
-		  Any expression accepted by the find command.
-		  See 'find -help' or 'man find' for more details.
-		  Use of -maxdepth is discouraged, it is set internally to 1 by default.
+		  Expression accepted by the find command.
+		  Default expression is '-maxdepth 1 -print'.
+
+		See 'find -help' or 'man find' for more details.
 	EOT
 }
 
 main() {
-  for arg do
-    if [[ $arg == '-h' || $arg == '-help' || $arg == '--help' ]]; then
-      help
-      exit
+  # Check for help option
+  local arg
+  for arg; do
+    [[ $arg =~ ^(-h|-?-help)$ ]] && help && exit
+  done
+
+  # Consume options
+  local options=()
+  while [[ $# -gt 0 && $1 =~ ^(-H|-L|-P|-O.*|-D)$ ]]; do
+    options+=("$1")
+    if [[ $1 == -D ]]; then
+      if [[ $# -eq 1 ]]; then
+        find "${options[@]}" # Missing argument => fail with correct error message
+        die "internal error" # Should not ever happen
+      fi
+      options+=("$2")
+      shift 2
+    else
+      shift
     fi
   done
 
-  if [[ $# -gt 0 && $1 != -* ]]; then
-    [[ -d $1 ]] || die "'$1' is not a directory"
-    cd "$1"
+  # Consume paths
+  local paths=()
+  while [[ $# -gt 0 && $1 != -* ]]; do
+    paths+=("$1")
     shift
+  done
+
+  # Default path if none were passed
+  if [[ "${#paths[@]}" -eq 0 ]]; then
+    paths=(".")
   fi
 
-  while true; do
-    find "$PWD" "-maxdepth" "1" "$@"
-    if [[ $PWD == / ]]; then
-      break;
-    else
-      cd ..
-    fi
+  # Process every path upwards
+  local path
+  for path in "${paths[@]}"; do
+    while true; do
+      find "${options[@]}" "$path" -maxdepth 1 "$@"
+      if [[ $path -ef / ]]; then
+        break # We are at the root
+      elif [[ $path == /* ]]; then
+        path=$(dirname "$path") # Absolute path
+      elif [[ $path == */ ]]; then
+        path+=".." # Relative path ending with /
+      else
+        path+="/.." # Relative path not ending with /
+      fi
+    done
   done
 }
 
