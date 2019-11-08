@@ -13,6 +13,7 @@ help() {
 
 		Options:
 		  -a  Include all types of projects.
+		  -v  Include projects that use a version control system.
 		  -m  Include Maven projects.
 		  -n  Include Node.js projects.
 		  -u  Search upwards to find the topmost project root.
@@ -26,18 +27,21 @@ help() {
 }
 
 main() {
-  local include_maven=false
-  local include_node=false
-  local upwards=
+  local vcs=false
+  local maven=false
+  local node=false
+  local upwards=false
   local null_out=false
   local opt
 
-  while getopts ":amnuZh" opt; do
+  while getopts ":avmnuZh" opt; do
     case "$opt" in
-      a) include_maven=true
-         include_node=true ;;
-      m) include_maven=true ;;
-      n) include_node=true ;;
+      a) vcs=true
+         maven=true
+         node=true ;;
+      v) vcs=true ;;
+      m) maven=true ;;
+      n) node=true ;;
       u) upwards=true ;;
       Z) null_out=true ;;
       h) help; exit ;;
@@ -54,22 +58,55 @@ main() {
     path="$1"
   fi
 
-  local root_files=()
+  local dirs=()
+  local files=()
 
-  [[ $include_maven == true ]] && root_files+=("pom.xml")
-  [[ $include_node == true ]] && root_files+=("package.json")
-  [[ ${#root_files[@]} -gt 0 ]] || die_help "no project type specified"
+  if [[ $vcs == true ]]; then
+    dirs+=(
+      ".git" # Git
+      ".hg"  # Mercurial
+      ".bzr" # Bazaar
+      ".svn" # Subversion
+    )
+  fi
 
-  local find_opts+=(
-    "-type" "f" "("
-    "-name" "${root_files[0]}"
-  )
+  if [[ $maven == true ]]; then
+   files+=("pom.xml")
+  fi
 
-  for root_file in "${root_files[@]:1}"; do
-    find_opts+=("-or" "-name" "$root_file")
-  done
+  if [[ $node == true ]]; then
+    files+=("package.json")
+  fi
 
-  find_opts+=(")" "-printf" "%h\0")
+  if [[ ${#dirs[@]} -eq 0 && ${#files[@]} -eq 0 ]]; then
+    die_help "no project type specified"
+  fi
+
+  local expression+=("(")
+
+  if [[ ${#dirs[@]} -gt 0 ]]; then
+    expression+=("(" "-type" "d" "(")
+    for (( i = 0; i < ${#dirs[@]}; i++ )); do
+      [[ $i -gt 0 ]] && expression+=("-or")
+      expression+=("-name" "${dirs[$i]}")
+    done
+    expression+=(")" ")")
+  fi
+
+  if [[ ${#dirs[@]} -gt 0 && ${#files[@]} -gt 0 ]]; then
+    expression+=("-or")
+  fi
+
+  if [[ ${#files[@]} -gt 0 ]]; then
+    expression+=("(" "-type" "f" "(")
+    for (( i = 0; i < ${#files[@]}; i++ )); do
+      [[ $i -gt 0 ]] && expression+=("-or")
+      expression+=("-name" "${files[$i]}")
+    done
+    expression+=(")" ")")
+  fi
+
+  expression+=(")" "-printf" "%h\0")
 
   if [[ $upwards == true ]]; then
     find_upwards
@@ -79,7 +116,7 @@ main() {
 }
 
 find_upwards() {
-  findup "$path" "${find_opts[@]}" \
+  findup "$path" "${expression[@]}" \
     | tail --zero-terminated --lines=1 \
     | replace_line_endings \
     | check_any_result \
@@ -87,7 +124,10 @@ find_upwards() {
 }
 
 find_downards() {
-  findex "$path" -exclude vplo "${find_opts[@]}" \
+  # A directory will be printed twice if if contains two different
+  # project files, so we are using 'uniq' to merge them.
+  findex "$path" -exclude vplo "${expression[@]}" \
+    | uniq --zero-terminated \
     | replace_line_endings \
     | check_any_result \
     || die "unable find any project directory"
