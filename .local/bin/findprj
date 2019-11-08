@@ -14,7 +14,7 @@ help() {
 		Options:
 		  -a  Include all types of projects.
 		  -m  Include Maven projects.
-		  -n  Include include_node.js projects.
+		  -n  Include Node.js projects.
 		  -u  Search upwards to find the topmost project root.
 		  -Z  Print results delimited by NUL character instead of newline.
 		  -h  Print this help.
@@ -47,9 +47,11 @@ main() {
 
   shift $((OPTIND - 1))
 
+  local path="."
+
   if [[ $# -ge 1 ]]; then
     [[ -d $1 ]] || die "'$1' is not a directory"
-    cd "$1"
+    path="$1"
   fi
 
   local root_files=()
@@ -77,7 +79,7 @@ main() {
 }
 
 find_upwards() {
-  findup "${find_opts[@]}" \
+  findup "$path" "${find_opts[@]}" \
     | tail --zero-terminated --lines=1 \
     | replace_line_endings \
     | check_any_result \
@@ -85,7 +87,7 @@ find_upwards() {
 }
 
 find_downards() {
-  findex -exclude vplo "${find_opts[@]}" \
+  findex "$path" -exclude vplo "${find_opts[@]}" \
     | replace_line_endings \
     | check_any_result \
     || die "unable find any project directory"

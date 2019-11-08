@@ -8,7 +8,7 @@ if [[ -f $PURELINE_SCRIPT ]]; then
   term_title_module() {
     local title="\033]0;"
     local project_root
-    if project_root=$(findprj -au 2>/dev/null); then
+    if project_root=$(findprj -au "$PWD" 2>/dev/null); then
       title+="[$(basename "$project_root")] "
     fi
     title+="$PWD\007"
