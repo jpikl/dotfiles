@@ -9,7 +9,7 @@ help() {
 		Find command that searches upwards in directory tree.
 
 		Usage:
-		  $(self) [options] [path...] [expression]
+		  $(self) [options] [path]... [expression]
 
 		Options:
 		  Options accepted by the find command.
@@ -40,7 +40,7 @@ main() {
     if [[ $1 == -D ]]; then
       if [[ $# -eq 1 ]]; then
         find "${options[@]}" # Missing argument => fail with correct error message
-        die "internal error" # Should not ever happen
+        die_help "-D option requires an argument" # Should not be needed
       fi
       options+=("$2")
       shift 2

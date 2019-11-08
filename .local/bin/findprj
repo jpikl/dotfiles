@@ -85,8 +85,7 @@ find_upwards() {
 }
 
 find_downards() {
-  # shellcheck disable=SC2046
-  find $(findexpr -s) "${find_opts[@]}" \
+  findex -exclude vplo "${find_opts[@]}" \
     | replace_line_endings \
     | check_any_result \
     || die "unable find any project directory"

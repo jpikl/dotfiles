@@ -59,7 +59,7 @@ alias grepe='grep --extended-regexp'
 alias grepf='grep --fixed-strings'
 
 # Find
-alias findsrc='find $(findexpr -s)'
+alias findsrc='findex -exclude vplo'
 
 # Fzf
 alias fzfbat='fzf --preview="bat --color=always {}"'

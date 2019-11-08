@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Find command enhanced with extra capabilities.
+
+		Usage:
+		  $(self) [options] [path]... [expression]
+
+		Options:
+		  Options accepted by the find command.
+
+		Path:
+		  Zero or more starting points.
+		  Default path is the current working directory.
+
+		Expression:
+		  Expression accepted by the find command.
+		  Default expression is '-print'.
+		  The following are new expressions provided by $(self).
+
+		  -exclude flags
+		           Exclude certain files and directories from search.
+		           Such directories are always pruned from search using -prune.           
+		           Flags is a string of the following characters:
+
+		           v  Exclude directories of various version control systems.
+		           p  Exclude metadata of various editors and IDEs.
+		           l  Exlude libraries and dependencies.
+		           o  Exclude output of a compilation or a build process.
+
+		See 'find -help' or 'man find' for more details.
+	EOT
+}
+
+main() {
+  # Check for help option
+  local arg
+  for arg; do
+    [[ $arg =~ ^(-h|-?-help)$ ]] && help && exit
+  done
+
+  # Consume options
+  local options=()
+  while [[ $# -gt 0 && $1 =~ ^(-H|-L|-P|-O.*|-D)$ ]]; do
+    options+=("$1")
+    if [[ $1 == -D ]]; then
+      if [[ $# -eq 1 ]]; then
+        find "${options[@]}" # Missing argument => fail with correct error message
+        die_help "-D option requires an argument" # Should not be needed
+      fi
+      options+=("$2")
+      shift 2
+    else
+      shift
+    fi
+  done
+
+  # Consume paths
+  local paths=()
+  while [[ $# -gt 0 && $1 != -* ]]; do
+    paths+=("$1")
+    shift
+  done
+
+  # Consume and expand expression
+  local expression=()
+  while [[ $# -gt 0 ]]; do
+    if [[ $1 == "-exclude" ]]; then
+      if [[ $# -lt 2 ]]; then
+        die_help "-exclude requires an argument"
+      elif [[ ! $2 ]]; then
+        die_help "no flags passed to -exclude"
+      elif [[ ! $2 =~ ^[vplo]+$ ]]; then
+        die_help "invalid flags passed to -exclude"
+      fi
+      mapfile -tO "${#expression[@]}" expression < <(expand_exclude "$2")
+      shift 2
+    else
+      expression+=("$1")
+      shift
+    fi
+  done
+
+  # Pass everything to find
+  find "${options[@]}" "${paths[@]}" "${expression[@]}"
+}
+
+expand_exclude() {
+  local excluded_dirs=()
+  local excluded_files=()
+
+  if [[ $1 == *v* ]]; then
+    excluded_dirs+=(
+      ".git" # Git
+      ".hg"  # Mercurial
+      ".bzr" # Bazaar
+      ".svn" # Subversion
+    )
+  fi
+
+  if [[ $1 == *p* ]]; then
+    excluded_dirs+=(
+      ".idea"     # Intellij IDEA
+      ".metadata" # Eclipse
+      ".vscode"   # Visual Studio Code
+    )
+    excluded_files+=(
+      "*.iml" # Intellij IDEA
+    )
+  fi
+
+  if [[ $1 == *l* ]]; then
+    excluded_dirs+=(
+      "node_modules" # Node.js
+      "!dependsrc"   # Delphi
+    )
+  fi
+
+  if [[ $1 == *o* ]]; then
+    excluded_dirs+=(
+      "target"     # Maven
+      ".happypack" # Happypack (webpack plugin)
+    )
+  fi
+
+  local expression=("(")
+
+  if [[ ${#excluded_dirs[@]} -gt 0 ]]; then
+    expression+=("-not" "(" "-type" "d" "(")
+    for (( i = 0; i < ${#excluded_dirs[@]}; i++ )); do
+      [[ $i -gt 0 ]] && expression+=("-or")
+      expression+=("-name" "${excluded_dirs[$i]}")
+    done
+    expression+=(")" "-prune" ")")
+  fi
+
+  if [[ ${#excluded_files[@]} -gt 0 ]]; then
+    expression+=("-not" "(" "-type" "f" "(")
+    for (( i = 0; i < ${#excluded_files[@]}; i++ )); do
+      [[ $i -gt 0 ]] && expression+=("-or")
+      expression+=("-name" "${excluded_files[$i]}")
+    done
+    expression+=(")" ")")
+  fi
+
+  expression+=(")")
+
+  printf "%s\n" "${expression[@]}"
+}
+
+main "$@"
