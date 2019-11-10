@@ -47,7 +47,10 @@ alias clipi='xclip -in -selection clipboard'
 alias clipo='xclip -out -selection clipboard'
 
 # Dotfiles
-alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
+alias dotfiles='envdotfiles git'
+
+# Env
+alias envdotfiles='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
 
 # Exif
 alias exiffzf='exiftool $(find -type f | fzfexif)'
