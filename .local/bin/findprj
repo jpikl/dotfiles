@@ -126,7 +126,7 @@ find_upwards() {
 find_downards() {
   # A directory will be printed twice if if contains two different
   # project files, so we are using 'uniq' to merge them.
-  findex "$path" -exclude vplo "${expression[@]}" \
+  findex "$path" -exclude vploD "${expression[@]}" \
     | uniq --zero-terminated \
     | replace_line_endings \
     | check_any_result \

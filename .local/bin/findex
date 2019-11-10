@@ -25,13 +25,15 @@ help() {
 
 		  -exclude flags
 		           Exclude certain files and directories from search.
-		           Such directories are always pruned from search using -prune.           
+		           Such directories are always pruned from search using -prune.
 		           Flags is a string of the following characters:
 
 		           v  Exclude directories of various version control systems.
 		           p  Exclude metadata of various editors and IDEs.
 		           l  Exlude libraries and dependencies.
 		           o  Exclude output of a compilation or a build process.
+		           D  When excluding a directory, exclude only its contents
+		              not the directory itself.
 
 		See 'find -help' or 'man find' for more details.
 	EOT
@@ -75,7 +77,7 @@ main() {
         die_help "-exclude requires an argument"
       elif [[ ! $2 ]]; then
         die_help "no flags passed to -exclude"
-      elif [[ ! $2 =~ ^[vplo]+$ ]]; then
+      elif [[ ! $2 =~ ^[vploD]+$ ]]; then
         die_help "invalid flags passed to -exclude"
       fi
       mapfile -tO "${#expression[@]}" expression < <(expand_exclude "$2")
@@ -131,12 +133,19 @@ expand_exclude() {
   local expression=("(")
 
   if [[ ${#dirs[@]} -gt 0 ]]; then
-    expression+=("-not" "(" "-type" "d" "(")
+    if [[ $1 != *D* ]]; then
+      expression+=("-not")
+    fi
+    expression+=("(" "-type" "d" "(")
     for (( i = 0; i < ${#dirs[@]}; i++ )); do
       [[ $i -gt 0 ]] && expression+=("-or")
       expression+=("-name" "${dirs[$i]}")
     done
-    expression+=(")" "-prune" ")")
+    expression+=(")" "-prune")
+    if [[ $1 == *D* ]]; then
+      expression+=("-or" "-true")
+    fi
+    expression+=(")")
   fi
 
   if [[ ${#files[@]} -gt 0 ]]; then
