@@ -121,7 +121,7 @@ alias npmup='npm update'
 alias paci='pacfind -ra | fzfpac | xargs --no-run-if-empty retty pacaur -S'
 alias pacr='pacaur -Sy'
 alias pacri='pacr && paci'
-alias pacun='pacfind -i | fzfpac | xargs --no-run-if-empty retty pacaur -Rsc'
+alias pacun='pacfind -l | fzfpac | xargs --no-run-if-empty retty pacaur -Rsc'
 alias pacup='pacaur -Syu'
 
 # React Native

@@ -12,30 +12,30 @@ help() {
 		  $(self) [options] [--] [name]
 
 		Options:
-		  -i  Include installed packages.
-		  -g  Include installed packages that are gone from repositories / AUR.
-		  -r  Include pacakges from repositories.
-		  -a  Include packages from AUR.
+		  -l  Include local packages.
+		  -g  Include local packages that are gone on remote.
+		  -r  Include remote pacakges from repositories.
+		  -a  Include remote packages from AUR.
 		  -q  Print package names only.
 		  -h  Print this help.
 
 		Name:
 		  Package name to find.
-		  If not specified, all packages are printed.
+		  Can be ommited to list all packages.
 	EOT
 }
 
 main() {
-  local installed=false
+  local local=false
   local gone=false
   local repos=false
   local aur=false
   local quiet=false
   local opt
 
-  while getopts ":igraqch" opt; do
+  while getopts ":lgraqch" opt; do
     case "$opt" in
-      i) installed=true ;;
+      l) local=true ;;
       g) gone=true ;;
       r) repos=true ;;
       a) aur=true ;;
@@ -47,6 +47,10 @@ main() {
 
   shift $((OPTIND - 1))
 
+  if [[ $local == false && $gone == false && $repos == false && $aur == false ]]; then
+    die_help "nothing to do"
+  fi
+
   if [[ $quiet == true ]]; then
     print | filter "${1:-}" | LC_ALL=C sort | LC_ALL=C uniq
   else
@@ -55,7 +59,7 @@ main() {
 }
 
 print() {
-  [[ $installed == true ]] && print_installed
+  [[ $local == true ]] && print_local
   [[ $gone == true ]] && print_gone
   [[ $repos == true ]] && print_repos
   [[ $aur == true ]] && print_aur
@@ -63,12 +67,12 @@ print() {
   true
 }
 
-print_installed() {
+print_local() {
   if [[ $quiet == true || "${1:-}" == quiet ]]; then
     pacman --query --quiet
   else
     local prefix
-    prefix="$(tput bold)$(tput setaf 5)installed "
+    prefix="$(tput bold)$(tput setaf 5)local "
     pacman --query --color=always | sed --expression="s/^/$prefix/"
   fi
 }
@@ -84,7 +88,7 @@ print_gone() {
 }
 
 print_gone_quiet() {
-  print_installed quiet \
+  print_local quiet \
     | grep --fixed-strings \
            --line-regexp \
            --invert-match \
