@@ -8,75 +8,100 @@ readonly FORMAT="--format=%(refname:short)"
 
 help() {
   cat <<-EOT
-		List git branches.
+		List Git branches.
 
 		Usage:
 		  $(self) [options]
 
 		Options:
-		  -c  Include current branch.
-		  -C  Exclude current branch.
+		  -c  Include current branch (-C to exclude).
 		  -l  Include local branches.
+		  -a  Include local branches that are ahead of remote (-A to exclude).
+		  -b  Include local branches that are behind remote (-B to exclude).
+		  -g  Include local branches that are gone on remote (-G to exclude).
 		  -r  Include remote branches.
-		  -g  Include tracking branches no longer on remote.
-		  -x  Remove remote prefix from branch names.
+		  -s  Print short branch names without remote prefix.
 		  -h  Print this help.
 	EOT
 }
 
 main() {
-  local current=false
-  local no_current=false
-  local local=false
-  local remote=false
-  local gone=false
-  local no_prefix=false
+  local include_current=false
+  local exclude_current=false
+  local include_local=false
+  local include_ahead=false
+  local exclude_ahead=false
+  local include_behind=false
+  local exclude_behind=false
+  local include_gone=false
+  local exclude_gone=false
+  local include_remote=false
+  local short_names=false
   local opt
 
-  while getopts ":cClrgxh" opt; do
+  while getopts ":cClaAbBgGrsh" opt; do
     case "$opt" in
-      c) current=true ;;
-      C) no_current=true ;;
-      l) local=true ;;
-      r) remote=true ;;
-      g) gone=true ;;
-      x) no_prefix=true ;;
+      c) include_current=true ;;
+      C) exclude_current=true ;;
+      l) include_local=true ;;
+      a) include_ahead=true ;;
+      A) exclude_ahead=true ;;
+      b) include_behind=true ;;
+      B) exclude_behind=true ;;
+      g) include_gone=true ;;
+      G) exclude_gone=true ;;
+      r) include_remote=true ;;
+      s) short_names=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
 
-  if [[ $current == false
-     && $local == false
-     && $remote == false
-     && $gone == false ]]; then
+  if [[ $include_current == false
+     && $include_local == false
+     && $include_gone == false
+     && $include_ahead == false
+     && $include_behind == false
+     && $include_remote == false ]]; then
      die_help "nothing to do"
   fi
 
-  # Just to check we are in a git repository.
+  # Check we are in a git repository.
   git status --porcelain >/dev/null
 
-  if [[ $no_prefix = true ]]; then
+
+
+  if [[ $short_names = true ]]; then
     { # We want to print mix of local and remote branches.
-      print_enabled_local
-      print_enabled_remote | remove_remote_prefix
-    } | LC_ALL=C sort | uniq | remove_enabled_current
+      print_included_local
+      print_included_remote | remove_remote_prefix
+    } | LC_ALL=C sort | uniq | filter_excluded_local
   else
     # We want to print local branches before the remote ones.
-    print_enabled_local | sort | uniq | remove_enabled_current
-    print_enabled_remote | sort
+    print_included_local | sort | uniq | filter_excluded_local
+    print_included_remote | sort
   fi
 }
 
-print_enabled_local() {
-  [[ $current = true ]] && print_current
-  [[ $local = true ]] && print_local
-  [[ $gone = true ]] && print_gone
+print_included_local() {
+  [[ $include_current = true ]] && print_current
+  [[ $include_local = true ]] && print_local
+  [[ $include_ahead = true ]] && print_ahead
+  [[ $include_behind = true ]] && print_behind
+  [[ $include_gone = true ]] && print_gone
   true
 }
 
-print_enabled_remote() {
-  [[ $remote = true ]] && print_remote
+print_excluded_local() {
+  [[ $exclude_current = true ]] && print_current
+  [[ $exclude_ahead = true ]] && print_ahead
+  [[ $exclude_behind = true ]] && print_behind
+  [[ $exclude_gone = true ]] && print_gone
+  true
+}
+
+print_included_remote() {
+  [[ $include_remote = true ]] && print_remote
   true
 }
 
@@ -93,19 +118,40 @@ print_remote() {
   git branch --remote $FORMAT | grep --invert-match '/HEAD$' || true
 }
 
-print_gone() {
-  print_local | grep --fixed-strings \
-                     --line-regexp \
-                     --invert-match \
-                     --file=<(print_remote | remove_remote_prefix) || true
+print_ahead() {
+  print_local | filter_having_revlist_count --left-only
 }
 
-remove_enabled_current() {
-  if [[ $no_current = true ]]; then
-    grep --fixed-strings --line-regexp --invert-match "$(print_current)" || true
-  else
-    cat
-  fi
+print_behind() {
+  print_local | filter_having_revlist_count --right-only
+}
+
+print_gone() {
+  print_local | filter_gone
+}
+
+filter_excluded_local() {
+  grep --fixed-strings \
+       --line-regexp \
+       --invert-match \
+       --file=<(print_excluded_local) || true
+}
+
+filter_having_revlist_count() {
+  while IFS= read -r branch; do
+    local count
+    count=$(git rev-list --count "$1" "$branch...$branch@{upstream}" 2>/dev/null) \
+      && [[ $count -gt 0 ]] \
+      && echo "$branch"
+  done
+  true
+}
+
+filter_gone() {
+  grep --fixed-strings \
+       --line-regexp \
+       --invert-match \
+       --file=<(print_remote | remove_remote_prefix) || true
 }
 
 remove_remote_prefix() {

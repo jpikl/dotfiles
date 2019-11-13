@@ -73,7 +73,7 @@ alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-i
 alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | awk "{print \$2}"'
 
 # Git
-alias gitcb='gitlsb -lrx | choose -ip "Checkout branch:" | xargs --no-run-if-empty git checkout'
+alias gitcb='gitlsb -lrs | choose -ip "Checkout branch:" | xargs --no-run-if-empty git checkout'
 alias gitct='git tag | choose -ip "Checkout tag:" | xargs --no-run-if-empty git checkout'
 alias gitdb='gitlsb -l | choose -imp "Delete branche(s):" | xargs --no-run-if-empty git branch --delete'
 alias gitdbf='gitdb --force'
