@@ -21,23 +21,23 @@ help() {
 
 		Name:
 		  Package name to find.
-		  Can be ommited to list all packages.
+		  Omit to list all packages.
 	EOT
 }
 
 main() {
   local local=false
   local gone=false
-  local repos=false
+  local repo=false
   local aur=false
   local quiet=false
   local opt
 
-  while getopts ":lgraqch" opt; do
+  while getopts ":lgraqh" opt; do
     case "$opt" in
       l) local=true ;;
       g) gone=true ;;
-      r) repos=true ;;
+      r) repo=true ;;
       a) aur=true ;;
       q) quiet=true ;;
       h) help; exit ;;
@@ -47,100 +47,100 @@ main() {
 
   shift $((OPTIND - 1))
 
-  if [[ $local == false && $gone == false && $repos == false && $aur == false ]]; then
+  if [[ $local == false && $gone == false && $repo == false && $aur == false ]]; then
     die_help "nothing to do"
   fi
 
   if [[ $quiet == true ]]; then
-    print | filter "${1:-}" | LC_ALL=C sort | LC_ALL=C uniq
+    print_names | filter_names "${1:-}" | LC_ALL=C sort | LC_ALL=C uniq
   else
-    print | filter "${1:-}"
+    print_packages | filter_packages "${1:-}"
   fi
 }
 
-print() {
-  [[ $local == true ]] && print_local
-  [[ $gone == true ]] && print_gone
-  [[ $repos == true ]] && print_repos
-  [[ $aur == true ]] && print_aur
-  [[ $quiet == false ]] && tput sgr0
+print_packages() {
+  [[ $local == true ]] && print_local_packages
+  [[ $gone == true ]] && print_gone_packages
+  [[ $repo == true ]] && print_repo_packages
+  [[ $aur == true ]] && print_aur_packages
+  tput sgr0 # Reset changed color
+}
+
+print_names() {
+  [[ $local == true ]] && print_local_names
+  [[ $gone == true ]] && print_gone_names
+  [[ $repo == true ]] && print_repo_names
+  [[ $aur == true ]] && print_aur_names
   true
 }
 
-print_local() {
-  if [[ $quiet == true || "${1:-}" == quiet ]]; then
-    pacman --query --quiet
-  else
-    local prefix
-    prefix="$(tput bold)$(tput setaf 5)local "
-    pacman --query --color=always | sed --expression="s/^/$prefix/"
-  fi
+print_local_packages() {
+  pacman --query --color=always | prepend_prefix "local"
 }
 
-print_gone() {
-  if [[ $quiet == true ]]; then
-    print_gone_quiet
-  else
-    local prefix
-    prefix="$(tput bold)$(tput setaf 5)gone $(tput sgr0)$(tput bold)"
-    print_gone_quiet | sed --expression="s/^/$prefix/"
-  fi
+print_local_names() {
+  pacman --query --quiet
 }
 
-print_gone_quiet() {
-  print_local quiet \
-    | grep --fixed-strings \
-           --line-regexp \
-           --invert-match \
-           --file=<(print_repos_aur_quiet)
+print_gone_packages() {
+  print_gone_names | prepend_prefix "gone"
 }
 
-print_repos_aur_quiet() {
+print_gone_names() {
+  print_local_names | filter_gone_names
+}
+
+filter_gone_names() {
+  grep --fixed-strings \
+       --line-regexp \
+       --invert-match \
+       --file=<(print_remote_names)
+}
+
+print_remote_names() {
   {
-    print_repos quiet
-    print_aur_quiet
+    print_repo_names
+    print_aur_names
   } | LC_ALL=C sort | LC_ALL=C uniq
 }
 
-print_repos() {
-  local opts=("--sync" "--list")
-  if [[ $quiet == true || "${1:-}" == quiet ]]; then
-    opts+=("--quiet")
-  else
-    opts+=("--color=always")
-  fi
-  pacman "${opts[@]}"
+print_repo_packages() {
+  pacman --sync --list --color=always
 }
 
-print_aur() {
-  if [[ $quiet == true ]]; then
-    print_aur_quiet
-  else
-    local prefix
-    prefix="$(tput bold)$(tput setaf 5)aur $(tput sgr0)$(tput bold)"
-    print_aur_quiet | sed --expression="s/^/$prefix/"
-  fi
+print_repo_names() {
+  pacman --sync --list --quiet
 }
 
-print_aur_quiet() {
+print_aur_packages() {
+  print_aur_names | prepend_prefix "aur"
+}
+
+print_aur_names() {
   curl --silent https://aur.archlinux.org/packages.gz \
     | gunzip \
     | tail --lines=+2 \
     | LC_ALL=C sort
 }
 
-filter() {
+filter_packages() {
   if [[ $1 ]]; then
-    local opts=("--extended-regexp" "--color=never")
-    if [[ $quiet == true ]]; then
-      opts=("$1")
-    else
-      opts=("^.* .*$1") # We need to exclude prefix
-    fi
-    grep "${opts[@]}"
+    filter_names "^\S*\s+\S*$1" # To exclude prefix
   else
     cat
   fi
+}
+
+filter_names() {
+  if [[ $1 ]]; then
+    grep --extended-regexp --color=never "$1"
+  else
+    cat
+  fi
+}
+
+prepend_prefix() {
+  sed --expression="s/^/$(tput bold)$(tput setaf 5)$1 $(tput sgr0)$(tput bold)/"
 }
 
 main "$@"
