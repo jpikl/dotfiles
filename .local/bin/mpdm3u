@@ -18,7 +18,7 @@ help() {
 
 		Year:
 		  Zero or more years for which generate playlists.
-		  If not specified, every year found in MPD datebase will be used.
+		  If omitted, use every year in MPD database.
 
 		Environment variables:
 		  MUSIC_DIR      Directory where MPD expects to be music.

@@ -20,7 +20,7 @@ help() {
 
 		Branch:
 		  Zero or more Git branches.
-		  If none is passed then branches are read as lines from stdin.
+		  If omitted, read branches as lines from stdin.
 	EOT
 }
 
