@@ -17,7 +17,7 @@ help() {
 
 		Options:
 		  -p <prompt>   Message to print as a prompt.
-		  -d <default>  Default value to print if no values are available.
+		  -d <default>  Default value to print if nothing was chosen.
 		  -m            Enable selection of multiple values.
 		  -i            Read values from standard input.
 		  -z            Read values delimited by NUL character instead of newline.
@@ -94,7 +94,7 @@ main() {
 }
 
 fzf_mode() {
-  local opts=("--select-1" "--exit-0" "--print0")
+  local opts=("--exit-0" "--print0")
 
   if [[ $stdin = true ]]; then
     export FZF_DEFAULT_COMMAND=cat # To force reading from stdin
@@ -106,8 +106,15 @@ fzf_mode() {
     exec </dev/null # To fail fast using the --exit-0 option
   fi
 
-  [[ $multi = true ]] && opts+=("--multi")
-  [[ $prompt ]] && opts+=("--prompt=$prompt ")
+  if [[ $multi = true ]]; then
+    opts+=("--multi")
+  else
+    opts+=("--select-1")
+  fi
+
+  if [[ $prompt ]]; then
+    opts+=("--prompt=$prompt ")
+  fi
 
   mapfile -td '' results < <(fzf "${opts[@]}")
 }
@@ -123,9 +130,9 @@ basic_mode() {
     exec < "$TTY"  # Redirect stdin back to tty
   fi
 
-  if [[ ${#values[@]} -eq 1 ]]; then
+  if [[ ${#values[@]} -eq 1 && $multi == false ]]; then
     results=("${values[0]}")
-  elif [[ ${#values[@]} -gt 1 ]]; then
+  elif [[ ${#values[@]} -ge 1 ]]; then
     local choice
     while true; do
       [[ $prompt ]] && echo "$prompt"
