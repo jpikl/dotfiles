@@ -57,7 +57,7 @@ alias exiffzf='exiftool $(find -type f | fzfexif)'
 
 # Grep
 alias grep='grep --color=auto'
-alias grep='grep --perl-regexp'
+alias grepp='grep --perl-regexp'
 alias grepe='grep --extended-regexp'
 alias grepf='grep --fixed-strings'
 
