@@ -73,12 +73,12 @@ alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-i
 alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | awk "{print \$2}"'
 
 # Git
-alias gitcb='gitlsb -lrs | choose -ip "Checkout branch:" | xargs --no-run-if-empty git checkout'
+alias gitcb='gitlsb -lrsC | choose -ip "Checkout branch:" | xargs --no-run-if-empty git checkout'
 alias gitct='git tag | choose -ip "Checkout tag:" | xargs --no-run-if-empty git checkout'
-alias gitdb='gitlsb -l | choose -imp "Delete branche(s):" | xargs --no-run-if-empty git branch --delete'
+alias gitdb='gitlsb -lC | choose -imp "Delete branch(es):" | xargs --no-run-if-empty git branch --delete'
 alias gitdbf='gitdb --force'
 alias gitfap='git fetch --all --prune'
-alias gitffb='gitlsb -l | choose -imp "Fast-forward branche(s):" | xargs --no-run-if-empty gitff'
+alias gitffb='gitlsb -b | choose -imp "Fast-forward branch(es):" | xargs --no-run-if-empty gitff'
 alias gitladog='git log --all --decorate --oneline --graph'
 alias gitmb='gitlsb -lrC | choose -ip "Merge branch to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
 alias gits='git status'
