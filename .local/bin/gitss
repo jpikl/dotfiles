@@ -32,40 +32,57 @@ main() {
   # Check we are in a git repository.
   git status --porcelain >/dev/null
 
-  declare -A icons=(
-    [index]="I"
-    [wtree]="W"
-  )
+  declare -A icons=()
 
-  if [[ $TERM != linux ]]; then
-    icons[branch]="  "
-    icons[remote]=" 歷"
-    icons[ahead]="  "
-    icons[behind]="  "
-    icons[wtree]="פּ"
-    icons[index]=""
-    icons[stash]="  "
-    icons[added]="  "
-    icons[copied]="  "
-    icons[deleted]="  "
-    icons[modified]="  "
-    icons[renamed]="  "
-    icons[retyped]="  "
-    icons[unmerged]="  "
-    icons[unknown]=" ? "
-    icons[broken]="  "
-    icons[untracked]="  "
+  if [[ $TERM == linux ]]; then
+    icons[0]=""   # Branch
+    icons[1]=""   # Remote
+    icons[2]=""   # Ahead
+    icons[3]=""   # Behind
+    icons[4]=""   # Stash
+    icons[a]=" W" # Work tree
+    icons[b]=" I" # Index
+    icons[c]=""   # Added
+    icons[d]=""   # Copied
+    icons[e]=""   # Deleted
+    icons[f]=""   # Modified
+    icons[g]=""   # Renamed
+    icons[h]=""   # Retyped
+    icons[i]=""   # Unmerged
+    icons[j]=""   # Unknown
+    icons[k]=""   # Broken
+    icons[l]=""   # Untracked
+    icons[_]=""   # Padding
+  else
+    icons[0]="  " # Branch
+    icons[1]=" 歷"  # Remote
+    icons[2]="  " # Ahead
+    icons[3]="  " # Behind
+    icons[4]="  " # Stash
+    icons[a]=" פּ"  # Work tree
+    icons[b]=" "  # Index
+    icons[c]="  " # Added
+    icons[d]="  " # Copied
+    icons[e]="  " # Deleted
+    icons[f]="  " # Modified
+    icons[g]="  " # Renamed
+    icons[h]="  " # Retyped
+    icons[i]="  " # Unmerged
+    icons[j]=" ? " # Unknown
+    icons[k]="  " # Broken
+    icons[l]="  " # Untracked
+    icons[_]="   " # Padding
   fi
 
-  print_info_table | format_table
+  print_summary_table | format_table --table-right=1 | replace_icon_placeholders
 
   if [[ $all == true || "$(git status --porcelain)" ]]; then
     echo
-    print_changes_table | format_table
+    print_changes_table | format_table --table-right=1,2,3 | replace_icon_placeholders
   fi
 }
 
-print_info_table() {
+print_summary_table() {
   print_current_branch
   print_remote_branch
   print_commits_ahead
@@ -74,12 +91,12 @@ print_info_table() {
 }
 
 print_current_branch() {
-  printf "Branch%s:;" "${icons[branch]:-}"
+  printf "Branch!0:;"
   git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
 print_remote_branch() {
-  printf "Remote%s:;" "${icons[remote]:-}"
+  printf "Remote!1:;"
   git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null
 }
 
@@ -87,7 +104,7 @@ print_commits_ahead() {
   local count
   count=$(git rev-list --count --left-only 'HEAD...@{upstream}' 2>/dev/null)
   if [[ $count -gt 0 || $all == true ]]; then
-    printf "Ahead%s:;%s\n" "${icons[ahead]:-}" "$count"
+    printf "Ahead!2:;%s\n" "$count"
   fi
 }
 
@@ -95,7 +112,7 @@ print_commits_behind() {
   local count
   count=$(git rev-list --count --right-only 'HEAD...@{upstream}' 2>/dev/null)
   if [[ $count -gt 0 || $all == true ]]; then
-    printf "Behind%s:;%s\n" "${icons[behind]:-}" "$count"
+    printf "Behind!3:;%s\n" "$count"
   fi
 }
 
@@ -103,48 +120,60 @@ print_stash_size() {
   local size
   size=$(git stash list 2>/dev/null | wc --lines)
   if [[ $size -gt 0 || $all == true ]]; then
-    printf "Stash%s:;%s\n" "${icons[stash]:-}" "$size"
+    printf "Stash!4:;%s\n" "$size"
   fi
 }
 
 print_changes_table() {
-  printf "[Work/Index];%s;%s\n" "${icons[wtree]}" "${icons[index]}"
-  print_changed "A" "Addded" "added"
-  print_changed "C" "Copied" "copied"
-  print_changed "D" "Deleted" "deleted"
-  print_changed "M" "Modified" "modified"
-  print_changed "R" "Renamed" "renamed"
-  print_changed "T" "Retyped" "retyped"
-  print_changed "U" "Unmerged" "unmerged"
-  print_changed "X" "Unknown" "unknown"
-  print_changed "B" "Broken" "broken"
-  print_untracked
+  printf "!_[Work/Index];!a;!b\n"
+  print_changed_files "A" "Addded!c"
+  print_changed_files "C" "Copied!d"
+  print_changed_files "D" "Deleted!e"
+  print_changed_files "M" "Modified!f"
+  print_changed_files "R" "Renamed!g"
+  print_changed_files "T" "Retyped!h"
+  print_changed_files "U" "Unmerged!i"
+  print_changed_files "X" "Unknown!j"
+  print_changed_files "B" "Broken!k"
+  print_untracked_files
 }
 
-print_changed() {
+print_changed_files() {
   local wtree_count
-  local stage_count
+  local index_count
 
   wtree_count=$(git diff --name-only --diff-filter="$1" 2>/dev/null | wc --lines)
-  stage_count=$(git diff --name-only --diff-filter="$1" --staged 2>/dev/null | wc --lines)
+  index_count=$(git diff --name-only --diff-filter="$1" --staged 2>/dev/null | wc --lines)
 
-  if [[ $wtree_count -gt 0 || $stage_count -gt 0 || $all == true ]]; then
+  if [[ $wtree_count -gt 0 || $index_count -gt 0 || $all == true ]]; then
     [[ $wtree_count -eq 0 && $all == false ]] && wtree_count=
-    [[ $stage_count -eq 0 && $all == false ]] && stage_count=
-    printf "%s%s:;%s;%s\n" "$2" "${icons[$3]:-}" "$wtree_count" "$stage_count"
+    [[ $index_count -eq 0 && $all == false ]] && index_count=
+    printf "%s:;%s;%s\n" "$2" "$wtree_count" "$index_count"
   fi
 }
 
-print_untracked() {
+print_untracked_files() {
   local count
   count="$(git ls-files --other --exclude-standard  2>/dev/null | wc --lines)"
   if [[ $count -gt 0 || $all == true ]]; then
-    printf "Untracked%s:;%s\n" "${icons[untracked]:-}" "$count"
+    printf "Untracked!l:;%d\n" "$count"
   fi
 }
 
 format_table() {
-  column --table --table-right=1 --separator=';' --output-separator=' '
+  column --table --separator=";" --output-separator=" " "$@"
+}
+
+replace_icon_placeholders() {
+  # Some /usr/bin/column implementations (e.g. MSYS) are broken and cannot
+  # properly handle unicode characters. We are therefore using "!x" style
+  # ASCII placeholders in colum's input and replace them with icons
+  # in column's output.
+  local opts=()
+  for name in "${!icons[@]}"; do
+    opts+=("--expression" "s/!$name/${icons[$name]:-}/g")
+  done
+  sed "${opts[@]}"
 }
 
 main "$@"
