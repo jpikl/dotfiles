@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Find command enhanced with extra capabilities.
+		Find command with extra capabilities.
 
 		Usage:
 		  $(self) [options] [path]... [expression]
