@@ -81,6 +81,7 @@ alias gitfap='git fetch --all --prune'
 alias gitffb='gitlsb -b | choose -imp "Fast-forward branch(es):" | xargs --no-run-if-empty gitff'
 alias gitladog='git log --all --decorate --oneline --graph'
 alias gitmb='gitlsb -lrC | choose -ip "Merge branch to \""$(gitlsb -c)"\":" | xargs --no-run-if-empty git merge'
+alias gitrob='gitlsb -lrC | choose -ip "Rebase \""$(gitlsb -c)"\" onto branch:" | xargs --no-run-if-empty git rebase --onto'
 alias gits='git status'
 
 # Iconv
