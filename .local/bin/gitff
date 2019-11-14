@@ -6,17 +6,19 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Fast-forward git branches.
+		Fast-forward local Git branches.
 
 		Usage:
 		  $(self) [options] [--] [branch]...
 
 		Options:
-		  -a  Fast-forward all local branches.
+		  -a  Fast-forward all local branches that are behind remote.
 		  -h  Print this help.
 
 		Branch:
-		  One or more branches to fast-forward.
+		  Zero or more branches to fast-forward.
+		  If omitted, fast-forward the current branch.
+
 	EOT
 }
 
@@ -32,18 +34,30 @@ main() {
     esac
   done
 
+  # Check we are in a git repository.
+  git status --porcelain >/dev/null
+
   shift $((OPTIND - 1))
 
-  local branches=("$@")
-  [[ $all = true ]] && mapfile -t branches < <(gitlsb -l)
-
+  local branches
   local current_branch
+
   current_branch=$(gitlsb -c)
+
+  if [[ $all = true ]]; then
+    mapfile -t branches < <(gitlsb -b)
+  elif [[ $# -gt 0 ]]; then
+    branches=("$@")
+  else
+    branches=("$current_branch")
+  fi
 
   local branch
   for branch in "${branches[@]}"; do
-    if [[ $branch != "$current_branch" ]]; then
-      git fetch origin "$branch:$branch"
+    if [[ $branch == "$current_branch" ]]; then
+      git merge --ff-only || true
+    else
+      git fetch origin "$branch:$branch" || true
     fi
   done
 }
