@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/utils.sh"
 
 help() {
   cat <<-EOT
@@ -36,19 +35,26 @@ main() {
   [[ $# -eq 0 ]] && die_missing_arg
   [[ -f package.json ]] || die "no package.json in current directory"
 
-  # Lines with script names start with 2 spaces which we need to cut off.
-  local scripts
-  mapfile -t scripts < <(npm run | grep '^  \S' | cut --characters=3-)
-
   local script
-  for script; do
-    if is_one_of "$script" "${scripts[@]}"; then
-      npm run --silent "$script"
-      return
-    fi
-  done
+  script=$(get_runnable_script "$@")
 
-  die "missing scripts: $(join_values ", " "$@")"
+  if [[ $script ]]; then
+    npm run --silent "$script"
+  else
+    die "no runnable scripts: $*"
+  fi
+}
+
+get_runnable_script() {
+  printf "%s\n" "$@" \
+    | grep --line-regexp --fixed-string --file=<(list_runnable_scripts)  \
+    | head --lines=1 \
+    || true
+}
+
+list_runnable_scripts() {
+  # Lines with script names start with 2 spaces which we need to cut off.
+  npm run | grep '^  \S' | cut --characters=3-
 }
 
 main "$@"
