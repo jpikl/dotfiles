@@ -3,7 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/utils.sh"
+source "$BASH_LIB_DIR/system.sh"
 
 readonly ERR_NO_VALUES=2
 
@@ -98,7 +98,9 @@ fzf_mode() {
 
   if [[ $stdin = true ]]; then
     export FZF_DEFAULT_COMMAND=cat # To force reading from stdin
-    [[ $null_in = true ]] && opts+=("--read0")
+    if [[ $null_in = true ]]; then
+      opts+=("--read0")
+    fi
   elif [[ ${#values[@]} -gt 0 ]]; then
     exec < <(printf "%s\0" "${values[@]}")
     opts+=("--read0")
@@ -135,7 +137,9 @@ basic_mode() {
   elif [[ ${#values[@]} -ge 1 ]]; then
     local choice
     while true; do
-      [[ $prompt ]] && echo "$prompt"
+      if [[ $prompt ]]; then
+        echo "$prompt"
+      fi
       select choice in "${values[@]}"; do
         if [[ $choice ]]; then
           results+=("$choice")
@@ -145,9 +149,22 @@ basic_mode() {
           break
         fi
       done || break
-      [[ $multi = false || ${#values[@]} -eq 0 ]] && break
+      if [[ $multi = false || ${#values[@]} -eq 0 ]]; then
+        break
+      fi
     done
   fi
 } >&2
+
+remove_value() {
+  local value=$1
+  shift
+  printf "%s\0" "$@" | grep --null \
+                            --null-data \
+                            --invert-match \
+                            --line-regexp \
+                            --fixed-strings \
+                            "$value"
+}
 
 main "$@"

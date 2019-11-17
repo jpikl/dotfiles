@@ -31,6 +31,7 @@ main() {
 list_files() {
   cd "$HOME"
   list_possible_files | grep --fixed-strings \
+                             --line-regexp \
                              --file=<(list_commited_files)
 }
 
