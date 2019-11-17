@@ -40,7 +40,7 @@ main() {
   [[ $# -eq 0 ]] && die_missing_arg
   [[ ${TTY:-} ]] || die_no_var TTY # Defined in .bashrc
 
-  if [[ $(readlink -f /dev/stdin) != "$TTY" ]]; then
+  if [[ ! -t 0 ]]; then
     "$@" < "$TTY"
   else
     "$@"
