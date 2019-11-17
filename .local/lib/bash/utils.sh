@@ -5,7 +5,7 @@ is_command() {
 }
 
 is_mingw() {
-   [[ $(uname) =~ ^MINGW ]]
+  [[ ${MSYSTEM:-} =~ ^MINGW(32|64)$ ]]
 }
 
 is_one_of() {
