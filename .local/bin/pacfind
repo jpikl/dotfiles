@@ -51,6 +51,17 @@ main() {
     die_help "nothing to do"
   fi
 
+  local term_output
+  local pacman_color
+
+  if [[ -t 1 ]]; then
+    term_output=true
+    pacman_color="--color=always"
+  else
+    term_output=false
+    pacman_color="--color=never"
+  fi
+
   if [[ $quiet == true ]]; then
     print_names | filter_names "${1:-}" | LC_ALL=C sort | LC_ALL=C uniq
   else
@@ -63,7 +74,8 @@ print_packages() {
   [[ $gone == true ]] && print_gone_packages
   [[ $repo == true ]] && print_repo_packages
   [[ $aur == true ]] && print_aur_packages
-  tput sgr0 # Reset changed color
+  [[ -t 1 ]] && tput sgr0 # Reset changed color
+  true
 }
 
 print_names() {
@@ -75,7 +87,7 @@ print_names() {
 }
 
 print_local_packages() {
-  pacman --query --color=always | prepend_prefix "local"
+  pacman --query "$pacman_color" | decorate_line "local"
 }
 
 print_local_names() {
@@ -83,7 +95,7 @@ print_local_names() {
 }
 
 print_gone_packages() {
-  print_gone_names | prepend_prefix "gone"
+  print_gone_names | decorate_line "gone"
 }
 
 print_gone_names() {
@@ -105,7 +117,7 @@ print_remote_names() {
 }
 
 print_repo_packages() {
-  pacman --sync --list --color=always
+  pacman --sync --list "$pacman_color"
 }
 
 print_repo_names() {
@@ -113,7 +125,7 @@ print_repo_names() {
 }
 
 print_aur_packages() {
-  print_aur_names | prepend_prefix "aur"
+  print_aur_names | decorate_line "aur"
 }
 
 print_aur_names() {
@@ -139,8 +151,12 @@ filter_names() {
   fi
 }
 
-prepend_prefix() {
-  sed --expression="s/^/$(tput bold)$(tput setaf 5)$1 $(tput sgr0)$(tput bold)/"
+decorate_line() {
+  if [[ $term_output == true ]]; then
+    sed "s/^/$(tput bold)$(tput setaf 5)$1 $(tput sgr0)$(tput bold)/"
+  else
+    sed "s/^/$1 /"
+  fi
 }
 
 main "$@"
