@@ -45,17 +45,17 @@ main() {
     icons[s]="  " # Stash
     icons[w]=" פּ"  # Work tree
     icons[i]=" "  # Index
-    icons[A]="  " # Added
-    icons[C]="  " # Copied
-    icons[D]="  " # Deleted
-    icons[M]="  " # Modified
-    icons[R]="  " # Renamed
-    icons[T]="  " # Retyped
-    icons[U]="  " # Unmerged
-    icons[X]=" ? " # Unknown
-    icons[B]="  " # Broken
-    icons[u]="  " # Untracked
-    icons[_]="   " # Padding
+    icons[t]="" # Change type
+    icons[A]="" # Added
+    icons[C]="" # Copied
+    icons[D]="" # Deleted
+    icons[M]="" # Modified
+    icons[R]="" # Renamed
+    icons[T]="" # Retyped
+    icons[U]="" # Unmerged
+    icons[X]="?" # Unknown
+    icons[B]="" # Broken
+    icons[u]="" # Untracked
   else
     icons[l]=""   # Branch
     icons[r]=""   # Remote
@@ -64,17 +64,17 @@ main() {
     icons[s]=""   # Stash
     icons[w]=" W" # Work tree
     icons[i]=" I" # Index
-    icons[A]=""   # Added
-    icons[C]=""   # Copied
-    icons[D]=""   # Deleted
-    icons[M]=""   # Modified
-    icons[R]=""   # Renamed
-    icons[T]=""   # Retyped
-    icons[U]=""   # Unmerged
-    icons[X]=""   # Unknown
-    icons[B]=""   # Broken
-    icons[u]=""   # Untracked
-    icons[_]=""   # Padding
+    icons[t]="T"   # Change type
+    icons[A]="A"   # Added
+    icons[C]="C"   # Copied
+    icons[D]="D"   # Deleted
+    icons[M]="M"   # Modified
+    icons[R]="R"   # Renamed
+    icons[T]="T"   # Retyped
+    icons[U]="U"   # Unmerged
+    icons[X]="X"   # Unknown
+    icons[B]="B"   # Broken
+    icons[u]=" "   # Untracked
   fi
 
   local current_branch
@@ -145,6 +145,7 @@ main() {
   done
 
   untracked_files_count=$(print_untracked_files_count)
+  #untracked_files_count=123
 
   if [[ $all == true
      || $is_index_change == true
@@ -153,14 +154,14 @@ main() {
 
     echo
     {
-      printf "CHANGE!_ ;!w;!i\n"
+      printf "CHANGE;!t;!w;!i\n"
 
       for change_type in "${change_types[@]}"; do
         wtree_count=${wtree_changes_count[$change_type]}
         index_count=${index_changes_count[$change_type]}
 
         if [[ $wtree_count -gt 0 || $index_count -gt 0 || $all == true ]]; then
-          printf "%s!%s:;%s;%d\n" "${change_names[$change_type]}" \
+          printf "%s;!%s;%d;%d\n" "${change_names[$change_type]}" \
                                   "$change_type" \
                                   "$wtree_count" \
                                   "$index_count"
@@ -168,30 +169,30 @@ main() {
       done
 
       if [[ $untracked_files_count -gt 0 || $all == true ]]; then
-        printf "Untracked!u:;%d;-\n" "$untracked_files_count"
+        printf "Untracked;!u;%d;\n" "$untracked_files_count"
       fi
-    } | format_table --table-right=1,2,3 \
+    } | format_table --table-right=1,3,4 \
       | replace_icon_placeholders
   fi
 
   if [[ $is_wtree_change == true ]]; then
     echo
-    echo "Work tree changes:"
+    echo "Changes in work tree:"
 
     for change_type in "${change_types[@]}"; do
       if [[ ${wtree_changes_count[$change_type]} -gt 0 ]]; then
-        print_changed_files "$change_type" | sort | prepend_icon "$change_type"
+        print_changed_files "$change_type" | sort | prepend_icon "$change_type" " $change_type "
       fi
     done
   fi
 
   if [[ $is_index_change == true ]]; then
     echo
-    echo "Staged changes:"
+    echo "Changes in index:"
 
     for change_type in "${change_types[@]}"; do
       if [[ ${index_changes_count[$change_type]} -gt 0 ]]; then
-        print_changed_files "$change_type" --staged | sort | prepend_icon "$change_type"
+        print_changed_files "$change_type" --staged | sort | prepend_icon "$change_type" " $change_type "
       fi
     done
   fi
@@ -199,7 +200,7 @@ main() {
   if [[ $untracked_files_count -gt 0 ]]; then
     echo
     echo "Untracked files:"
-    print_untracked_files | sort | prepend_icon "u"
+    print_untracked_files | sort | prepend_icon "u" " "
   fi
 }
 
@@ -256,7 +257,7 @@ replace_icon_placeholders() {
 }
 
 prepend_icon() {
-  sed "s/^/${icons[$1]:-"- "}/"
+  sed "s/^/ ${icons[$1]} /"
 }
 
 main "$@"
