@@ -17,6 +17,16 @@ export TTY
 command -v dircolors >/dev/null && eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"
 
+# Detect font icons support in terminal
+if [[ ! $TERM_FONT_ICONS ]]; then
+  if [[ $TERM == linux ]]; then
+    TERM_FONT_ICONS=false
+  else
+    TERM_FONT_ICONS=true
+  fi
+  export TERM_FONT_ICONS
+fi
+
 # Source libraries
 if [[ $BASH_LIB_DIR ]]; then
   source "$BASH_LIB_DIR/aliases.sh"

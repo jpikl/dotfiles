@@ -14,6 +14,9 @@ help() {
 		Options:
 		  -a  Print all information.
 		  -h  Print this help.
+
+		Environment variables:
+		  TERM_FONT_ICONS  When true, display font icons in the output.
 	EOT
 }
 
@@ -34,26 +37,7 @@ main() {
 
   local -A icons=()
 
-  if [[ $TERM == linux ]]; then
-    icons[l]=""   # Branch
-    icons[r]=""   # Remote
-    icons[a]=""   # Ahead
-    icons[b]=""   # Behind
-    icons[s]=""   # Stash
-    icons[w]=" W" # Work tree
-    icons[i]=" I" # Index
-    icons[A]=""   # Added
-    icons[C]=""   # Copied
-    icons[D]=""   # Deleted
-    icons[M]=""   # Modified
-    icons[R]=""   # Renamed
-    icons[T]=""   # Retyped
-    icons[U]=""   # Unmerged
-    icons[X]=""   # Unknown
-    icons[B]=""   # Broken
-    icons[u]=""   # Untracked
-    icons[_]=""   # Padding
-  else
+  if [[ ${TERM_FONT_ICONS:-} == true ]]; then
     icons[l]="  " # Branch
     icons[r]=" 歷"  # Remote
     icons[a]="  " # Ahead
@@ -72,6 +56,25 @@ main() {
     icons[B]="  " # Broken
     icons[u]="  " # Untracked
     icons[_]="   " # Padding
+  else
+    icons[l]=""   # Branch
+    icons[r]=""   # Remote
+    icons[a]=""   # Ahead
+    icons[b]=""   # Behind
+    icons[s]=""   # Stash
+    icons[w]=" W" # Work tree
+    icons[i]=" I" # Index
+    icons[A]=""   # Added
+    icons[C]=""   # Copied
+    icons[D]=""   # Deleted
+    icons[M]=""   # Modified
+    icons[R]=""   # Renamed
+    icons[T]=""   # Retyped
+    icons[U]=""   # Unmerged
+    icons[X]=""   # Unknown
+    icons[B]=""   # Broken
+    icons[u]=""   # Untracked
+    icons[_]=""   # Padding
   fi
 
   local current_branch
