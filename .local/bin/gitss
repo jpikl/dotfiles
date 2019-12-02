@@ -190,7 +190,7 @@ print_changed_files_count() {
 }
 
 print_untracked_files() {
-  git ls-files --other --exclude-standard
+  git ls-files --other --exclude-standard --full-name "$(git rev-parse --show-toplevel)"
 }
 
 print_untracked_files_count() {
