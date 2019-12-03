@@ -106,8 +106,7 @@ print_included_remote() {
 }
 
 print_current() {
-  # "git branch --show-current" requires git >=2.21
-  git rev-parse --abbrev-ref HEAD
+  git branch --show-current
 }
 
 print_local() {
