@@ -42,10 +42,10 @@ main() {
   local branches
   local current_branch
 
-  current_branch=$(gitlsb -c)
+  current_branch=$(git ls-branches -c)
 
   if [[ $all = true ]]; then
-    mapfile -t branches < <(gitlsb -b)
+    mapfile -t branches < <(git ls-branches -b)
   elif [[ $# -gt 0 ]]; then
     branches=("$@")
   else

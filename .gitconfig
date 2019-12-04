@@ -1,0 +1,23 @@
+[core]
+    editor = vim
+[merge]
+    tool = vimdiff
+[pull]
+    rebase = true
+[push]
+    default = simple
+[http]
+    postBuffer = 134217728 # 128 MiB
+[alias]
+    chmodx = add --chmod=+x --
+    diffc = diff --word-diff-regex=.
+    diffw = diff --word-diff
+    fap = fetch --all --prune
+    ff = fast-forward
+    gb = gone-branches
+    ladog = log --all --decorate --oneline --graph
+    last = log --max-count=1 --stat
+    lsb = ls-branches
+    ss = super-status
+[include]
+    path = ~/.gitconfig.local

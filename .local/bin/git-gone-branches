@@ -44,7 +44,7 @@ main() {
     else
       echo "$branch"
     fi
-  done < <(gitlsb -g)
+  done < <(git ls-branches -g)
 }
 
 main "$@"
