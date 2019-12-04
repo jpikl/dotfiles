@@ -45,12 +45,12 @@ homefiles -h
 The following files are not part of the `~/.dotfiles.git` repository and
 can be used for machine-specific or user-specific configuration.
 
-`~/.profile_local`
+`~/.profile.local`
 
 - Sourced at the start of `~/.profile`.
 - Can be used to override environment variables defined in `~/.profile`.
 
-`~/.bashrc_local`
+`~/.bashrc.local`
 
 - Sourced at the end of `~/.bashrc`.
 - Can be used to define custom aliases and functions.

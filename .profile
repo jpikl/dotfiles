@@ -1,8 +1,8 @@
 # shellcheck shell=bash
 
 # Local override not committed in git
-if [[ -f ~/.profile_local ]]; then
-  source ~/.profile_local
+if [[ -f ~/.profile.local ]]; then
+  source ~/.profile.local
 fi
 
 # Convert paths like 'C:\x\y\z' to '/c/x/y/z' for use with MSYS

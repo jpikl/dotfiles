@@ -36,6 +36,6 @@ else
 fi
 
 # Local override not committed in git
-if [[ -f ~/.bashrc_local ]]; then
-  source ~/.bashrc_local
+if [[ -f ~/.bashrc.local ]]; then
+  source ~/.bashrc.local
 fi
