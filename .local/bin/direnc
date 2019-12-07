@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Mount directory using encfs.
+
+		Usage:
+		  $(self) [options] [--] <action>
+
+		Options:
+		  -e <dir>  Path to encrypted directory.
+		  -d <dir>  Path to decrypted directory.
+		  -h        Print this help.
+
+		Action:
+		  status   Print directories and mount status.
+		  mount    Mount private directory. Directories are created
+		           and encryption is configured if they do not exist.
+		  unmount  Unmout private directory.
+
+		Environment variables:
+		  ENCRYPTED_DIR  Default path to encrypted directory.
+		  DECRYPTED_DIR  Default path to decrypted directory.
+	EOT
+}
+
+main() {
+  local enc_dir
+  local dec_dir
+  local opt
+
+  enc_dir=$(get_env_path ENCRYPTED_DIR)
+  dec_dir=$(get_env_path DECRYPTED_DIR)
+
+  while getopts ":e:d:h" opt; do
+    case "$opt" in
+      e) enc_dir=$(normalize_path "$OPTARG") ;;
+      d) dec_dir=$(normalize_path "$OPTARG") ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  case "$1" in
+    status) status ;;
+    mount) mount ;;
+    umount|unmount) unmount ;;
+    *) die_help "invalid action '$1'" ;;
+  esac
+}
+
+get_env_path() {
+  local path=${!1:-}
+  if [[ $path && $path != /* ]]; then
+    die "$1 variable must be an absolute path"
+  fi
+  echo "$path"
+}
+
+normalize_path() {
+  if [[ $1 && $1 != /* ]]; then
+    realpath "$1"
+  else
+    echo "$1"
+  fi
+}
+
+status() {
+  if [[ $enc_dir ]]; then
+    echo "Encrypted directory"
+    echo "  path:   $enc_dir"
+    echo -n "  status: "
+
+    if [ -d "$enc_dir" ]; then
+      echo "exists"
+    elif [ -e "$enc_dir" ]; then
+      echo "not a directory"
+    else
+      echo "not exists"
+    fi
+  else
+    echo "No encrypted directory specified"
+  fi
+
+  if [[ $enc_dir || $dec_dir ]]; then
+    echo
+  fi
+
+  if [[ $dec_dir ]]; then
+    echo "Decrypted directory"
+    echo "  path:  $dec_dir"
+    echo -n "  status: "
+
+    if [ -d "$dec_dir" ]; then
+      if is_mounted; then
+        echo "mounted"
+      else
+        echo "unmounted"
+      fi
+    elif [ -e "$dec_dir" ]; then
+      echo "not a directory"
+    else
+      echo "not exists"
+    fi
+  else
+    echo "No decrypted directory specified"
+  fi
+}
+
+mount() {
+  [[ $enc_dir ]] || die_help "no encrypted directory specified"
+  [[ $dec_dir ]] || die_help "no decrypted directory specified"
+  is_mounted && die "'$dec_dir' is already mounted"
+
+  mkdir --parent "$enc_dir" "$dec_dir"
+  encfs "$enc_dir" "$dec_dir"
+  echo "Mounted '$enc_dir' as '$dec_dir'"
+}
+
+unmount() {
+  [[ $dec_dir ]] || die_help "no decrypted directory specified"
+  is_mounted || die "'$dec_dir' is not mounted"
+
+  fusermount -u --unmount "$dec_dir"
+  echo "Unmounted '$dec_dir'"
+}
+
+is_mounted() {
+  mountpoint --quiet "$dec_dir"
+}
+
+main "$@"
