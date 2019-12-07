@@ -14,7 +14,7 @@ help() {
 		Options:
 		  -t  Preserve only modification times.
 		  -e  Optimize for exFAT filesystem.
-		  -f  Skip dry run. Perform sync without confirmation.
+		  -f  No dry run and skip confirmation.
 		  -h  Print this help.
 
 		Source:
