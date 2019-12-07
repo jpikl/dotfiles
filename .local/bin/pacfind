@@ -35,13 +35,11 @@ main() {
   local repo=false
   local aur=false
   local quiet=false
-  local colorized
+  local colorized=false
   local opt
 
   if [[ -t 1 ]]; then
     colorized=${TERM_COLORS:-true}
-  else
-    colorized=false
   fi
 
   while getopts ":lgraqcCh" opt; do

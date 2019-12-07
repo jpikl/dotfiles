@@ -17,14 +17,14 @@ export TTY
 command -v dircolors >/dev/null && eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"
 
-# Detect font icons support in terminal
-if [[ ! $TERM_FONT_ICONS ]]; then
+# Detect icons support in terminal
+if [[ ! $TERM_ICONS ]]; then
   if [[ $TERM == linux ]]; then
-    TERM_FONT_ICONS=false
+    TERM_ICONS=false
   else
-    TERM_FONT_ICONS=true
+    TERM_ICONS=true
   fi
-  export TERM_FONT_ICONS
+  export TERM_ICONS
 fi
 
 # Source libraries

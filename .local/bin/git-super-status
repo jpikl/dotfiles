@@ -14,30 +14,33 @@ help() {
 		Options:
 		  -a  Include all information.
 		  -c  Force colors in output (-C for no colors).
+		  -i  Force icons in output (-I for no icons).
 		  -h  Print this help.
 
 		Environment variables:
 		  TERM_COLORS  Enables colors in terminal output (default: true).
-		  TERM_FONT_ICONS  When true, display font icons in terminal.
+		  TERM_ICONS   Enables icons in terminal output (default: false).
 	EOT
 }
 
 main() {
   local all=false
-  local colorized
+  local colorized=false
+  local iconized=false
   local opt
 
   if [[ -t 1 ]]; then
     colorized=${TERM_COLORS:-true}
-  else
-    colorized=false
+    iconized=${TERM_ICONS:-true}
   fi
 
-  while getopts ":acCh" opt; do
+  while getopts ":acChiI" opt; do
     case "$opt" in
       a) all=true ;;
       c) colorized=true ;;
       C) colorized=false ;;
+      i) iconized=true ;;
+      I) iconized=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -248,7 +251,7 @@ replace_formatters() {
     formats[u]= # Untracked
   fi
 
-  if [[ -t 1 &&  ${TERM_FONT_ICONS:-} == true ]]; then
+  if [[ $iconized == true ]]; then
     icons[l]="  " # Branch
     icons[r]=" 歷"  # Remote
     icons[a]="  " # Ahead
