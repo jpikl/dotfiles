@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/path.sh"
 
 help() {
   cat <<-EOT
@@ -33,13 +34,13 @@ main() {
   local dec_dir
   local opt
 
-  enc_dir=$(get_env_path ENCRYPTED_DIR)
-  dec_dir=$(get_env_path DECRYPTED_DIR)
+  enc_dir=$(path_from_env ENCRYPTED_DIR)
+  dec_dir=$(path_from_env DECRYPTED_DIR)
 
   while getopts ":e:d:h" opt; do
     case "$opt" in
-      e) enc_dir=$(normalize_path "$OPTARG") ;;
-      d) dec_dir=$(normalize_path "$OPTARG") ;;
+      e) enc_dir=$(path_make_absolute "$OPTARG") ;;
+      d) dec_dir=$(path_make_absolute "$OPTARG") ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -54,22 +55,6 @@ main() {
     umount|unmount) unmount ;;
     *) die_help "invalid action '$1'" ;;
   esac
-}
-
-get_env_path() {
-  local path=${!1:-}
-  if [[ $path && $path != /* ]]; then
-    die "$1 variable must be an absolute path"
-  fi
-  echo "$path"
-}
-
-normalize_path() {
-  if [[ $1 && $1 != /* ]]; then
-    realpath "$1"
-  else
-    echo "$1"
-  fi
 }
 
 status() {

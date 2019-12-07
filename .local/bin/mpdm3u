@@ -3,35 +3,50 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/path.sh"
 
 help() {
   cat <<-EOT
 		Generate M3U playlists from MPD database.
-		Playlists structure is "{PLAYLIST_DIR}/{YEAR}/{ARTIST} - {ALBUM}.m3u"
+
+		Playlist are generated using the following pattern:
+		  "{YEAR}/{ARTIST} - {ALBUM}.m3u"
 
 		Usage:
 		  $(self) [options] [year]...
 
 		Options:
+		  -m  Path to MPD music directory.
+		  -o  Path to output directory.
+		  -a  Generate playlist for every year found in MPD database.
 		  -v  Verbose mode with additional output.
 		  -h  Print this help.
 
 		Year:
 		  Zero or more years for which generate playlists.
-		  If omitted, use every year in MPD database.
+		  Ignored whem the -a option is passed.
 
 		Environment variables:
-		  MUSIC_DIR      Directory where MPD expects to be music.
-		  PLAYLISTS_DIR  Directory where to generate playlists.
+		  MUSIC_DIR      Default path to MPD music directory.
+		  PLAYLISTS_DIR  Default path to output directory.
 	EOT
 }
 
 main() {
+  local music_dir
+  local output_dir
+  local all=false
   local verbose=false
   local opt
 
-  while getopts ":vh" opt; do
+  music_dir=$(path_from_env MUSIC_DIR)
+  output_dir=$(path_from_env PLAYLISTS_DIR)
+
+  while getopts ":m:o:avh" opt; do
     case "$opt" in
+      m) music_dir=$(path_make_absolute "$OPTARG") ;;
+      o) output_dir=$(path_make_absolute "$OPTARG") ;;
+      a) all=true ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -40,23 +55,25 @@ main() {
 
   shift $((OPTIND - 1))
 
-  [[ ${PLAYLISTS_DIR:-} ]] || die_no_var PLAYLISTS_DIR
-  [[ ${MUSIC_DIR:-} ]] || die_no_var MUSIC_DIR
+  [[ $output_dir ]] || die "no music directory specified"
+  [[ $music_dir ]] || die "no output directory specified"
 
-  [[ -d $PLAYLISTS_DIR ]] || die "'$PLAYLISTS_DIR' is not a directory"
-  [[ -d $MUSIC_DIR ]] || die "'$MUSIC_DIR' is not a directory"
+  [[ -d $output_dir ]] || die "'$output_dir' is not a directory"
+  [[ -d $music_dir ]] || die "'$music_dir' is not a directory"
 
   [[ $verbose == true ]] && echo "Updating MPD database"
   mpc update --wait --quiet # Check mpd is running + update database
 
-  local years=("$@")
-
-  if [[ ${#years[@]} -eq 0 ]]; then
+  local years
+  if [[ $all == true ]]; then
     mapfile -t years < <(mpc list Date)
-
     if [[ ${#years[@]} -eq 1 && ! ${years[0]} ]]; then
-      die "no years fround in MPD database"
+      die "no year found in MPD database"
     fi
+  elif [[ $# -gt 0 ]]; then
+    years=("$@")
+  else
+    die_missing_arg
   fi
 
   local year
@@ -69,7 +86,7 @@ gen_playlists_year() {
   local year=$1
   local artist album
 
-  echo "Generating $year playlists"
+  echo "Generating playlists for $year"
 
   while IFS='␝' read -r artist album; do
     gen_playlist_album "$year" "$artist" "$album"
@@ -84,14 +101,14 @@ gen_playlist_album() {
   artist=$(sanitize_name "$artist")
   album=$(sanitize_name "$album")
 
-  local playlist_dir=$PLAYLISTS_DIR/$year
+  local playlist_dir=$output_dir/$year
   mkdir --parents "$playlist_dir"
 
   local playlist_file="$playlist_dir/$artist - $album.m3u"
   [[ $verbose == true ]] && echo "  $playlist_file"
 
   local prefix
-  prefix=$(realpath --relative-to="$playlist_dir" "$MUSIC_DIR")/
+  prefix=$(realpath --relative-to="$playlist_dir" "$music_dir")/
   prefix=${prefix//\//\\\\} # '/' to '\'
 
   {
