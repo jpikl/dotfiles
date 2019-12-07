@@ -17,11 +17,15 @@ help() {
 		  -r  Include remote pacakges from repositories.
 		  -a  Include remote packages from AUR.
 		  -q  Print package names only.
+		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 
 		Name:
 		  Package name to find.
 		  Omit to list all packages.
+
+		Environment variables:s
+		  TERM_COLORS  Enables colors in terminal output (default: true).
 	EOT
 }
 
@@ -31,15 +35,24 @@ main() {
   local repo=false
   local aur=false
   local quiet=false
+  local colorized
   local opt
 
-  while getopts ":lgraqh" opt; do
+  if [[ -t 1 ]]; then
+    colorized=${TERM_COLORS:-true}
+  else
+    colorized=false
+  fi
+
+  while getopts ":lgraqcCh" opt; do
     case "$opt" in
       l) local=true ;;
       g) gone=true ;;
       r) repo=true ;;
       a) aur=true ;;
       q) quiet=true ;;
+      c) colorized=true ;;
+      C) colorized=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -51,14 +64,11 @@ main() {
     die_help "nothing to do"
   fi
 
-  local term_output
   local pacman_color
 
-  if [[ -t 1 ]]; then
-    term_output=true
+  if [[ $colorized == true ]]; then
     pacman_color="--color=always"
   else
-    term_output=false
     pacman_color="--color=never"
   fi
 
@@ -152,7 +162,7 @@ filter_names() {
 }
 
 decorate_line() {
-  if [[ $term_output == true ]]; then
+  if [[ $colorized == true ]]; then
     sed "s/^/$(tput bold)$(tput setaf 5)$1 $(tput sgr0)$(tput bold)/"
   else
     sed "s/^/$1 /"

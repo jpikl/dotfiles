@@ -12,21 +12,32 @@ help() {
 		  $(self) [options]
 
 		Options:
-		  -a  Print all information.
+		  -a  Include all information.
+		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 
 		Environment variables:
+		  TERM_COLORS  Enables colors in terminal output (default: true).
 		  TERM_FONT_ICONS  When true, display font icons in terminal.
 	EOT
 }
 
 main() {
-  local opt
   local all=false
+  local colorized
+  local opt
 
-  while getopts ":ah" opt; do
+  if [[ -t 1 ]]; then
+    colorized=${TERM_COLORS:-true}
+  else
+    colorized=false
+  fi
+
+  while getopts ":acCh" opt; do
     case "$opt" in
       a) all=true ;;
+      c) colorized=true ;;
+      C) colorized=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -35,7 +46,7 @@ main() {
   # Check we are in a git repository.
   git status --porcelain >/dev/null
 
-  generate_output | colorize_output
+  generate_output | replace_formatters
 }
 
 generate_output() {
@@ -205,11 +216,11 @@ format_path() {
   sed --regexp-extended "s/^(.*)$/#$1 @$1 \1#r/"
 }
 
-colorize_output() {
+replace_formatters() {
   local -A formats=()
   local -A icons=()
 
-  if [[ -t 1 ]]; then
+  if [[ $colorized == true ]]; then
     formats[r]=$(tput sgr0)      # Reset
     formats[b]=$(tput bold)      # Bold
     formats[A]="$(tput setaf 2)" # Added
