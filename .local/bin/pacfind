@@ -24,7 +24,7 @@ help() {
 		  Package name to find.
 		  Omit to list all packages.
 
-		Environment variables:s
+		Environment variables:
 		  TERM_COLORS  Enables colors in terminal output (default: true).
 	EOT
 }
