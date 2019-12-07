@@ -69,6 +69,8 @@ gen_playlists_year() {
   local year=$1
   local artist album
 
+  echo "Generating $year playlists"
+
   while IFS='␝' read -r artist album; do
     gen_playlist_album "$year" "$artist" "$album"
   done < <(mpc --format='%artist%␝%album%' search Date "$year" | uniq)
@@ -86,7 +88,7 @@ gen_playlist_album() {
   mkdir --parents "$playlist_dir"
 
   local playlist_file="$playlist_dir/$artist - $album.m3u"
-  [[ $verbose == true ]] && echo "Generating $playlist_file"
+  [[ $verbose == true ]] && echo "  $playlist_file"
 
   local prefix
   prefix=$(realpath --relative-to="$playlist_dir" "$MUSIC_DIR")/
