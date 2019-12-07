@@ -30,13 +30,15 @@ main() {
   done
 
   shift $((OPTIND - 1))
-
   [[ $# -eq 0 ]] && die_missing_arg
-  [[ ${LOCAL_BIN_DIR:-} ]] || die_no_var LOCAL_BIN_DIR
 
-  cd "$LOCAL_BIN_DIR"
-  cp "$(self)" "$1"
-  chmod +x "$1"
+  local target
+  target=$(dirname "$0")/$1
+  [[ -e $target ]] && die "'$target' already exists"
+
+  cp "$0" "$target"
+  chmod +x "$target"
+  echo "Created '$target'"
 }
 
 main "$@"
