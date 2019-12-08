@@ -106,11 +106,32 @@ print_included_remote() {
 }
 
 print_current() {
-  git branch --show-current
+  local branch
+  branch=$(git branch --show-current)
+
+  if [[ $branch ]]; then
+    echo "$branch"
+    return
+  fi
+
+  local git_dir
+  git_dir=$(git rev-parse --git-dir)
+
+  for sub_dir in rebase-apply rebase-merge; do
+    local head_name_file=$git_dir/$sub_dir/head-name
+    if [[ -f $head_name_file ]]; then
+      git rev-parse --abbrev-ref "$(<"$head_name_file")"
+      return
+    fi
+  done
 }
 
 print_local() {
-  git branch $FORMAT | grep --invert-match 'HEAD detached' || true
+  git branch $FORMAT | grep --invert-match \
+                            --fixed-string \
+                            --regexp='HEAD detached' \
+                            --regexp='no branch, rebasing' \
+                     || true
 }
 
 print_remote() {

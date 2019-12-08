@@ -176,7 +176,7 @@ generate_output() {
 }
 
 print_current_branch() {
-  git rev-parse --abbrev-ref HEAD
+  git ls-branches -c
 }
 
 print_remote_branch() {
