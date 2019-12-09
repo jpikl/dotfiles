@@ -54,24 +54,29 @@ main() {
 
 generate_output() {
   local current_branch
-  local remote_branch
+  local remote_branch=
   local wtree_state
   local commits_ahead=
   local commits_behind=
   local stash_size
 
   current_branch=$(print_current_branch)
-  remote_branch=$(print_remote_branch "$current_branch")
   wtree_state=$(git state)
   stash_size=$(print_stash_size)
 
-  if [[ $remote_branch ]]; then
-    commits_ahead=$(print_commits_ahead "$remote_branch")
-    commits_behind=$(print_commits_behind "$remote_branch")
+  if [[ $current_branch ]]; then
+    remote_branch=$(print_remote_branch "$current_branch")
+
+    if [[ $remote_branch ]]; then
+      commits_ahead=$(print_commits_ahead "$remote_branch")
+      commits_behind=$(print_commits_behind "$remote_branch")
+    fi
   fi
 
   {
-    printf "#bBranch#r@l:;%s\n" "$current_branch"
+    if [[ $current_branch || $all == true ]]; then
+      printf "#bBranch#r@l:;%s\n" "${current_branch:--}"
+    fi
 
     if [[ $remote_branch || $all == true ]]; then
       printf "#bRemote#r@r:;%s\n" "${remote_branch:--}"
