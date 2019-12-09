@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Print state of git working tree.
+
+		The following states are being recognized.
+		The "normal" state does not have any output printed.
+
+		  Name | Description
+		  -----+-------------------------
+		     M | Merging
+		     R | Rebasing
+		    RI | Rebasing interactively
+		    CP | Cherry picking
+		    DH | Detached HEAD
+
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -s  Print short name instead of description.
+		  -h  Print this help.
+
+		Name:
+		  Name of a new script.
+	EOT
+}
+
+main() {
+  local short=false
+  local opt
+
+  while getopts ":sh" opt; do
+    case "$opt" in
+      s) short=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  local git_dir
+  git_dir=$(git rev-parse --git-dir)
+
+  if [[ -f $git_dir/MERGE_HEAD ]]; then
+    if [[ $short == true ]]; then
+      echo "M"
+    else
+      echo "Merging"
+    fi
+  elif [[ -f $git_dir/REBASE_HEAD ]]; then
+    if [[ $short == true ]]; then
+      echo "R"
+    else
+      echo "Rebasing"
+    fi
+  elif [[ -d $git_dir/rebase-merge ]]; then
+    if [[ $short == true ]]; then
+      echo "RI"
+    else
+      echo "Rebasing interactively"
+    fi
+  elif [[ -f $git_dir/CHERRY_PICK_HEAD ]]; then
+    if [[ $short == true ]]; then
+      echo "CP"
+    else
+      echo "Cherry picking"
+    fi
+  elif [[ $(git rev-parse --abbrev-ref HEAD) == HEAD ]]; then
+    if [[ $short == true ]]; then
+      echo "DH"
+    else
+      echo "Detached head"
+    fi
+  fi
+}
+
+main "$@"
