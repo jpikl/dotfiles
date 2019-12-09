@@ -55,30 +55,42 @@ main() {
 generate_output() {
   local current_branch
   local remote_branch
-  local commits_ahead
-  local commits_behind
+  local wtree_state
+  local commits_ahead=
+  local commits_behind=
   local stash_size
 
   current_branch=$(print_current_branch)
-  remote_branch=$(print_remote_branch)
-  commits_ahead=$(print_commits_ahead)
-  commits_behind=$(print_commits_behind)
+  remote_branch=$(print_remote_branch "$current_branch")
+  wtree_state=$(git state)
   stash_size=$(print_stash_size)
+
+  if [[ $remote_branch ]]; then
+    commits_ahead=$(print_commits_ahead "$remote_branch")
+    commits_behind=$(print_commits_behind "$remote_branch")
+  fi
 
   {
     printf "#bBranch#r@l:;%s\n" "$current_branch"
-    printf "#bRemote#r@r:;%s\n" "$remote_branch"
+
+    if [[ $remote_branch || $all == true ]]; then
+      printf "#bRemote#r@r:;%s\n" "${remote_branch:--}"
+    fi
+
+    if [[ $wtree_state || $all == true ]]; then
+      printf "#bState#r@e:;%s\n" "${wtree_state:--}"
+    fi
 
     if [[ $commits_ahead -gt 0 || $all == true ]]; then
-      printf "#bAhead#r@a:;%d\n" "$commits_ahead"
+      printf "#bAhead#r@a:;%s\n" "${commits_ahead:--}"
     fi
 
     if [[ $commits_behind -gt 0 || $all == true ]]; then
-      printf "#bBehind#r@b:;%d\n" "$commits_behind"
+      printf "#bBehind#r@b:;%s\n" "${commits_behind:--}"
     fi
 
     if [[ $stash_size -gt 0 || $all == true ]]; then
-      printf "#bStash#r@s:;%d\n" "$stash_size"
+      printf "#bStash#r@s:;%s\n" "$stash_size"
     fi
   } | format_table --table-right=1
 
@@ -180,15 +192,16 @@ print_current_branch() {
 }
 
 print_remote_branch() {
-  git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}'
+  # We cannot use @{upstream} notation since it does not work with detached HEAD
+  git for-each-ref --format='%(upstream:short)' "refs/heads/$1"
 }
 
 print_commits_ahead() {
-  git rev-list --count --left-only 'HEAD...@{upstream}'
+  git rev-list --count --left-only "HEAD...$1"
 }
 
 print_commits_behind() {
-  git rev-list --count --right-only 'HEAD...@{upstream}'
+  git rev-list --count --right-only "HEAD...$1"
 }
 
 print_stash_size() {
@@ -256,6 +269,7 @@ replace_formatters() {
     icons[r]=" 歷"  # Remote
     icons[a]="  " # Ahead
     icons[b]="  " # Behind
+    icons[e]="  " # State
     icons[s]="  " # Stash
     icons[w]=" פּ"  # Work tree
     icons[i]=" "  # Index
@@ -275,6 +289,7 @@ replace_formatters() {
     icons[r]=     # Remote
     icons[a]=     # Ahead
     icons[b]=     # Behind
+    icons[e]=     # State
     icons[s]=     # Stash
     icons[w]=" W" # Work tree
     icons[i]=" I" # Index
