@@ -15,6 +15,10 @@ help() {
 		  -a  Include all information.
 		  -c  Force colors in output (-C for no colors).
 		  -i  Force icons in output (-I for no icons).
+		  -F  Exclude all file lists (same as -WSU).
+		  -W  Exclude work tree file list.
+		  -S  Exclude index file list.
+		  -U  Exclude untracked file list.
 		  -h  Print this help.
 
 		Environment variables:
@@ -27,6 +31,9 @@ main() {
   local all=false
   local colorized=false
   local iconized=false
+  local wtree_files_on=true
+  local index_files_on=true
+  local untracked_files_on=true
   local opt
 
   if [[ -t 1 ]]; then
@@ -34,13 +41,19 @@ main() {
     iconized=${TERM_ICONS:-true}
   fi
 
-  while getopts ":acChiI" opt; do
+  while getopts ":acChiIFWSU" opt; do
     case "$opt" in
       a) all=true ;;
       c) colorized=true ;;
       C) colorized=false ;;
       i) iconized=true ;;
       I) iconized=false ;;
+      F) wtree_files_on=false
+         index_files_on=false
+         untracked_files_on=false ;;
+      W) wtree_files_on=false ;;
+      S) index_files_on=false ;;
+      U) untracked_files_on=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -172,7 +185,7 @@ generate_output() {
     } | format_table --table-right=1,3,4
   fi
 
-  if [[ $is_wtree_change == true ]]; then
+  if [[ $is_wtree_change == true && $wtree_files_on == true ]]; then
     printf "\n#bChanges in work tree#r:\n"
 
     for change_type in "${change_types[@]}"; do
@@ -182,7 +195,7 @@ generate_output() {
     done
   fi
 
-  if [[ $is_index_change == true ]]; then
+  if [[ $is_index_change == true && $index_files_on == true ]]; then
     printf "\n#bChanges in index#r:\n"
 
     for change_type in "${change_types[@]}"; do
@@ -192,7 +205,7 @@ generate_output() {
     done
   fi
 
-  if [[ $untracked_files_count -gt 0 ]]; then
+  if [[ $untracked_files_count -gt 0 && $untracked_files_on == true ]]; then
     printf "\n#bUntracked files#r:\n"
     print_untracked_files | sort | format_path "u"
   fi
