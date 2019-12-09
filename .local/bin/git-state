@@ -13,6 +13,7 @@ help() {
 
 		  Name | Description
 		  -----+-------------------------
+		     E | No commits
 		     M | Merging
 		     R | Rebasing
 		    RI | Rebasing interactively
@@ -46,7 +47,13 @@ main() {
   local git_dir
   git_dir=$(git rev-parse --git-dir)
 
-  if [[ -f $git_dir/MERGE_HEAD ]]; then
+  if ! git rev-parse HEAD &> /dev/null; then
+    if [[ $short == true ]]; then
+      echo "E"
+    else
+      echo "No commits"
+    fi
+  elif [[ -f $git_dir/MERGE_HEAD ]]; then
     if [[ $short == true ]]; then
       echo "M"
     else

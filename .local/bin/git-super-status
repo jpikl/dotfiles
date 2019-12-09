@@ -53,6 +53,7 @@ main() {
 }
 
 generate_output() {
+  local current_revision
   local current_branch
   local remote_branch=
   local wtree_state
@@ -60,6 +61,7 @@ generate_output() {
   local commits_behind=
   local stash_size
 
+  current_revision=$(print_current_revision)
   current_branch=$(print_current_branch)
   wtree_state=$(git state)
   stash_size=$(print_stash_size)
@@ -74,6 +76,10 @@ generate_output() {
   fi
 
   {
+    if [[ $current_branch || $all == true ]]; then
+      printf "#bRevision#r@v:;%s\n" "${current_revision:--}"
+    fi
+
     if [[ $current_branch || $all == true ]]; then
       printf "#bBranch#r@l:;%s\n" "${current_branch:--}"
     fi
@@ -192,6 +198,11 @@ generate_output() {
   fi
 }
 
+print_current_revision() {
+  # Fails when we are in a repository with no commits
+  git rev-parse --verify HEAD 2>/dev/null || true
+}
+
 print_current_branch() {
   git ls-branches -c
 }
@@ -270,6 +281,7 @@ replace_formatters() {
   fi
 
   if [[ $iconized == true ]]; then
+    icons[v]="  " # Revision
     icons[l]="  " # Branch
     icons[r]=" 歷"  # Remote
     icons[a]="  " # Ahead
@@ -290,6 +302,7 @@ replace_formatters() {
     icons[B]="" # Broken
     icons[u]="" # Untracked
   else
+    icons[v]=     # Revision
     icons[l]=     # Branch
     icons[r]=     # Remote
     icons[a]=     # Ahead
