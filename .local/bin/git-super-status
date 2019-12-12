@@ -90,31 +90,31 @@ generate_output() {
 
   {
     if [[ $current_branch || $all == true ]]; then
-      printf "#bRevision#r@v:;%s\n" "${current_revision:--}"
+      printf "#bRevision#r@v:|%s\n" "${current_revision:--}"
     fi
 
     if [[ $current_branch || $all == true ]]; then
-      printf "#bBranch#r@l:;%s\n" "${current_branch:--}"
+      printf "#bBranch#r@l:|%s\n" "${current_branch:--}"
     fi
 
     if [[ $remote_branch || $all == true ]]; then
-      printf "#bRemote#r@r:;%s\n" "${remote_branch:--}"
+      printf "#bRemote#r@r:|%s\n" "${remote_branch:--}"
     fi
 
     if [[ $wtree_state || $all == true ]]; then
-      printf "#bState#r@e:;%s\n" "${wtree_state:--}"
+      printf "#bState#r@e:|%s\n" "${wtree_state:--}"
     fi
 
     if [[ $commits_ahead -gt 0 || $all == true ]]; then
-      printf "#bAhead#r@a:;%s\n" "${commits_ahead:--}"
+      printf "#bAhead#r@a:|%s\n" "${commits_ahead:--}"
     fi
 
     if [[ $commits_behind -gt 0 || $all == true ]]; then
-      printf "#bBehind#r@b:;%s\n" "${commits_behind:--}"
+      printf "#bBehind#r@b:|%s\n" "${commits_behind:--}"
     fi
 
     if [[ $stash_size -gt 0 || $all == true ]]; then
-      printf "#bStash#r@s:;%s\n" "$stash_size"
+      printf "#bStash#r@s:|%s\n" "$stash_size"
     fi
   } | format_table --table-right=1
 
@@ -164,14 +164,14 @@ generate_output() {
 
     echo
     {
-      printf "#bCHANGE;@t#r;@w;@i\n"
+      printf "#bCHANGE|@t#r|@w|@i\n"
 
       for change_type in "${change_types[@]}"; do
         wtree_count=${wtree_changes_count[$change_type]}
         index_count=${index_changes_count[$change_type]}
 
         if [[ $wtree_count -gt 0 || $index_count -gt 0 || $all == true ]]; then
-          printf "#%s%s;@%s#r;%d;%d\n" "$change_type" \
+          printf "#%s%s|@%s#r|%d|%d\n" "$change_type" \
                                        "${change_names[$change_type]}" \
                                        "$change_type" \
                                        "$wtree_count" \
@@ -180,7 +180,7 @@ generate_output() {
       done
 
       if [[ $untracked_files_count -gt 0 || $all == true ]]; then
-        printf "#uUntracked;@u#r;%d;\n" "$untracked_files_count"
+        printf "#uUntracked|@u#r|%d|\n" "$untracked_files_count"
       fi
     } | format_table --table-right=1,3,4
   fi
@@ -190,7 +190,7 @@ generate_output() {
 
     for change_type in "${change_types[@]}"; do
       if [[ ${wtree_changes_count[$change_type]} -gt 0 ]]; then
-        print_changed_files "$change_type" | sort | format_path "$change_type"
+        print_changed_files "$change_type" | sort | format_paths "$change_type"
       fi
     done
   fi
@@ -200,14 +200,14 @@ generate_output() {
 
     for change_type in "${change_types[@]}"; do
       if [[ ${index_changes_count[$change_type]} -gt 0 ]]; then
-        print_changed_files "$change_type" --staged | sort | format_path "$change_type"
+        print_changed_files "$change_type" --staged | sort | format_paths "$change_type"
       fi
     done
   fi
 
   if [[ $untracked_files_count -gt 0 && $untracked_files_on == true ]]; then
     printf "\n#bUntracked files#r:\n"
-    print_untracked_files | sort | format_path "u"
+    print_untracked_files | sort | format_paths "u"
   fi
 }
 
@@ -238,27 +238,61 @@ print_stash_size() {
 }
 
 print_changed_files() {
-  git diff --name-only --diff-filter "$@"
+  if [[ $1 == R || $1 == C ]]; then
+    print_changed_files_raw "$@" --name-status
+  else
+    print_changed_files_raw "$@" --name-only
+  fi
 }
 
 print_changed_files_count() {
-  print_changed_files "$@" | wc --lines
+  print_changed_files_raw "$@" --name-only | count_nulls
+}
+
+print_changed_files_raw() {
+  git diff -z --diff-filter "$@"
 }
 
 print_untracked_files() {
-  git ls-files --other --exclude-standard --full-name "$(git rev-parse --show-toplevel)"
+  git ls-files -z --other --exclude-standard --full-name "$(git rev-parse --show-toplevel)"
 }
 
 print_untracked_files_count() {
-  print_untracked_files | wc --lines
+  print_untracked_files | count_nulls
+}
+
+count_nulls() {
+  tr --complement --delete '\0' | wc --bytes
 }
 
 format_table() {
-  column --table --separator=";" --output-separator=" " "$@"
+  column --table --separator="|" --output-separator=" " "$@"
 }
 
-format_path() {
-  sed --regexp-extended "s/^(.*)$/#$1 @$1 \1#r/"
+format_paths() {
+  if [[ $1 == R || $1 == C ]]; then
+    local change src_path dst_path
+
+    while IFS= read -r -d '' change \
+       && IFS= read -r -d '' src_path \
+       && IFS= read -r -d '' dst_path; do
+
+      change=${change:1}
+      if [[ $change == 0* ]]; then
+        change=${change:1}
+        if [[ $change == 0* ]]; then
+          change=${change:1}
+        fi
+      fi
+
+      printf "#%s @%s %s#r|@m|#%s%s#r|#u%s%%#r\n" "$1" "$1" "$src_path" "$1" "$dst_path" "$change"
+    done | format_table --table-right=4
+  else
+    local path
+    while IFS= read -r -d '' path; do
+      printf "#%s @%s %s#r\n" "$1" "$1" "$path"
+    done
+  fi
 }
 
 replace_formatters() {
@@ -314,6 +348,7 @@ replace_formatters() {
     icons[X]="?" # Unknown
     icons[B]="" # Broken
     icons[u]="" # Untracked
+    icons[m]="➔" # Move
   else
     icons[v]=     # Revision
     icons[l]=     # Branch
@@ -335,17 +370,18 @@ replace_formatters() {
     icons[X]="X"  # Unknown
     icons[B]="B"  # Broken
     icons[u]=" "  # Untracked
+    icons[m]="->" # Move
   fi
 
   local sed_opts=()
   local name
 
   for name in "${!formats[@]}"; do
-    sed_opts+=("--expression" "s/#$name/${formats[$name]}/")
+    sed_opts+=("--expression" "s/#$name/${formats[$name]}/g")
   done
 
   for name in "${!icons[@]}"; do
-    sed_opts+=("--expression" "s/@$name/${icons[$name]}/")
+    sed_opts+=("--expression" "s/@$name/${icons[$name]}/g")
   done
 
   sed "${sed_opts[@]}"
