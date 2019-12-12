@@ -29,25 +29,25 @@ help() {
 
 main() {
   local all=false
-  local colorized=false
-  local iconized=false
+  local colors_on=false
+  local icons_on=false
   local wtree_files_on=true
   local index_files_on=true
   local untracked_files_on=true
   local opt
 
   if [[ -t 1 ]]; then
-    colorized=${TERM_COLORS:-true}
-    iconized=${TERM_ICONS:-true}
+    colors_on=${TERM_COLORS:-true}
+    icons_on=${TERM_ICONS:-true}
   fi
 
   while getopts ":acChiIFWSU" opt; do
     case "$opt" in
       a) all=true ;;
-      c) colorized=true ;;
-      C) colorized=false ;;
-      i) iconized=true ;;
-      I) iconized=false ;;
+      c) colors_on=true ;;
+      C) colors_on=false ;;
+      i) icons_on=true ;;
+      I) icons_on=false ;;
       F) wtree_files_on=false
          index_files_on=false
          untracked_files_on=false ;;
@@ -299,7 +299,7 @@ replace_formatters() {
   local -A formats=()
   local -A icons=()
 
-  if [[ $colorized == true ]]; then
+  if [[ $colors_on == true ]]; then
     formats[r]=$(tput sgr0)      # Reset
     formats[b]=$(tput bold)      # Bold
     formats[A]="$(tput setaf 2)" # Added
@@ -327,7 +327,7 @@ replace_formatters() {
     formats[u]= # Untracked
   fi
 
-  if [[ $iconized == true ]]; then
+  if [[ $icons_on == true ]]; then
     icons[v]="  " # Revision
     icons[l]="  " # Branch
     icons[r]=" 歷"  # Remote

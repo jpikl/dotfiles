@@ -35,11 +35,11 @@ main() {
   local repo=false
   local aur=false
   local quiet=false
-  local colorized=false
+  local colors=false
   local opt
 
   if [[ -t 1 ]]; then
-    colorized=${TERM_COLORS:-true}
+    colors=${TERM_COLORS:-true}
   fi
 
   while getopts ":lgraqcCh" opt; do
@@ -49,8 +49,8 @@ main() {
       r) repo=true ;;
       a) aur=true ;;
       q) quiet=true ;;
-      c) colorized=true ;;
-      C) colorized=false ;;
+      c) colors=true ;;
+      C) colors=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -64,7 +64,7 @@ main() {
 
   local pacman_color
 
-  if [[ $colorized == true ]]; then
+  if [[ $colors == true ]]; then
     pacman_color="--color=always"
   else
     pacman_color="--color=never"
@@ -160,7 +160,7 @@ filter_names() {
 }
 
 decorate_line() {
-  if [[ $colorized == true ]]; then
+  if [[ $colors == true ]]; then
     sed "s/^/$(tput bold)$(tput setaf 5)$1 $(tput sgr0)$(tput bold)/"
   else
     sed "s/^/$1 /"
