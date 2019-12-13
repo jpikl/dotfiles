@@ -81,7 +81,7 @@ main() {
     if [[ $short == true ]]; then
       echo "DH"
     else
-      echo "Detached head"
+      echo "Detached HEAD"
     fi
   fi
 }

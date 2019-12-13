@@ -66,57 +66,76 @@ main() {
 }
 
 generate_output() {
-  local current_revision
-  local current_branch
+  local local_branch
+  local local_commit
   local remote_branch=
+  local remote_commit=
   local wtree_state
   local commits_ahead=
   local commits_behind=
   local stash_size
 
-  current_revision=$(print_current_revision)
-  current_branch=$(print_current_branch)
+  local_branch=$(print_local_branch)
+  local_commit=$(print_local_commit)
   wtree_state=$(git state)
   stash_size=$(print_stash_size)
 
-  if [[ $current_branch ]]; then
-    remote_branch=$(print_remote_branch "$current_branch")
+  if [[ $local_branch ]]; then
+    remote_branch=$(print_remote_branch "$local_branch")
 
     if [[ $remote_branch ]]; then
+      remote_commit=$(print_remove_commit "$remote_branch")
       commits_ahead=$(print_commits_ahead "$remote_branch")
       commits_behind=$(print_commits_behind "$remote_branch")
     fi
   fi
 
+  printf "===== *l#bLOCAL#r =====\n\n"
+
   {
-    if [[ $current_branch || $all == true ]]; then
-      printf "#bRevision#r@v:|%s\n" "${current_revision:--}"
-    fi
-
-    if [[ $current_branch || $all == true ]]; then
-      printf "#bBranch#r@l:|%s\n" "${current_branch:--}"
-    fi
-
-    if [[ $remote_branch || $all == true ]]; then
-      printf "#bRemote#r@r:|%s\n" "${remote_branch:--}"
+    if [[ $local_branch || $all == true ]]; then
+      printf "#bBranch#r*h:|%s\n" "${local_branch:--}"
     fi
 
     if [[ $wtree_state || $all == true ]]; then
-      printf "#bState#r@e:|%s\n" "${wtree_state:--}"
+      printf "#bState#r*e:|%s\n" "${wtree_state:--}"
     fi
 
     if [[ $commits_ahead -gt 0 || $all == true ]]; then
-      printf "#bAhead#r@a:|%s\n" "${commits_ahead:--}"
-    fi
-
-    if [[ $commits_behind -gt 0 || $all == true ]]; then
-      printf "#bBehind#r@b:|%s\n" "${commits_behind:--}"
+      printf "#bAhead#r*a:|%s\n" "${commits_ahead:--}"
     fi
 
     if [[ $stash_size -gt 0 || $all == true ]]; then
-      printf "#bStash#r@s:|%s\n" "$stash_size"
+      printf "#bStash#r*s:|%s\n" "$stash_size"
     fi
+
+    if [[ $local_commit || $all == true ]]; then
+      printf "#bCommit#r*c:|%s\n" "${local_commit:--}"
+    fi
+
+    print_log_table "$local_commit"
   } | format_table --table-right=1
+
+  if [[ $remote_branch || $all == true ]]; then
+    printf "\n===== *r#bREMOTE#r =====\n\n"
+
+    {
+      printf "#bBranch#r*h:|%s\n" "${remote_branch:--}"
+
+      if [[ $remote_commit != "$local_commit" || $all == true ]]; then
+        if [[ $commits_behind -gt 0 || $all == true ]]; then
+          printf "#bAhead#r*b:|%s\n" "${commits_behind:--}"
+        fi
+
+        if [[ $remote_commit || $all == true ]]; then
+          printf "#bCommit#r*c:|%s\n" "${remote_commit:--}"
+        fi
+
+        print_log_table "$remote_commit"
+      fi
+
+    } | format_table --table-right=1
+  fi
 
   local change_type
   local change_types=(A C D M R T U X B)
@@ -162,16 +181,17 @@ generate_output() {
      || $is_wtree_change == true
      || $untracked_files_count -gt 0 ]]; then
 
-    echo
+    printf "\n===== *g#bCHANGES#r =====\n\n"
+
     {
-      printf "#bCHANGE|@t#r|@w|@i\n"
+      printf "#bType|*t#r|*w|*i\n"
 
       for change_type in "${change_types[@]}"; do
         wtree_count=${wtree_changes_count[$change_type]}
         index_count=${index_changes_count[$change_type]}
 
         if [[ $wtree_count -gt 0 || $index_count -gt 0 || $all == true ]]; then
-          printf "#%s%s|@%s#r|%d|%d\n" "$change_type" \
+          printf "#%s%s|*%s#r|%d|%d\n" "$change_type" \
                                        "${change_names[$change_type]}" \
                                        "$change_type" \
                                        "$wtree_count" \
@@ -180,7 +200,7 @@ generate_output() {
       done
 
       if [[ $untracked_files_count -gt 0 || $all == true ]]; then
-        printf "#uUntracked|@u#r|%d|\n" "$untracked_files_count"
+        printf "#uUntracked|*u#r|%d|\n" "$untracked_files_count"
       fi
     } | format_table --table-right=1,3,4
   fi
@@ -211,18 +231,22 @@ generate_output() {
   fi
 }
 
-print_current_revision() {
-  # Fails when we are in a repository with no commits
-  git rev-parse --verify HEAD 2>/dev/null || true
+print_local_branch() {
+  git ls-branches -c
 }
 
-print_current_branch() {
-  git ls-branches -c
+print_local_commit() {
+  # Fails when we are in a repository with no commits
+  git rev-parse --verify HEAD 2>/dev/null || true
 }
 
 print_remote_branch() {
   # We cannot use @{upstream} notation since it does not work with detached HEAD
   git for-each-ref --format='%(upstream:short)' "refs/heads/$1"
+}
+
+print_remove_commit() {
+  git rev-parse "$1"
 }
 
 print_commits_ahead() {
@@ -235,6 +259,24 @@ print_commits_behind() {
 
 print_stash_size() {
   git stash list | wc --lines
+}
+
+print_log_table() {
+  local message='#bMessage#r*m:|'
+  local author='#bAuthor#r*o:|'
+  local date='#bDate#r*d:|'
+
+  if [[ $1 ]]; then
+    message+="%s"
+    author+="%aN <%ae>"
+    date+="%ai (%ar)"
+    git log -1 --pretty="${message}%n${author}%n${date}" "$1"
+  else
+    message+="-"
+    author+="-"
+    date+="-"
+    printf "%s\n" "$message" "$author" "$date"
+  fi
 }
 
 print_changed_files() {
@@ -285,12 +327,12 @@ format_paths() {
         fi
       fi
 
-      printf "#%s @%s %s#r|@m|#%s%s#r|#u%s%%#r\n" "$1" "$1" "$src_path" "$1" "$dst_path" "$change"
+      printf "#%s *%s %s#r|*n|#%s%s#r|#u%s%%#r\n" "$1" "$1" "$src_path" "$1" "$dst_path" "$change"
     done | format_table --table-right=4
   else
     local path
     while IFS= read -r -d '' path; do
-      printf "#%s @%s %s#r\n" "$1" "$1" "$path"
+      printf "#%s *%s %s#r\n" "$1" "$1" "$path"
     done
   fi
 }
@@ -328,35 +370,45 @@ replace_formatters() {
   fi
 
   if [[ $icons_on == true ]]; then
-    icons[v]="  " # Revision
-    icons[l]="  " # Branch
-    icons[r]=" 歷"  # Remote
-    icons[a]="  " # Ahead
-    icons[b]="  " # Behind
-    icons[e]="  " # State
-    icons[s]="  " # Stash
+    icons[l]="ﲾ " # Local
+    icons[r]="歷"  # Remote
+    icons[g]=" " # Changes
+    icons[h]="  " # Branch
+    icons[a]="  " # Ahead
+    icons[b]="  " # Behind
+    icons[e]="  " # State
+    icons[s]="  " # Stash
+    icons[c]="  " # Commit
+    icons[m]="  " # Message
+    icons[o]="  " # Author
+    icons[d]="  " # Date
     icons[w]=" פּ"  # Work tree
     icons[i]=" "  # Index
-    icons[t]="" # Change type
-    icons[A]="" # Added
+    icons[t]="" # Change type
+    icons[A]="" # Added
     icons[C]="" # Copied
-    icons[D]="" # Deleted
-    icons[M]="" # Modified
-    icons[R]="" # Renamed
+    icons[D]="" # Deleted
+    icons[M]="" # Modified
+    icons[R]="" # Renamed
     icons[T]="" # Retyped
-    icons[U]="" # Unmerged
+    icons[U]="" # Unmerged
     icons[X]="?" # Unknown
     icons[B]="" # Broken
-    icons[u]="" # Untracked
-    icons[m]="➔" # Move
+    icons[u]="" # Untracked
+    icons[n]="" # Move
   else
-    icons[v]=     # Revision
-    icons[l]=     # Branch
+    icons[l]=     # Local
     icons[r]=     # Remote
+    icons[h]=     # Branch
     icons[a]=     # Ahead
     icons[b]=     # Behind
     icons[e]=     # State
     icons[s]=     # Stash
+    icons[c]=     # Commit
+    icons[m]=     # Message
+    icons[o]=     # Author
+    icons[d]=     # Date
+    icons[g]=     # Changes
     icons[w]=" W" # Work tree
     icons[i]=" I" # Index
     icons[t]="T"  # Change type
@@ -370,7 +422,7 @@ replace_formatters() {
     icons[X]="X"  # Unknown
     icons[B]="B"  # Broken
     icons[u]=" "  # Untracked
-    icons[m]="->" # Move
+    icons[n]="->" # Move
   fi
 
   local sed_opts=()
@@ -381,7 +433,7 @@ replace_formatters() {
   done
 
   for name in "${!icons[@]}"; do
-    sed_opts+=("--expression" "s/@$name/${icons[$name]}/g")
+    sed_opts+=("--expression" "s/*$name/${icons[$name]}/g")
   done
 
   sed "${sed_opts[@]}"
