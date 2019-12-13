@@ -372,7 +372,7 @@ replace_formatters() {
   if [[ $icons_on == true ]]; then
     icons[l]="ﲾ " # Local
     icons[r]="歷"  # Remote
-    icons[g]=" " # Changes
+    icons[g]=" " # Changes
     icons[h]="  " # Branch
     icons[a]="  " # Ahead
     icons[b]="  " # Behind
