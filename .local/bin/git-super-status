@@ -90,11 +90,24 @@ generate_output() {
     fi
   fi
 
-  printf "===== *l#bLOCAL#r =====\n\n"
+  local separate_local_remote
+  if [[ ( $remote_branch && $remote_commit != "$local_commit" ) || $all == true ]]; then
+    separate_local_remote=true
+  else
+    separate_local_remote=false
+  fi
+
+  if [[ $separate_local_remote == true ]]; then
+    printf "[*l#bLocal#r]\n"
+  fi
 
   {
     if [[ $local_branch || $all == true ]]; then
       printf "#bBranch#r*h:|%s\n" "${local_branch:--}"
+    fi
+
+    if [[ $remote_branch && $separate_local_remote != true ]]; then
+      printf "#bRemote#r*r:|%s\n" "$remote_branch"
     fi
 
     if [[ $wtree_state || $all == true ]]; then
@@ -116,8 +129,8 @@ generate_output() {
     print_log_table "$local_commit"
   } | format_table --table-right=1
 
-  if [[ $remote_branch || $all == true ]]; then
-    printf "\n===== *r#bREMOTE#r =====\n\n"
+  if [[ $separate_local_remote == true ]]; then
+    printf "\n[*r#bRemote#r]\n"
 
     {
       printf "#bBranch#r*h:|%s\n" "${remote_branch:--}"
@@ -181,10 +194,9 @@ generate_output() {
      || $is_wtree_change == true
      || $untracked_files_count -gt 0 ]]; then
 
-    printf "\n===== *g#bCHANGES#r =====\n\n"
-
+    echo
     {
-      printf "#bType|*t#r|*w|*i\n"
+      printf "#bChange|*t#r|*w|*i\n"
 
       for change_type in "${change_types[@]}"; do
         wtree_count=${wtree_changes_count[$change_type]}
@@ -370,9 +382,8 @@ replace_formatters() {
   fi
 
   if [[ $icons_on == true ]]; then
-    icons[l]="ﲾ " # Local
-    icons[r]="歷"  # Remote
-    icons[g]=" " # Changes
+    icons[l]=" ﲾ " # Local
+    icons[r]=" 歷"  # Remote
     icons[h]="  " # Branch
     icons[a]="  " # Ahead
     icons[b]="  " # Behind
@@ -408,7 +419,6 @@ replace_formatters() {
     icons[m]=     # Message
     icons[o]=     # Author
     icons[d]=     # Date
-    icons[g]=     # Changes
     icons[w]=" W" # Work tree
     icons[i]=" I" # Index
     icons[t]="T"  # Change type
