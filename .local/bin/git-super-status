@@ -84,7 +84,7 @@ generate_output() {
     remote_branch=$(print_remote_branch "$local_branch")
 
     if [[ $remote_branch ]]; then
-      remote_commit=$(print_remove_commit "$remote_branch")
+      remote_commit=$(print_remote_commit "$remote_branch")
       commits_ahead=$(print_commits_ahead "$remote_branch")
       commits_behind=$(print_commits_behind "$remote_branch")
     fi
@@ -98,50 +98,50 @@ generate_output() {
   fi
 
   if [[ $separate_local_remote == true ]]; then
-    printf "[*l#bLocal#r]\n"
+    printf "[{@loc}{#bld}Local{#rst}]\n"
   fi
 
   {
     if [[ $local_branch || $all == true ]]; then
-      printf "#bBranch#r*h:|%s\n" "${local_branch:--}"
+      printf "{#bld}Branch{#rst}{@brn}:|%s\n" "${local_branch:--}"
     fi
 
     if [[ $remote_branch && $separate_local_remote != true ]]; then
-      printf "#bRemote#r*r:|%s\n" "$remote_branch"
+      printf "{#bld}Remote{#rst}{@rmt}:|%s\n" "$remote_branch"
     fi
 
     if [[ $wtree_state || $all == true ]]; then
-      printf "#bState#r*e:|%s\n" "${wtree_state:--}"
+      printf "{#bld}State{#rst}{@sta}:|%s\n" "${wtree_state:--}"
     fi
 
     if [[ $commits_ahead -gt 0 || $all == true ]]; then
-      printf "#bAhead#r*a:|%s\n" "${commits_ahead:--}"
+      printf "{#bld}Ahead{#rst}{@ahd}:|%s\n" "${commits_ahead:--}"
     fi
 
     if [[ $stash_size -gt 0 || $all == true ]]; then
-      printf "#bStash#r*s:|%s\n" "$stash_size"
+      printf "{#bld}Stash{#rst}{@sts}:|%s\n" "$stash_size"
     fi
 
     if [[ $local_commit || $all == true ]]; then
-      printf "#bCommit#r*c:|%s\n" "${local_commit:--}"
+      printf "{#bld}Commit{#rst}{@cmt}:|%s\n" "${local_commit:--}"
     fi
 
     print_log_table "$local_commit"
   } | format_table --table-right=1
 
   if [[ $separate_local_remote == true ]]; then
-    printf "\n[*r#bRemote#r]\n"
+    printf "\n[{@rmt}{#bld}Remote{#rst}]\n"
 
     {
-      printf "#bBranch#r*h:|%s\n" "${remote_branch:--}"
+      printf "{#bld}Branch{#rst}{@brn}:|%s\n" "${remote_branch:--}"
 
       if [[ $remote_commit != "$local_commit" || $all == true ]]; then
         if [[ $commits_behind -gt 0 || $all == true ]]; then
-          printf "#bAhead#r*b:|%s\n" "${commits_behind:--}"
+          printf "{#bld}Ahead{#rst}{@bhd}:|%s\n" "${commits_behind:--}"
         fi
 
         if [[ $remote_commit || $all == true ]]; then
-          printf "#bCommit#r*c:|%s\n" "${remote_commit:--}"
+          printf "{#bld}Commit{#rst}{@cmt}:|%s\n" "${remote_commit:--}"
         fi
 
         print_log_table "$remote_commit"
@@ -152,6 +152,18 @@ generate_output() {
 
   local change_type
   local change_types=(A C D M R T U X B)
+
+  local -A change_codes=(
+    [A]="add"
+    [C]="cpy"
+    [D]="del"
+    [M]="mod"
+    [R]="ren"
+    [T]="ret"
+    [U]="unm"
+    [X]="unk"
+    [B]="brk"
+  )
 
   local -A change_names=(
     [A]="Addded"
@@ -196,50 +208,55 @@ generate_output() {
 
     echo
     {
-      printf "#bChange|*t#r|*w|*i\n"
+      printf "{#bld}Change{#rst}|{@cht}{____}| {@wtr}| {@idx}\n"
 
       for change_type in "${change_types[@]}"; do
         wtree_count=${wtree_changes_count[$change_type]}
         index_count=${index_changes_count[$change_type]}
 
         if [[ $wtree_count -gt 0 || $index_count -gt 0 || $all == true ]]; then
-          printf "#%s%s|*%s#r|%d|%d\n" "$change_type" \
+          printf "{#%s}%s{____}|{@%s}{#rst}|{___} %d|{___} %d\n" \
+                                       "${change_codes[$change_type]}" \
                                        "${change_names[$change_type]}" \
-                                       "$change_type" \
+                                       "${change_codes[$change_type]}" \
                                        "$wtree_count" \
                                        "$index_count"
         fi
       done
 
       if [[ $untracked_files_count -gt 0 || $all == true ]]; then
-        printf "#uUntracked|*u#r|%d|\n" "$untracked_files_count"
+        printf "{#unt}Untracked{____}|{@unt}{#rst}|{___} %d|\n" "$untracked_files_count"
       fi
     } | format_table --table-right=1,3,4
   fi
 
   if [[ $is_wtree_change == true && $wtree_files_on == true ]]; then
-    printf "\n#bChanges in work tree#r:\n"
+    printf "\n{#bld}Changes in work tree{#rst}:\n"
 
     for change_type in "${change_types[@]}"; do
       if [[ ${wtree_changes_count[$change_type]} -gt 0 ]]; then
-        print_changed_files "$change_type" | sort | format_paths "$change_type"
+        print_changed_files "$change_type" \
+          | sort \
+          | format_paths "$change_type" "${change_codes[$change_type]}"
       fi
     done
   fi
 
   if [[ $is_index_change == true && $index_files_on == true ]]; then
-    printf "\n#bChanges in index#r:\n"
+    printf "\n{#bld}Changes in index{#rst}:\n"
 
     for change_type in "${change_types[@]}"; do
       if [[ ${index_changes_count[$change_type]} -gt 0 ]]; then
-        print_changed_files "$change_type" --staged | sort | format_paths "$change_type"
+        print_changed_files "$change_type" --staged \
+          | sort \
+          | format_paths "$change_type" "${change_codes[$change_type]}"
       fi
     done
   fi
 
   if [[ $untracked_files_count -gt 0 && $untracked_files_on == true ]]; then
-    printf "\n#bUntracked files#r:\n"
-    print_untracked_files | sort | format_paths "u"
+    printf "\n{#bld}Untracked files{#rst}:\n"
+    print_untracked_files | sort | format_paths "" "unt"
   fi
 }
 
@@ -253,11 +270,11 @@ print_local_commit() {
 }
 
 print_remote_branch() {
-  # We cannot use @{upstream} notation since it does not work with detached HEAD
+  # We cannot use {@upstream} notation since it does not work with detached HEAD
   git for-each-ref --format='%(upstream:short)' "refs/heads/$1"
 }
 
-print_remove_commit() {
+print_remote_commit() {
   git rev-parse "$1"
 }
 
@@ -274,9 +291,9 @@ print_stash_size() {
 }
 
 print_log_table() {
-  local message='#bMessage#r*m:|'
-  local author='#bAuthor#r*o:|'
-  local date='#bDate#r*d:|'
+  local message='{#bld}Message{#rst}{@msg}:|'
+  local author='{#bld}Author{#rst}{@ath}:|'
+  local date='{#bld}Date{#rst}{@dat}:|'
 
   if [[ $1 ]]; then
     message+="%s"
@@ -324,127 +341,149 @@ format_table() {
 }
 
 format_paths() {
-  if [[ $1 == R || $1 == C ]]; then
-    local change src_path dst_path
+  local change_type=$1
+  local change_code=$2
 
-    while IFS= read -r -d '' change \
+  if [[ $change_type == R || $change_type == C ]]; then
+    local status src_path dst_path
+
+    while IFS= read -r -d '' status \
        && IFS= read -r -d '' src_path \
        && IFS= read -r -d '' dst_path; do
 
-      change=${change:1}
-      if [[ $change == 0* ]]; then
-        change=${change:1}
-        if [[ $change == 0* ]]; then
-          change=${change:1}
-        fi
-      fi
+      # Remove type character and leading zeros
+      status=${status:1}
+      while [[ $status == 0* ]]; do
+        status=${status:1}
+      done
 
-      printf "#%s *%s %s#r|*n|#%s%s#r|#u%s%%#r\n" "$1" "$1" "$src_path" "$1" "$dst_path" "$change"
+      printf " {#%s}{@%s} %s{#rst}|{@mov}|{#%s}%s{#rst}|{#unt}%s%%{#rst}\n" \
+                          "$change_code" \
+                          "$change_code" \
+                          "$src_path" \
+                          "$change_code" \
+                          "$dst_path" \
+                          "$status"
+
     done | format_table --table-right=4
   else
     local path
     while IFS= read -r -d '' path; do
-      printf "#%s *%s %s#r\n" "$1" "$1" "$path"
+      printf " {#%s}{@%s} %s{#rst}\n" "$change_code" "$change_code" "$path"
     done
   fi
 }
 
 replace_formatters() {
-  local -A formats=()
+  # Why are we using these color/icon placeholders
+  # instead of directly outputing color/icons?
+  # 1) It is easy to disable them in the output.
+  # 2) All the placeholders have equal lenght and
+  #    the "column" command aligns them correctly.
+
+  local -A colors=()
   local -A icons=()
 
   if [[ $colors_on == true ]]; then
-    formats[r]=$(tput sgr0)      # Reset
-    formats[b]=$(tput bold)      # Bold
-    formats[A]="$(tput setaf 2)" # Added
-    formats[C]="$(tput setaf 6)" # Copied
-    formats[D]="$(tput setaf 1)" # Deleted
-    formats[M]="$(tput setaf 4)" # Modified
-    formats[R]="$(tput setaf 6)" # Renamed
-    formats[T]="$(tput setaf 6)" # Retyped
-    formats[U]="$(tput setaf 3)" # Unmerged
-    formats[X]="$(tput setaf 5)" # Unknown
-    formats[B]="$(tput setaf 5)" # Broken
-    formats[u]="$(tput setaf 8)" # Untracked
+    colors[rst]=$(tput sgr0)      # Reset
+    colors[bld]=$(tput bold)      # Bold
+    colors[add]="$(tput setaf 2)" # Added
+    colors[cpy]="$(tput setaf 6)" # Copied
+    colors[del]="$(tput setaf 1)" # Deleted
+    colors[mod]="$(tput setaf 4)" # Modified
+    colors[ren]="$(tput setaf 6)" # Renamed
+    colors[ret]="$(tput setaf 6)" # Retyped
+    colors[unm]="$(tput setaf 3)" # Unmerged
+    colors[unk]="$(tput setaf 5)" # Unknown
+    colors[brk]="$(tput setaf 5)" # Broken
+    colors[unt]="$(tput setaf 8)" # Untracked
   else
-    formats[r]= # Reset
-    formats[b]= # Bold
-    formats[A]= # Added
-    formats[C]= # Copied
-    formats[D]= # Deleted
-    formats[M]= # Modified
-    formats[R]= # Renamed
-    formats[T]= # Retyped
-    formats[U]= # Unmerged
-    formats[X]= # Unknown
-    formats[B]= # Broken
-    formats[u]= # Untracked
+    colors[rst]= # Reset
+    colors[bld]= # Bold
+    colors[add]= # Added
+    colors[cpy]= # Copied
+    colors[del]= # Deleted
+    colors[mod]= # Modified
+    colors[ren]= # Renamed
+    colors[ret]= # Retyped
+    colors[unm]= # Unmerged
+    colors[unk]= # Unknown
+    colors[brk]= # Broken
+    colors[unt]= # Untracked
   fi
 
   if [[ $icons_on == true ]]; then
-    icons[l]=" ﲾ " # Local
-    icons[r]=" 歷"  # Remote
-    icons[h]="  " # Branch
-    icons[a]="  " # Ahead
-    icons[b]="  " # Behind
-    icons[e]="  " # State
-    icons[s]="  " # Stash
-    icons[c]="  " # Commit
-    icons[m]="  " # Message
-    icons[o]="  " # Author
-    icons[d]="  " # Date
-    icons[w]=" פּ"  # Work tree
-    icons[i]=" "  # Index
-    icons[t]=" " # Change type
-    icons[A]=" " # Added
-    icons[C]=" " # Copied
-    icons[D]=" " # Deleted
-    icons[M]=" " # Modified
-    icons[R]=" " # Renamed
-    icons[T]=" " # Retyped
-    icons[U]=" " # Unmerged
-    icons[X]="? " # Unknown
-    icons[B]=" " # Broken
-    icons[u]=" " # Untracked
-    icons[n]="" # Move
+    icons[loc]=" ﲾ " # Local
+    icons[rmt]=" 歷"  # Remote
+    icons[brn]="  " # Branch
+    icons[ahd]="  " # Ahead
+    icons[bhd]="  " # Behind
+    icons[sta]="  " # State
+    icons[sts]="  " # Stash
+    icons[cmt]="  " # Commit
+    icons[msg]="  " # Message
+    icons[ath]="  " # Author
+    icons[dat]="  " # Date
+    icons[wtr]="פּ"   # Work tree
+    icons[idx]=""   # Index
+    icons[cht]=" "  # Change type
+    icons[add]=" "  # Added
+    icons[cpy]=" "  # Copied
+    icons[del]=" "  # Deleted
+    icons[mod]=" "  # Modified
+    icons[ren]=" "  # Renamed
+    icons[ret]=" "  # Retyped
+    icons[unm]=" "  # Unmerged
+    icons[unk]="? "  # Unknown
+    icons[brk]=" "  # Broken
+    icons[unt]=" "  # Untracked
+    icons[mov]=""   # Move
   else
-    icons[l]=     # Local
-    icons[r]=     # Remote
-    icons[h]=     # Branch
-    icons[a]=     # Ahead
-    icons[b]=     # Behind
-    icons[e]=     # State
-    icons[s]=     # Stash
-    icons[c]=     # Commit
-    icons[m]=     # Message
-    icons[o]=     # Author
-    icons[d]=     # Date
-    icons[w]=" W" # Work tree
-    icons[i]=" I" # Index
-    icons[t]="T"  # Change type
-    icons[A]="A"  # Added
-    icons[C]="C"  # Copied
-    icons[D]="D"  # Deleted
-    icons[M]="M"  # Modified
-    icons[R]="R"  # Renamed
-    icons[T]="T"  # Retyped
-    icons[U]="U"  # Unmerged
-    icons[X]="X"  # Unknown
-    icons[B]="B"  # Broken
-    icons[u]=" "  # Untracked
-    icons[n]="->" # Move
+    icons[loc]=     # Local
+    icons[rmt]=     # Remote
+    icons[brn]=     # Branch
+    icons[ahd]=     # Ahead
+    icons[bhd]=     # Behind
+    icons[sta]=     # State
+    icons[sts]=     # Stash
+    icons[cmt]=     # Commit
+    icons[msg]=     # Message
+    icons[ath]=     # Author
+    icons[dat]=     # Date
+    icons[wtr]="W"  # Work tree
+    icons[idx]="I"  # Index
+    icons[cht]="T"  # Change type
+    icons[add]="A"  # Added
+    icons[cpy]="C"  # Copied
+    icons[del]="D"  # Deleted
+    icons[mod]="M"  # Modified
+    icons[ren]="R"  # Renamed
+    icons[ret]="T"  # Retyped
+    icons[unm]="U"  # Unmerged
+    icons[unk]="X"  # Unknown
+    icons[brk]="B"  # Broken
+    icons[unt]="?"  # Untracked
+    icons[mov]="->" # Move
   fi
 
-  local sed_opts=()
   local name
+  local sed_opts=()
 
-  for name in "${!formats[@]}"; do
-    sed_opts+=("--expression" "s/#$name/${formats[$name]}/g")
+  # Remove "{___}" expressions which are just used as a padding to deceive
+  # the "column" command to correctly align the output.
+  sed_opts+=("--expression" "s/{_\+}//g")
+
+  # Replace "{#abc}" expressions by color escape codes.
+  for name in "${!colors[@]}"; do
+    sed_opts+=("--expression" "s/{#$name}/${colors[$name]}/g")
   done
 
+  # Replace "{@abc}" expressions by icon characters.
   for name in "${!icons[@]}"; do
-    sed_opts+=("--expression" "s/*$name/${icons[$name]}/g")
+    sed_opts+=("--expression" "s/{@$name}/${icons[$name]}/g")
   done
+
+
 
   sed "${sed_opts[@]}"
 }
