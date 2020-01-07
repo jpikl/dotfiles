@@ -4,8 +4,8 @@
 alias bakmusls='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Bat
-alias batfzf='bat $(find -type f | fzfbat)'
-alias batfzfsrc='bat $(findsrc -type f | fzfbat)'
+alias batfzf='bat "$(find -type f | fzfbat)"'
+alias batfzfsrc='bat "$(findsrc -type f | fzfbat)"'
 
 # Cd
 alias cdbak='cd "$BACKUP_DIR"'
@@ -50,7 +50,7 @@ alias clipo='xclip -out -selection clipboard'
 alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
 # Exif
-alias exiffzf='exiftool $(find -type f | fzfexif)'
+alias exiffzf='exiftool "$(find -type f | fzfexif)"'
 
 # Grep
 alias grep='grep --color=auto'
