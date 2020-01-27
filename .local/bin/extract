@@ -67,7 +67,8 @@ extract() {
     *.bz2)            extract_bz2 "$file" ;;
     *.xz)             extract_xz  "$file" ;;
     *.z)              extract_z   "$file" ;;
-    *.zip|*.jar)      extract_zip "$file" ;;
+    *.zip|*.war|*.jar|*.sublime-package|*.ipsw|*.xpi|*.apk|*.aar|*.whl)
+                      extract_zip "$file" ;;
     *.rar)            extract_rar "$file" ;;
     *.7z)             extract_7z  "$file" ;;
     *)                handle_error "'$file' has unsupported archive extension" ;;
