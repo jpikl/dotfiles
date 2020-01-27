@@ -13,9 +13,10 @@ help() {
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -f  Print also files.
-		  -s  Sort directory entries by name.
-		  -h  Print this help.
+		  -m <depth>  The maximum number of levels to descent.
+		  -f          Print also files.
+		  -s          Sort directory entries by name.
+		  -h          Print this help.
 
 		Path:
 		  Root of a directory tree to print.
@@ -24,12 +25,14 @@ help() {
 }
 
 main() {
+  local max_depth=
   local files=false
   local sort=false
   local opt
 
-  while getopts ":fsh" opt; do
+  while getopts ":m:fsh" opt; do
     case "$opt" in
+      m) max_depth=$OPTARG ;;
       f) files=true ;;
       s) sort=true ;;
       h) help; exit ;;
@@ -45,6 +48,14 @@ main() {
   fi
 
   local find_args=("-mindepth" "1")
+
+  if [[ $max_depth ]]; then
+    if [[ $max_depth =~ ^[0-9]+$ ]]; then
+      find_args+=("-maxdepth" "$max_depth")
+    else
+      die_help "option -m requires positive integer as an argument"
+    fi
+  fi
 
   if [[ $files == false ]]; then
     find_args+=("-type" "d")
