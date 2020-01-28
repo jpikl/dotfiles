@@ -112,4 +112,4 @@ export PATH
 
 # Tools that initialize environment
 command -v luarocks >/dev/null && eval "$(luarocks path --append)"
-command -v ssh-agent >/dev/null && eval "$(sshstart)" # After we exported PATH
+command -v ssh-agent >/dev/null && eval "$(sshctl start)" # After we exported PATH

@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Control ssh-agent process.
+
+		Usage:
+		  $(self) [options] [command]
+
+		Options:
+		  -h  Print this help.
+
+		Commands:
+		  status   Print ssh-agent status.
+		  start    Start ssh-agent if needed.
+		  stop     Stop ssh-agent if needed.
+		  restart  Restart ssh-agent.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  if [[ $# -eq 0 ]]; then
+    die_missing_arg
+  elif [[ ! $1 =~ ^(status|start|stop|restart)$ ]]; then
+    die_help "invalid command"
+  fi
+
+  local vars_file=/tmp/ssh-agent-vars-$UID
+  local command=$1
+  local pid_state=
+  local sock_state=
+
+  {
+    echo "Checking environment"
+
+    pid_state=$(check_pid)
+    sock_state=$(check_sock)
+
+    if [[ $command == status ]]; then
+      exit
+    fi
+
+    if [[ -f $vars_file && ( $pid_state != valid || $sock_state != valid ) ]]; then
+      echo "Loading $vars_file"
+      source "$vars_file" || true
+
+      pid_state=$(check_pid)
+      sock_state=$(check_sock)
+    fi
+
+    if [[ $command == stop || \
+          $command == restart || \
+          $pid_state != valid || \
+          $sock_state != valid ]]; then
+
+      if [[ -f $vars_file ]]; then
+        echo "Deleting $vars_file"
+        rm "$vars_file"
+      fi
+
+      if [[ $pid_state == valid ]]; then
+        echo "Killing agent pid $SSH_AGENT_PID"
+        kill "$SSH_AGENT_PID"
+      fi
+
+      if [[ $sock_state == valid ]]; then
+        echo "Deleting agent socket $SSH_AUTH_SOCK"
+        rm -f "$SSH_AUTH_SOCK"
+      fi
+
+      if [[ $command == start || $command == restart ]]; then
+        echo "Starting agent"
+        eval "$(ssh-agent)" >/dev/null
+
+        pid_state=$(check_pid)
+        sock_state=$(check_sock)
+
+        if [[ $pid_state == valid && $sock_state == valid ]]; then
+          echo "Generating $vars_file"
+          export_vars >"$vars_file"
+        fi
+      fi
+    fi
+  } >&2
+
+  if [[ $pid_state == valid && $sock_state == valid ]]; then
+    export_vars
+  else
+    unset_vars
+  fi
+}
+
+export_vars() {
+  echo "SSH_AGENT_PID=$SSH_AGENT_PID; export SSH_AGENT_PID;"
+  echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK; export SSH_AUTH_SOCK;"
+}
+
+unset_vars() {
+  echo "unset SSH_AGENT_PID;"
+  echo "unset SSH_AUTH_SOCK;"
+}
+
+check_pid() {
+  if [[ ${SSH_AGENT_PID:-} ]]; then
+    if kill -0 "$SSH_AGENT_PID" &>/dev/null; then
+      echo "[ok] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
+      echo "valid"
+    else
+      echo "[invalid] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
+      echo "invalid"
+    fi
+  else
+    echo "[unset] SSH_AGENT_PID" >&2
+    echo "unset"
+  fi
+}
+
+check_sock() {
+  if [[ ${SSH_AUTH_SOCK:-} ]]; then
+    if [[ -S $SSH_AUTH_SOCK ]]; then
+      echo "[ok] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
+      echo "valid"
+    else
+      echo "[invalid] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
+      echo "invalid"
+    fi
+  else
+    echo "[unset] SSH_AUTH_SOCK" >&2
+    echo "unset"
+  fi
+}
+
+main "$@"
