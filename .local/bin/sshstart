@@ -26,35 +26,89 @@ main() {
     esac
   done
 
-  is_valid_pid && is_valid_sock && exit
-
   local vars_file=/tmp/ssh-agent-vars-$UID
+  local pid_state=
+  local sock_state=
 
-  if [[ -f $vars_file ]]; then
-    unset SSH_AGENT_PID
-    unset SSH_AUTH_SOCK
-    source "$vars_file" >/dev/null
+  {
+    echo "Checking environment"
 
-    if ! is_valid_pid || ! is_valid_sock; then
-      rm "$vars_file"
-      is_valid_pid && kill "$SSH_AGENT_PID"
-      is_valid_sock && rm -f "$SSH_AUTH_SOCK"
+    pid_state=$(check_pid)
+    sock_state=$(check_sock)
+
+    if [[ $pid_state == valid && $sock_state == valid ]]; then
+      exit
     fi
-  fi
 
-  if [[ ! -f $vars_file ]]; then
-    ssh-agent > $vars_file
-  fi
+    echo
+
+    if [[ -f $vars_file ]]; then
+      echo "Loading $vars_file"
+
+      unset SSH_AGENT_PID
+      unset SSH_AUTH_SOCK
+
+      source "$vars_file" >/dev/null
+
+      pid_state=$(check_pid)
+      sock_state=$(check_sock)
+
+      echo
+
+      if [[ $pid_state != valid || $sock_state != valid ]]; then
+        echo "Deleting $vars_file"
+        rm "$vars_file"
+
+        if [[ $pid_state == valid ]]; then
+          echo "Killing agent pid $SSH_AGENT_PID"
+          kill "$SSH_AGENT_PID"
+        fi
+
+        if [[ $sock_state == valid ]]; then
+          "Deleting agent socket $SSH_AUTH_SOCK"
+          rm "$SSH_AUTH_SOCK"
+        fi
+      fi
+    fi
+
+    if [[ ! -f $vars_file ]]; then
+      echo "Generating $vars_file"
+      echo "Starting agent"
+      ssh-agent > $vars_file
+    fi
+  } >&2
 
   cat "$vars_file"
 }
 
-is_valid_pid() {
-  [[ ${SSH_AGENT_PID:-} ]] && kill -0 "$SSH_AGENT_PID" &>/dev/null
+check_pid() {
+  if [[ ${SSH_AGENT_PID:-} ]]; then
+    if kill -0 "$SSH_AGENT_PID" &>/dev/null; then
+      echo "[ok] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
+      echo "valid"
+    else
+      echo "[invalid] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
+      echo "invalid"
+    fi
+  else
+    echo "[unset] SSH_AUTH_SOCK" >&2
+    echo "unset"
+  fi
 }
 
-is_valid_sock() {
-  [[ ${SSH_AUTH_SOCK:-} && -S $SSH_AUTH_SOCK ]]
+check_sock() {
+  if [[ ${SSH_AUTH_SOCK:-} ]]; then
+    if [[ -S $SSH_AUTH_SOCK ]]; then
+      echo "[ok] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
+      echo "valid"
+    else
+      echo "[invalid] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
+      echo "invalid"
+    fi
+  else
+    echo "[unset] SSH_AUTH_SOCK" >&2
+    echo "unset"
+  fi
 }
 
 main "$@"
