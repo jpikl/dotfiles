@@ -140,7 +140,6 @@ detect_paths() {
     vars_file=$run_dir/sshctl-vars
     lock_file=$run_dir/sshctl-lock
   else
-    run_dir=/tmp
     vars_file=/tmp/sshctl-vars-$UID
     lock_file=/tmp/sshctl-lock-$UID
   fi
