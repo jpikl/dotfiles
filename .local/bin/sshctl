@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -65,8 +66,10 @@ exec_command() {
 
   detect_paths
 
-  exec {lock_fd}>"$lock_file"
-  flock "$lock_fd"
+  if is_command flock; then
+    exec {lock_fd}>"$lock_file"
+    flock "$lock_fd"
+  fi
 
   check_env
 
@@ -83,7 +86,9 @@ exec_command() {
     fi
   fi
 
-  flock -u "$lock_fd"
+  if is_command flock; then
+    flock -u "$lock_fd"
+  fi
 }
 
 check_env() {
