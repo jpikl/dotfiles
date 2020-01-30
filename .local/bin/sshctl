@@ -40,63 +40,11 @@ main() {
     die_help "invalid command"
   fi
 
-  local vars_file=/tmp/ssh-agent-vars-$UID
   local command=$1
-  local pid_state=
-  local sock_state=
+  local pid_state
+  local sock_state
 
-  {
-    echo "Checking environment"
-
-    pid_state=$(check_pid)
-    sock_state=$(check_sock)
-
-    if [[ $command == status ]]; then
-      exit
-    fi
-
-    if [[ -f $vars_file && ( $pid_state != valid || $sock_state != valid ) ]]; then
-      echo "Loading $vars_file"
-      source "$vars_file" || true
-
-      pid_state=$(check_pid)
-      sock_state=$(check_sock)
-    fi
-
-    if [[ $command == stop || \
-          $command == restart || \
-          $pid_state != valid || \
-          $sock_state != valid ]]; then
-
-      if [[ -f $vars_file ]]; then
-        echo "Deleting $vars_file"
-        rm "$vars_file"
-      fi
-
-      if [[ $pid_state == valid ]]; then
-        echo "Killing agent pid $SSH_AGENT_PID"
-        kill "$SSH_AGENT_PID"
-      fi
-
-      if [[ $sock_state == valid ]]; then
-        echo "Deleting agent socket $SSH_AUTH_SOCK"
-        rm -f "$SSH_AUTH_SOCK"
-      fi
-
-      if [[ $command == start || $command == restart ]]; then
-        echo "Starting agent"
-        eval "$(ssh-agent)" >/dev/null
-
-        pid_state=$(check_pid)
-        sock_state=$(check_sock)
-
-        if [[ $pid_state == valid && $sock_state == valid ]]; then
-          echo "Generating $vars_file"
-          export_vars >"$vars_file"
-        fi
-      fi
-    fi
-  } >&2
+  exec_command >&2
 
   if [[ $pid_state == valid && $sock_state == valid ]]; then
     export_vars
@@ -105,14 +53,44 @@ main() {
   fi
 }
 
-export_vars() {
-  echo "SSH_AGENT_PID=$SSH_AGENT_PID; export SSH_AGENT_PID;"
-  echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK; export SSH_AUTH_SOCK;"
+exec_command() {
+  if [[ $command == status ]]; then
+    check_env
+    exit
+  fi
+
+  local vars_file
+  local lock_file
+  local lock_fd
+
+  detect_paths
+
+  exec {lock_fd}>"$lock_file"
+  flock "$lock_fd"
+
+  check_env
+
+  if [[ $pid_state != valid || $sock_state != valid ]]; then
+    load_vars
+  fi
+
+  if [[ $command == stop || $command == restart ||
+        $pid_state != valid || $sock_state != valid ]]; then
+    kill_agent
+
+    if [[ $command == start || $command == restart ]]; then
+      start_agent
+    fi
+  fi
+
+  flock -u "$lock_fd"
 }
 
-unset_vars() {
-  echo "unset SSH_AGENT_PID;"
-  echo "unset SSH_AUTH_SOCK;"
+check_env() {
+  echo "Checking environment"
+
+  pid_state=$(check_pid)
+  sock_state=$(check_sock)
 }
 
 check_pid() {
@@ -142,6 +120,74 @@ check_sock() {
   else
     echo "[unset] SSH_AUTH_SOCK" >&2
     echo "unset"
+  fi
+}
+
+detect_paths() {
+  if [[ -d /run || -d /var/run ]]; then
+    local run_dir=
+    if [[ -d /run ]]; then
+      run_dir=/run/user/$UID
+    else
+      run_dir=/var/run/user/$UID
+    fi
+    mkdir -p "$run_dir"
+    vars_file=$run_dir/sshctl-vars
+    lock_file=$run_dir/sshctl-lock
+  else
+    run_dir=/tmp
+    vars_file=/tmp/sshctl-vars-$UID
+    lock_file=/tmp/sshctl-lock-$UID
+  fi
+}
+
+load_vars() {
+  if [[ -f $vars_file ]]; then
+    echo "Loading $vars_file"
+    source "$vars_file" || true
+
+    pid_state=$(check_pid)
+    sock_state=$(check_sock)
+  fi
+}
+
+export_vars() {
+  echo "SSH_AGENT_PID=$SSH_AGENT_PID; export SSH_AGENT_PID;"
+  echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK; export SSH_AUTH_SOCK;"
+}
+
+unset_vars() {
+  echo "unset SSH_AGENT_PID;"
+  echo "unset SSH_AUTH_SOCK;"
+}
+
+start_agent() {
+  echo "Starting agent"
+  eval "$(ssh-agent)" >/dev/null
+
+  pid_state=$(check_pid)
+  sock_state=$(check_sock)
+
+  if [[ $pid_state == valid && $sock_state == valid ]]; then
+    echo "Generating $vars_file"
+    export_vars >"$vars_file"
+  fi
+}
+
+kill_agent() {
+  if [[ -f $vars_file ]]; then
+    echo "Deleting $vars_file"
+    rm "$vars_file"
+  fi
+
+  if [[ $pid_state == valid ]]; then
+    echo "Killing agent pid $SSH_AGENT_PID"
+    kill "$SSH_AGENT_PID"
+  fi
+
+  if [[ $sock_state == valid ]]; then
+    echo "Deleting agent socket $SSH_AUTH_SOCK"
+    rm -f "$SSH_AUTH_SOCK"
   fi
 }
 
