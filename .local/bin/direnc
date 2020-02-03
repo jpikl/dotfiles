@@ -10,14 +10,14 @@ help() {
 		Mount directory using encfs.
 
 		Usage:
-		  $(self) [options] [--] <action>
+		  $(self) [options] [--] <command>
 
 		Options:
 		  -e <dir>  Path to encrypted directory.
 		  -d <dir>  Path to decrypted directory.
 		  -h        Print this help.
 
-		Action:
+		Commands:
 		  status   Print directories and mount status.
 		  mount    Mount private directory. Directories are created
 		           and encryption is configured if they do not exist.
@@ -53,7 +53,7 @@ main() {
     status) status ;;
     mount) mount ;;
     umount|unmount) unmount ;;
-    *) die_help "invalid action '$1'" ;;
+    *) die_help "invalid command '$1'" ;;
   esac
 }
 

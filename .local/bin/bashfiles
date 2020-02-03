@@ -9,9 +9,9 @@ help() {
 		Do things with Bash files.
 
 		Usage:
-		  $(basename "$0") <action>
+		  $(basename "$0") <command>
 
-		Action:
+		Commands:
 		  list   List bash files.
 		  check  Validate bash files using shellcheck.
 
