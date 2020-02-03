@@ -10,7 +10,7 @@ help() {
 		Control ssh-agent process.
 
 		Usage:
-		  $(self) [options] [command]
+		  $(self) [options] <command>
 
 		Options:
 		  -h  Print this help.

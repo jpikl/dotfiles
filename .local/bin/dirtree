@@ -53,7 +53,7 @@ main() {
     if [[ $max_depth =~ ^[0-9]+$ ]]; then
       find_args+=("-maxdepth" "$max_depth")
     else
-      die_help "option -m requires positive integer as an argument"
+      die_help "option -m requires positive integer as its argument"
     fi
   fi
 

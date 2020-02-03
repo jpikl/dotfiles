@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Refresh output of a command on change.
+
+		Usage:
+		  $(self) [options] [--] <command> [args]
+
+		Options:
+		  -d <seconds>  Output refresh period in seconds (default: 1).
+		  -c            Continuous output.
+		  -h            Print this help.
+
+		Command:
+		  Command to execute.
+
+		Args:
+		  Arguments passed to command.
+	EOT
+}
+
+main() {
+  local delay=1
+  local continuous=false
+  local opt
+
+  while getopts ":d:ch" opt; do
+    case "$opt" in
+      d) delay=$OPTARG ;;
+      c) continuous=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  [[ $# -eq 0 ]] && die_missing_arg
+  [[ $delay =~ ^[0-9]+$ ]] || die_help "option -d requires positive integer as its argument"
+
+  local prev_output=
+  local output
+
+  if [[ $continuous == false ]]; then
+    tput sc
+  fi
+
+  while true; do
+    output=$("$@")
+    if [[ $output != "$prev_output" ]]; then
+      if [[ $continuous == false ]]; then
+        tput rc
+        tput ed
+      fi
+      printf "%s\n" "$output"
+      prev_output=$output
+    fi
+    sleep "$delay"
+  done
+}
+
+main "$@"
