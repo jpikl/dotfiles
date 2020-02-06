@@ -5,6 +5,9 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/system.sh"
 
+readonly VARS_FILENAME=sshctl-vars
+readonly LOCK_FILENAME=sshctl-lock
+
 help() {
   cat <<-EOT
 		Control ssh-agent process.
@@ -129,19 +132,15 @@ check_sock() {
 }
 
 detect_paths() {
-  if [[ -d /run || -d /var/run ]]; then
-    local run_dir=
-    if [[ -d /run ]]; then
-      run_dir=/run/user/$UID
-    else
-      run_dir=/var/run/user/$UID
-    fi
-    mkdir -p "$run_dir"
-    vars_file=$run_dir/sshctl-vars
-    lock_file=$run_dir/sshctl-lock
+  if [[ -d /run/user/$UID && -w /run/user/$UID ]]; then
+    vars_file=/run/user/$UID/$VARS_FILENAME
+    lock_file=/run/user/$UID/$LOCK_FILENAME
+  elif [[ -d /var/run/user/$UID && -w /var/run/user/$UID ]]; then
+    vars_file=/var/run/user/$UID/$VARS_FILENAME
+    lock_file=/var/run/user/$UID/$LOCK_FILENAME
   else
-    vars_file=/tmp/sshctl-vars-$UID
-    lock_file=/tmp/sshctl-lock-$UID
+    vars_file=/tmp/$VARS_FILENAME-$UID
+    lock_file=/tmp/$LOCK_FILENAME-$UID
   fi
 }
 
