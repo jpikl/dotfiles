@@ -1,10 +1,9 @@
 # shellcheck shell=bash
 
-readonly PURELINE_DIR=$BASH_LIB_DIR/pureline
-readonly PURELINE_SCRIPT=$PURELINE_DIR/pureline
-readonly PURELINE_CONFIG=$CONFIG_DIR/pureline.conf
+readonly PURELINE_BIN=$BASH_LIB_DIR/pureline/pureline
+readonly PURELINE_CONF=$CONFIG_DIR/pureline.conf
 
-if [[ -f $PURELINE_SCRIPT ]]; then
+if [[ -f $PURELINE_BIN ]]; then
   # shellcheck disable=SC2034
   project_module() {
     local content
@@ -40,13 +39,13 @@ if [[ -f $PURELINE_SCRIPT ]]; then
     PS1+=$title
   }
 
-  source "$PURELINE_SCRIPT" "$PURELINE_CONFIG"
+  source "$PURELINE_BIN" "$PURELINE_CONF"
 else
   {
     echo
     echo "Unable to setup pureline prompt!"
     echo "Install pureline with:"
-    echo "  dotfiles submodule update $PURELINE_DIR"
+    echo "  cd && dotfiles submodule update --init"
     echo
   } >&2
 fi

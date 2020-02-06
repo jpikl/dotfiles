@@ -4,29 +4,31 @@ My personal dotfiles and Bash scripts.
 
 ## Installation
 
-Clone bare repository to `~/.dotfiles.git` directory using SSH.
+Clone bare repository to `~/.dotfiles.git` directory.
 
 ```bash
-git clone --bare git@github.com:jpikl/dotfiles.git ~/.dotfiles.git
+git clone --bare git@github.com:jpikl/dotfiles.git     ~/.dotfiles.git # SSH
+git clone --bare https://github.com/jpikl/dotfiles.git ~/.dotfiles.git # HTTPS
 ```
 
-Or using HTTPS.
+Create an alias for git to operate under the cloned repository.
 
 ```bash
-git clone --bare https://github.com/jpikl/dotfiles.git ~/.dotfiles.git
+alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 ```
 
 Checkout `master` branch to initialize dotfiles in home directory.
 
 ```bash
-git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME checkout
+dotfiles checkout
+dotfiles checkout -f # To overwrite possible conflicts.
 ```
 
-Possibly use `-f, --force` option to override existing files if there were
-any conflicts.
+Initialize git submodules.
 
 ```bash
-git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME checkout -f
+cd # In case $HOME is not your current working directory.
+dotfiles submodule update --init
 ```
 
 Customize your personal [configuration](#configuration).
@@ -91,7 +93,7 @@ with ConEmu and bash on Windows.
 
 To work around this, `bash` needs to be executed using `winpty` command.
 
-`winpty bash -i -l`
+`winpty bash -li`
 
 ## License
 
