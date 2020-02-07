@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Print state of git working tree.
+		Print state of Git working tree.
 
 		The following states are being recognized.
 		The "normal" state does not have any output printed.

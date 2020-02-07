@@ -69,8 +69,6 @@ main() {
   # Check we are in a git repository.
   git status --porcelain >/dev/null
 
-
-
   if [[ $short_names = true ]]; then
     { # We want to print mix of local and remote branches.
       print_included_local
@@ -106,13 +104,22 @@ print_included_remote() {
 }
 
 print_current() {
-  local branch
-  branch=$(git branch --show-current)
+  # Git rev-parse fails with error when there are no commits yet.
+  # Do not use 'git branch --show-current' which requires Git >= 2.22.
 
-  if [[ $branch ]]; then
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null) || true
+
+  if [[ $branch != HEAD ]]; then
     echo "$branch"
     return
   fi
+
+  # Git rev-parse prints HEAD instead of a real branch name:
+  # 1) During rebase (branch name is saved in .git/rebase-apply directory).
+  # 2) During interactive rebase (branch name is saved in .git/rebase-merge directory).
+  # 3) When HEAD is detached (branch name cannot be detected).
+  # 4) When there are no commits yet (branch name cannot be detected).
 
   local git_dir
   git_dir=$(git rev-parse --git-dir)
