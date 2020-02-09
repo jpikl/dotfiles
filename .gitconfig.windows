@@ -1,4 +1,12 @@
+# Add the following section to ~/.gitconfig.local
+# to enable this Git configuration file.
+#
+# [include]
+#    path = ~/.gitconfig.windows
+#
+
 [core]
     autocrlf = true
     fileMode = false
+    fscache = true
     trustctime = false
