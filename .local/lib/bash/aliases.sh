@@ -125,6 +125,7 @@ alias rndebug='adb shell input keyevent 82'
 alias ssha='ssh-add "$(choose -p "Add SSH key:" ~/.ssh/*.key)"'
 alias sshi='eval "$(sshctl start)"'
 alias sshk='eval "$(sshctl stop)"'
+alias sshl='grep --fixed-strings --recursive --with-filename --file=<(ssh-add -L | cut --delimiter=" " --fields=2) ~/.ssh/ | cut --delimiter=: --fields=1'
 
 # Terminal
 alias termfit='cut --characters=-$COLUMNS'
