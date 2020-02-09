@@ -6,7 +6,10 @@ if [[ $- != *i* ]]; then
   return
 fi
 
-# Bash history (start with space to ignore command + erase duplicates)
+# Append entries to history file
+shopt -s histappend
+
+# Do not add commands starting with space to history + erase duplicates.
 export HISTCONTROL=ignorespace:erasedups
 
 # Current tty device
