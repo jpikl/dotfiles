@@ -85,6 +85,20 @@ bashfiles check
 
 ## Troubleshooting
 
+### Poor Git performance on Windows
+
+1. Assuming `C:\Program Files\Git` is your Git installation directory,
+add these paths **at the beginning** of `Path` environment variable:
+
+    ```text
+    C:\Program Files\Git\bin
+    C:\Program Files\Git\usr\bin
+    C:\Program Files\Git\mingw64\bin
+    ```
+
+2. Add `HOME` environment variable with value `%USERPROFILE%`.
+3. See also [Diagnosing performance issues](https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues) on Git for Windows Wiki.
+
 ### Character Set Not Supported
 
 Some commands internally use [fzf](https://github.com/junegunn/fzf) which
