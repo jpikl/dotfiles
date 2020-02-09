@@ -101,7 +101,7 @@ unset normalize_path
 PATH=$PATH:$LOCAL_BIN_DIR
 
 # Path for npm binaries
-if [[ $(uname) =~ ^MINGW ]]; then
+if [[ ${MSYSTEM:-} =~ ^MINGW(32|64)$ ]]; then
   PATH=$PATH:$NPM_PREFIX # Npm on Windows puts binaries here, not in $NPM_PREFIX/bin
 elif [[ $NPM_PREFIX != "$LOCAL_DIR" ]]; then
   PATH=$PATH:$NPM_PREFIX/bin # Otherwise $NPM_PREFIX/bin matches $LOCAL_BIN_DIR which is already in PATH
