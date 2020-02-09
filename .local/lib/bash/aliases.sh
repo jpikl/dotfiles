@@ -65,8 +65,7 @@ alias fzfbat='fzf --preview="bat --color=always {}"'
 alias fzfls='fzf --preview="ls -l --almost-all --human-readable --color=always {}"'
 alias fzfexif='fzf --preview="exiftool {}"'
 alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-if-empty'
-# shellcheck disable=SC2142
-alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | awk "{print \$2}"'
+alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | cut --delimiter=" " --fields=2'
 
 # Git
 alias gitcb='git ls-branches -lrsC | choose -ip "Checkout branch:" | xargs --no-run-if-empty git checkout'
