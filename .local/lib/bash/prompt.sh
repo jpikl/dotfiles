@@ -4,6 +4,14 @@ readonly PURELINE_BIN=$BASH_LIB_DIR/pureline/pureline
 readonly PURELINE_CONF=$CONFIG_DIR/pureline.conf
 
 if [[ -f $PURELINE_BIN ]]; then
+  level_module() {
+    if [[ "$SHLVL" -gt 1 ]]; then
+      PS1+="$(section_end "$2" "$1")"
+      PS1+="$(section_content "$2" "$1" " ${SHLVL}L ")"
+      __last_color="$1"
+    fi
+  }
+
   # shellcheck disable=SC2034
   project_module() {
     local content
