@@ -12,6 +12,7 @@
     chmodx = add --chmod=+x --
     diffc = diff --word-diff-regex=.
     diffw = diff --word-diff
+    drm= push origin --delete
     fap = fetch --all --prune
     ff = fast-forward
     gb = gone-branches
