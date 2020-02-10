@@ -44,7 +44,7 @@ if [[ -f $PURELINE_BIN ]]; then
     fi
 
     title+="$PWD\007"
-    PS1+=$title
+    PS1+="\[$title\]"
   }
 
   source "$PURELINE_BIN" "$PURELINE_CONF"
