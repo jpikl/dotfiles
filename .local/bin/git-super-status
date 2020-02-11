@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/term.sh"
 
 help() {
   cat <<-EOT
@@ -22,24 +23,18 @@ help() {
 		  -h  Print this help.
 
 		Environment variables:
-		  TERM_COLORS  Enables colors in terminal output (default: true).
-		  TERM_ICONS   Enables icons in terminal output (default: false).
+		  TERM_ICONS  Enables icons in terminal output (default: false).
 	EOT
 }
 
 main() {
   local all=false
-  local colors_on=false
-  local icons_on=false
+  local colors_on
+  local icons_on
   local wtree_files_on=true
   local index_files_on=true
   local untracked_files_on=true
   local opt
-
-  if [[ -t 1 ]]; then
-    colors_on=${TERM_COLORS:-true}
-    icons_on=${TERM_ICONS:-true}
-  fi
 
   while getopts ":acChiIFWSU" opt; do
     case "$opt" in
@@ -61,6 +56,9 @@ main() {
 
   # Check we are in a git repository.
   git status --porcelain >/dev/null
+
+  colors_on=${colors_on-$(boolean term_has_colors)}
+  icons_on=${icons_on-$(boolean term_has_icons)}
 
   generate_output | replace_formatters
 }
