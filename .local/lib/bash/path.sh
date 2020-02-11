@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 path_from_env() {
-  local path=${!1:-}
+  local path=${!1-}
   if [[ $path && $path != /* ]]; then
     die "$1 variable must be an absolute path"
   fi

@@ -13,7 +13,7 @@ alert() {
 }
 
 die() {
-  [[ "${1:-}" ]] && alert "$1"
+  [[ "${1-}" ]] && alert "$1"
   exit $ERR_GENERIC
 } >&2
 

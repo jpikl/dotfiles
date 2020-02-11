@@ -5,5 +5,5 @@ is_command() {
 }
 
 is_mingw() {
-   [[ ${MSYSTEM:-} =~ ^MINGW(32|64)$ ]]
+   [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]
 }

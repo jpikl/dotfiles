@@ -30,7 +30,7 @@ main() {
   done
 
   local key_type
-  local remote_hostname=${1:-}
+  local remote_hostname=${1-}
 
   key_type=$(choose -bp "Key type:" ed25519 rsa)
   read -rep "Remote hostname: " -i "$remote_hostname" remote_hostname

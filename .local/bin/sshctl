@@ -102,7 +102,7 @@ check_env() {
 }
 
 check_pid() {
-  if [[ ${SSH_AGENT_PID:-} ]]; then
+  if [[ ${SSH_AGENT_PID-} ]]; then
     if kill -0 "$SSH_AGENT_PID" &>/dev/null; then
       echo "[ok] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
       echo "valid"
@@ -117,7 +117,7 @@ check_pid() {
 }
 
 check_sock() {
-  if [[ ${SSH_AUTH_SOCK:-} ]]; then
+  if [[ ${SSH_AUTH_SOCK-} ]]; then
     if [[ -S $SSH_AUTH_SOCK ]]; then
       echo "[ok] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
       echo "valid"

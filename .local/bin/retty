@@ -38,7 +38,7 @@ main() {
   shift $((OPTIND - 1))
 
   [[ $# -eq 0 ]] && die_missing_arg
-  [[ ${TTY:-} ]] || die_no_var TTY # Defined in .bashrc
+  [[ ${TTY-} ]] || die_no_var TTY # Defined in .bashrc
 
   if [[ ! -t 0 ]]; then
     "$@" < "$TTY"

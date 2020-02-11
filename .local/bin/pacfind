@@ -71,9 +71,9 @@ main() {
   fi
 
   if [[ $quiet == true ]]; then
-    print_names | filter_names "${1:-}" | LC_ALL=C sort | LC_ALL=C uniq
+    print_names | filter_names "${1-}" | LC_ALL=C sort | LC_ALL=C uniq
   else
-    print_packages | filter_packages "${1:-}"
+    print_packages | filter_packages "${1-}"
   fi
 }
 

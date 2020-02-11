@@ -128,7 +128,7 @@ basic_mode() {
     else
       mapfile -t values
     fi
-    [[ ${TTY:-} ]] || die_no_var TTY # Defined in .bashrc
+    [[ ${TTY-} ]] || die_no_var TTY # Defined in .bashrc
     exec < "$TTY"  # Redirect stdin back to tty
   fi
 
