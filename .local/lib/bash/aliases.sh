@@ -45,6 +45,10 @@ alias cdwrk='cdwork'
 alias clipi='xclip -in -selection clipboard'
 alias clipo='xclip -out -selection clipboard'
 
+# Dir
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+
 # Dotfiles
 alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
 
@@ -53,9 +57,9 @@ alias exiffzf='exiftool "$(find -type f | fzfexif)"'
 
 # Grep
 alias grep='grep --color=auto'
-alias grepp='grep --perl-regexp'
-alias grepe='grep --extended-regexp'
-alias grepf='grep --fixed-strings'
+alias egrep='grep --extended-regexp'
+alias fgrep='grep --fixed-strings'
+alias pgrep='grep --perl-regexp'
 
 # Find
 alias findsrc='findex -exclude vplo'
