@@ -50,7 +50,9 @@ alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 
 # Dotfiles
-alias dotfiles='git --git-dir=$HOME/.dotfiles.git --work-tree=$HOME'
+alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
+alias dotfiles='dotenv git'
+alias dotcode='dotenv code ~/.dotfiles.code-workspace'
 
 # Exif
 alias exiffzf='exiftool "$(find -type f | fzfexif)"'
