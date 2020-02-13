@@ -8,6 +8,10 @@ alias batfzf='bat "$(find -type f | fzfbat)"'
 alias batfzfsrc='bat "$(findsrc -type f | fzfbat)"'
 
 # Cd
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 alias cdbak='cd "$BACKUP_DIR"'
 alias cdbin='cd "$LOCAL_BIN_DIR"'
 alias cdcach='cd "$CACHE_DIR"'
