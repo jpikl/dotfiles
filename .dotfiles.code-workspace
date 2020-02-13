@@ -10,5 +10,8 @@
 			"path": ".github"
 		}
 	],
-	"settings": {}
+	"settings": {
+        "shellcheck.enableQuickFix": true,
+        "shellcheck.exclude": ["SC1090"]
+	}
 }
