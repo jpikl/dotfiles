@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Based on https://centerkey.com/tree
 
 set -euo pipefail
+shopt -s extglob
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/term.sh"
 
 help() {
   cat <<-EOT
@@ -16,6 +17,7 @@ help() {
 		  -m <depth>  The maximum number of levels to descent.
 		  -f          Print also files.
 		  -s          Sort directory entries by name.
+		  -c          Force colors in output (-C for no colors).
 		  -h          Print this help.
 
 		Path:
@@ -28,13 +30,16 @@ main() {
   local max_depth=
   local files=false
   local sort=false
+  local colors=
   local opt
 
-  while getopts ":m:fsh" opt; do
+  while getopts ":m:fscCh" opt; do
     case "$opt" in
       m) max_depth=$OPTARG ;;
       f) files=true ;;
       s) sort=true ;;
+      c) colors=true ;;
+      C) colors=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -47,6 +52,18 @@ main() {
     cd "$1"
   fi
 
+  if [[ ! $colors ]] ; then
+    if term_has_colors; then
+      colors=true
+    else
+      colors=false
+    fi
+  fi
+
+  print_paths | sort_paths | rewrite_paths | format_output
+}
+
+print_paths() {
   local find_args=("-mindepth" "1")
 
   if [[ $max_depth ]]; then
@@ -61,24 +78,93 @@ main() {
     find_args+=("-type" "d")
   fi
 
-  find_args+=("-print0")
+  find_args+=("-printf" "%y%P\0")
 
-  # Sed expressions:
-  # 1) Replace leading dirs by spaces.
-  # 2) Remove extra left padding.
-  # 3) Add newlines.
+  find "${find_args[@]}"
+}
 
-  find "${find_args[@]}" \
-    | if [[ $sort == true ]]; then
-        sort --zero-terminated
-      else
-        cat
-      fi \
-    | sed --null-data \
-          --expression "s/[^\/]*\//  /g" \
-          --expression "s/^  //" \
-          --expression "s/$/\n/" \
-    | tr --delete '\000'
+sort_paths() {
+  if [[ $sort == true ]]; then
+    sort --zero-terminated --key=1.2 # Ignore first character
+  else
+    cat
+  fi
+}
+
+rewrite_paths() {
+  local item
+
+  while IFS= read -r -d '' item; do
+    local type=${item::1} # First character
+    local path=${item:1}  # All except first character
+
+    path=${path//+([^\/])\//  } # Replace leading directories by spaces
+    printf "%s%s\0" "$type" "$path"
+  done
+}
+
+format_output() {
+  local item
+
+  if [[ $colors == true ]]; then
+    local -A ext_colors=()
+    local -A type_colors=()
+    local reset_color=
+    local prev_color=
+
+    reset_color=$(tput sgr0)
+
+    if [[ $LS_COLORS ]]; then
+      parse_ls_colors
+    else
+      type_colors[d]=$(tput setaf 4)
+    fi
+  fi
+
+  while IFS= read -r -d '' item; do
+    local type=${item::1} # First character
+    local path=${item:1}  # All except first character
+
+    if [[ $colors == true ]]; then
+      local color=${type_colors[$type]-}
+
+      if [[ ! $color && $type == f ]]; then
+        local ext=${path##*.}
+        color=${ext_colors[${ext,,}]-} # Lowercase extension
+      fi
+
+      if [[ ! $color ]]; then
+        color=$reset_color
+      fi
+
+      if [[ $color != "$prev_color" ]]; then
+        echo -ne "$color"
+        color=$prev_color
+      fi
+    fi
+
+    printf "%s\n" "$path"
+  done
+}
+
+parse_ls_colors() {
+  local key
+  local value
+
+  while read -r -d = key && read -r -d : value; do
+    value="\e[${value}m"
+
+    case "$key" in
+       'fi') type_colors[f]=$value ;; # Normal file
+         bd) type_colors[b]=$value ;; # Block device
+         cd) type_colors[c]=$value ;; # Character device
+         di) type_colors[d]=$value ;; # Directory
+         ln) type_colors[l]=$value ;; # Symbolik link
+         pi) type_colors[p]=$value ;; # Named pipe
+         so) type_colors[s]=$value ;; # Socket
+      '*'.*) ext_colors[${key:2}]=$value ;;
+    esac
+  done <<< "$LS_COLORS"
 }
 
 main "$@"
