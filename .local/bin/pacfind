@@ -33,7 +33,7 @@ main() {
   local repo=false
   local aur=false
   local quiet=false
-  local colors
+  local colors=
   local opt
 
   while getopts ":lgraqcCh" opt; do
@@ -56,7 +56,13 @@ main() {
     die_help "nothing to do"
   fi
 
-  colors=${colors-$(boolean term_has_colors)}
+  if [[ ! $colors ]] ; then
+    if term_has_colors; then
+      colors=true
+    else
+      colors=false
+    fi
+  fi
 
   local pacman_color
 

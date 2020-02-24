@@ -29,8 +29,8 @@ help() {
 
 main() {
   local all=false
-  local colors_on
-  local icons_on
+  local colors_on=
+  local icons_on=
   local wtree_files_on=true
   local index_files_on=true
   local untracked_files_on=true
@@ -57,8 +57,21 @@ main() {
   # Check we are in a git repository.
   git status --porcelain >/dev/null
 
-  colors_on=${colors_on-$(boolean term_has_colors)}
-  icons_on=${icons_on-$(boolean term_has_icons)}
+  if [[ ! $colors_on ]] ; then
+    if term_has_colors; then
+      colors_on=true
+    else
+      colors_on=false
+    fi
+  fi
+
+  if [[ ! $icons_on ]] ; then
+    if term_has_icons; then
+      icons_on=true
+    else
+      icons_on=false
+    fi
+  fi
 
   generate_output | replace_formatters
 }

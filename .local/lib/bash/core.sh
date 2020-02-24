@@ -38,11 +38,3 @@ die_missing_arg() {
 die_no_var() {
   die "$1 variable is not set"
 }
-
-boolean() {
-  if "$@" >/dev/null; then
-    echo true
-  else
-    echo false
-  fi
-}
