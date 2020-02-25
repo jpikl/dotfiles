@@ -12,8 +12,9 @@ help() {
 		  $(self) [options] [--] [file]
 
 		Options:
-		  -m  Include exception messages.
-		  -h  Print this help.
+		  -m        Include exception messages.
+		  -n <max>  Limit exception messages to N characters.
+		  -h        Print this help.
 
 		File:
 		  Log file to read.
@@ -23,15 +24,26 @@ help() {
 
 main() {
   local messages=false
+  local messages_len=
   local opt
 
-  while getopts ":mh" opt; do
+  while getopts ":mn:h" opt; do
     case "$opt" in
       m) messages=true ;;
+      n) messages_len=$OPTARG ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  if [[ $messages_len ]]; then
+    if [[ $messages == false ]]; then
+      alert "using option -n without -m has no effect"
+    fi
+    if [[ ! ( $messages_len =~ ^[0-9]+$ && $messages_len -gt 0 ) ]]; then
+      die_help "option -n requires positive integer as its argument"
+    fi
+  fi
 
   shift $((OPTIND - 1))
 
@@ -43,7 +55,11 @@ main() {
   local pattern='^((\w|\$)+\.)*(\w|\$)+(Exception|Throwable|Error)'
 
   if [[ $messages = true ]]; then
-    pattern="${pattern}.*"
+    if [[ $messages_len ]]; then
+      pattern="${pattern}.{0,$messages_len}"
+    else
+      pattern="${pattern}.*"
+    fi
   fi
 
   grep --extended-regexp --only-matching "$pattern" \
