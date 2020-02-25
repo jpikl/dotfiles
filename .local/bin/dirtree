@@ -119,7 +119,7 @@ format_output() {
 
   # path is used just to consume rest of the input
   # shellcheck disable=SC2034
-  while IFS=/ read -r -d '' type depth basename path; do
+  while IFS=/ read -rd '' type depth basename path; do
     if [[ $colors == true ]]; then
       local color=${type_colors[$type]-}
 
@@ -151,7 +151,7 @@ parse_ls_colors() {
   local key
   local value
 
-  while IFS='=' read -r -d : key value; do
+  while IFS='=' read -rd : key value; do
     value="\e[${value}m"
 
     case "$key" in

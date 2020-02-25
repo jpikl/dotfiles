@@ -358,9 +358,9 @@ format_paths() {
   if [[ $change_type == R || $change_type == C ]]; then
     local status src_path dst_path
 
-    while IFS= read -r -d '' status \
-       && IFS= read -r -d '' src_path \
-       && IFS= read -r -d '' dst_path; do
+    while IFS= read -rd '' status \
+       && IFS= read -rd '' src_path \
+       && IFS= read -rd '' dst_path; do
 
       # Remove type character and leading zeros
       status=${status:1}
@@ -379,7 +379,7 @@ format_paths() {
     done | format_table --table-right=4
   else
     local path
-    while IFS= read -r -d '' path; do
+    while IFS= read -rd '' path; do
       printf " {#%s}{@%s} %s{#rst}\n" "$change_code" "$change_code" "$path"
     done
   fi
