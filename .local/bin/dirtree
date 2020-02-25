@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-shopt -s extglob
 
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/term.sh"
@@ -60,7 +59,7 @@ main() {
     fi
   fi
 
-  print_paths | sort_paths | rewrite_paths | format_output
+  print_paths | sort_paths | format_output
 }
 
 print_paths() {
@@ -78,34 +77,26 @@ print_paths() {
     find_args+=("-type" "d")
   fi
 
-  find_args+=("-printf" "%y%P\0")
+  find_args+=("-printf")
+
+  if [[ $sort == true ]]; then
+    find_args+=("%y/%d/%f/%P\0") # <depth>/<type>/<basename>/<path> ... path is used for sorting
+  else
+    find_args+=("%y/%d/%f\0")    # <depth>/<type>/<basename>
+  fi
 
   find "${find_args[@]}"
 }
 
 sort_paths() {
   if [[ $sort == true ]]; then
-    sort --zero-terminated --key=1.2 # Ignore first character
+    sort --zero-terminated --field-separator=/ --key=4 # Sort using path
   else
     cat
   fi
 }
 
-rewrite_paths() {
-  local item
-
-  while IFS= read -r -d '' item; do
-    local type=${item::1} # First character
-    local path=${item:1}  # All except first character
-
-    path=${path//+([^\/])\//  } # Replace leading directories by spaces
-    printf "%s%s\0" "$type" "$path"
-  done
-}
-
 format_output() {
-  local item
-
   if [[ $colors == true ]]; then
     local -A ext_colors=()
     local -A type_colors=()
@@ -117,19 +108,23 @@ format_output() {
     if [[ $LS_COLORS ]]; then
       parse_ls_colors
     else
-      type_colors[d]=$(tput setaf 4)
+      type_colors[d]=$(tput setaf 4) # Directory
     fi
   fi
 
-  while IFS= read -r -d '' item; do
-    local type=${item::1} # First character
-    local path=${item:1}  # All except first character
+  local type
+  local depth
+  local basename
+  local path
 
+  # path is used just to consume rest of the input
+  # shellcheck disable=SC2034
+  while IFS=/ read -r -d '' type depth basename path; do
     if [[ $colors == true ]]; then
       local color=${type_colors[$type]-}
 
       if [[ ! $color && $type == f ]]; then
-        local ext=${path##*.}
+        local ext=${basename##*.}
         color=${ext_colors[${ext,,}]-} # Lowercase extension
       fi
 
@@ -143,7 +138,12 @@ format_output() {
       fi
     fi
 
-    printf "%s\n" "$path"
+    local i
+    for (( i=1; i<depth; i++)); do
+      printf "  "
+    done
+
+    echo "$basename"
   done
 }
 
@@ -151,7 +151,7 @@ parse_ls_colors() {
   local key
   local value
 
-  while read -r -d = key && read -r -d : value; do
+  while IFS='=' read -r -d : key value; do
     value="\e[${value}m"
 
     case "$key" in
