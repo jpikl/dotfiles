@@ -14,7 +14,7 @@ help() {
 
 		Options:
 		  -m <depth>  The maximum number of levels to descent.
-		  -f          Print also files.
+		  -d          List directories only.
 		  -s          Sort directory entries by name.
 		  -c          Force colors in output (-C for no colors).
 		  -h          Print this help.
@@ -27,15 +27,15 @@ help() {
 
 main() {
   local max_depth=
-  local files=false
+  local dirs_only=false
   local sort=false
   local colors=
   local opt
 
-  while getopts ":m:fscCh" opt; do
+  while getopts ":m:dscCh" opt; do
     case "$opt" in
       m) max_depth=$OPTARG ;;
-      f) files=true ;;
+      d) dirs_only=true ;;
       s) sort=true ;;
       c) colors=true ;;
       C) colors=false ;;
@@ -73,7 +73,7 @@ print_paths() {
     fi
   fi
 
-  if [[ $files == false ]]; then
+  if [[ $dirs_only == true ]]; then
     find_args+=("-type" "d")
   fi
 
