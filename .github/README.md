@@ -70,8 +70,8 @@ Everything in the home directory is ignored by default and
 needs to be  forcibly added using `-f, --force` option.
 
 ```bash
-dotfiles add -f ~/.foo-bar
-dotfiles commit -m "Add foo-bar dotfile"
+dotfiles add -f ~/.xyz
+dotfiles commit -m "Add xyz dotfile"
 dotfiles push
 ```
 
@@ -88,26 +88,44 @@ bashfiles check
 ### Poor Git performance on Windows
 
 1. Assuming `C:\Program Files\Git` is your Git installation directory,
-add these paths **at the beginning** of `Path` environment variable:
+   add these paths **at the beginning** of `Path` environment variable:
 
-    ```text
-    C:\Program Files\Git\bin
-    C:\Program Files\Git\usr\bin
-    C:\Program Files\Git\mingw64\bin
-    ```
+   ```text
+   C:\Program Files\Git\bin
+   C:\Program Files\Git\usr\bin
+   C:\Program Files\Git\mingw64\bin
+   ```
 
 2. Add `HOME` environment variable with value `%USERPROFILE%`.
 3. See also [Diagnosing performance issues](https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues) on Git for Windows Wiki.
 
-### Character Set Not Supported
+### Commands not working in ConEmu
 
-Some commands internally use [fzf](https://github.com/junegunn/fzf) which
-[does not work well](https://github.com/junegunn/fzf/issues/963) in combination
-with ConEmu and bash on Windows.
+Some commands does not work well with ConEmu/Bash on Windows.
 
-To work around this, `bash` needs to be executed using `winpty` command.
+- [fzf](https://github.com/junegunn/fzf) - Fails with [character set not supported](https://github.com/junegunn/fzf/issues/963).
+- [mvn](https://maven.apache.org) - Does not output colors.
 
-`winpty bash -li`
+There are two workarounds using [winpty](https://github.com/rprichard/winpty):
+
+1. Wrap command execution using `winpty`.
+
+   ```bash
+   winpty fzf
+   winpty any-other-command
+   ```
+
+   This unfortunately does not work for `mvn`, executed as `winpty mvn.cmd`.
+   Also any alias or command that internally uses `fzf` won't work.
+
+2. Wrap `bash` execution using `winpty`.
+
+    ```bash
+   winpty bash -li
+   ```
+
+   This unfortunately breaks some other commands like `bat` which
+   stops printing colors.
 
 ## License
 
