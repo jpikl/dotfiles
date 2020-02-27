@@ -91,7 +91,7 @@ Use [LiterationMono Nerd Font](https://github.com/ryanoasis/nerd-fonts/tree/mast
 or any other [Nerd Font](https://www.nerdfonts.com).
 
 - They provide icons which are used by prompt and commands like `git-super-status`.
-- Run `homefile -f` to download latest version to `~/.local/share/fonts`.
+- Run `homefiles -f` to download latest version to `~/.local/share/fonts`.
 
 ### Colors
 
