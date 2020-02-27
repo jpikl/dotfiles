@@ -98,18 +98,18 @@ or any other [Nerd Font](https://www.nerdfonts.com).
 Use [Tilix Material theme](https://github.com/gnunn1/tilix/blob/master/data/schemes/material.json)
 which itself is a hybrid of Dark and Oceanic [materiallshell themes](https://materialshell.carloscuesta.me).
 
-<table>
-  <tr><td>Foreground </td><td><code>#A1B0B8</code></td><td style="background: #A1B0B8"></td></tr>
-  <tr><td>Background </td><td><code>#263238</code></td><td style="background: #263238"></td></tr>
-  <tr><td>(0) Black  </td><td><code>#252525</code></td><td style="background: #252525"></td></tr>
-  <tr><td>(1) Red    </td><td><code>#FF5252</code></td><td style="background: #FF5252"></td></tr>
-  <tr><td>(2) Green  </td><td><code>#C3D82C</code></td><td style="background: #C3D82C"></td></tr>
-  <tr><td>(3) Yellow </td><td><code>#FFC135</code></td><td style="background: #FFC135"></td></tr>
-  <tr><td>(4) Blue   </td><td><code>#42A5F5</code></td><td style="background: #42A5F5"></td></tr>
-  <tr><td>(5) Magenta</td><td><code>#D81B60</code></td><td style="background: #D81B60"></td></tr>
-  <tr><td>(6) Cyan   </td><td><code>#00ACC1</code></td><td style="background: #00ACC1"></td></tr>
-  <tr><td>(7) White  </td><td><code>#F5F5F5</code></td><td style="background: #F5F5F5"></td></tr>
-</table>
+| Color       |                                                          | Value     |
+| ----------- | -------------------------------------------------------- | --------- |
+| Foreground  | ![#A1B0B8](https://placehold.it/16/A1B0B8/000000?text=+) | `#A1B0B8` |
+| Background  | ![#263238](https://placehold.it/16/263238/000000?text=+) | `#263238` |
+| (0) Black   | ![#252525](https://placehold.it/16/252525/000000?text=+) | `#252525` |
+| (1) Red     | ![#FF5252](https://placehold.it/16/FF5252/000000?text=+) | `#FF5252` |
+| (2) Green   | ![#C3D82C](https://placehold.it/16/C3D82C/000000?text=+) | `#C3D82C` |
+| (3) Yellow  | ![#FFC135](https://placehold.it/16/FFC135/000000?text=+) | `#FFC135` |
+| (4) Blue    | ![#42A5F5](https://placehold.it/16/42A5F5/000000?text=+) | `#42A5F5` |
+| (5) Magenta | ![#D81B60](https://placehold.it/16/D81B60/000000?text=+) | `#D81B60` |
+| (6) Cyan    | ![#00ACC1](https://placehold.it/16/00ACC1/000000?text=+) | `#00ACC1` |
+| (7) White   | ![#F5F5F5](https://placehold.it/16/F5F5F5/000000?text=+) | `#F5F5F5` |
 
 Bold colors #8-15 are the same as regular colors #0-7.
 
