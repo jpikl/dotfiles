@@ -139,6 +139,9 @@ alias sshl='grep --fixed-strings --recursive --with-filename --file=<(ssh-add -L
 # Terminal
 alias termfit='cut --characters=-$COLUMNS'
 
+# Tree
+command -v tree >/dev/null || alias tree='dirtree -s' # Use our own implementation when not available
+
 # Xargs
 alias xargsfzf='find -print0 | fzfxargs'
 alias xargsfzfsrc='findsrc -print0 | fzfxargs'
