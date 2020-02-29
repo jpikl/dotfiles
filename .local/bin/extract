@@ -12,7 +12,7 @@ help() {
 		  $(self) [options] [--] <file>...
 
 		Options:
-		  -o  Overwrite existing files without prompting.
+		  -f  Force extraction even if output files aready exist.
 		  -v  Verbose mode with additional output.
 		  -s  Skip extraction errors.
 		  -h  Print this help.
@@ -23,14 +23,14 @@ help() {
 }
 
 main() {
-  local overwrite=false
+  local force=false
   local verbose=false
   local skip_errors=false
   local opt
 
-  while getopts ":ovsh" opt; do
+  while getopts ":fvsh" opt; do
     case "$opt" in
-      o) overwrite=true ;;
+      f) force=true ;;
       v) verbose=true ;;
       s) skip_errors=true ;;
       h) help; exit ;;
@@ -148,7 +148,7 @@ extract_tar() {
     fi
   fi
 
-  if [[ $overwrite = true ]]; then
+  if [[ $force = true ]]; then
     opts+=("--overwrite") # Overwrite existing files.
   else
     opts+=("--keep-old-files") # Don't replace existing files, treat them as errors.
@@ -163,7 +163,7 @@ extract_tar() {
 
 extract_compression() {
   local output=${1%.*} # Remove input extension.
-  if [[ -f "$output" && $overwrite == false ]] && ! confirm "Overwrite '$output'?"; then
+  if [[ -f "$output" && $force == false ]] && ! confirm "Overwrite '$output'?"; then
       return
   fi
 
@@ -188,7 +188,7 @@ extract_compression() {
 extract_7z() {
   local opts=("x") # Do extraction.
 
-  if [[ $overwrite = true ]]; then
+  if [[ $force = true ]]; then
     opts+=("-aoa") # Overwrite existing files without prompting.
   fi
 
@@ -201,7 +201,7 @@ extract_7z() {
     opts+=("-bb3") # Log everything.
   fi
 
-  if [[ $verbose = false && $overwrite = true ]]; then
+  if [[ $verbose = false && $force = true ]]; then
     # In this particular case, where no confirmation is needed,
     # we can safely redirect all output to /dev/null.
     7z "${opts[@]}" "$1" >/dev/null || handle_error
@@ -213,7 +213,7 @@ extract_7z() {
 extract_rar() {
   local opts=("x") # Do extraction.
 
-  if [[ $overwrite = true ]]; then
+  if [[ $force = true ]]; then
     opts+=("-o+") # Overwrite existing files without prompting.
   fi
 
@@ -227,7 +227,7 @@ extract_rar() {
 extract_zip() {
   local opts=()
 
-  if [[ $overwrite = true ]]; then
+  if [[ $force = true ]]; then
     opts+=("-o") # Overwrite existing files without prompting.
   fi
 
@@ -236,11 +236,6 @@ extract_zip() {
   fi
 
   unzip "${opts[@]}" "$1" || handle_error
-}
-
-can_extract() {
-  local output=${1%.*} # Remove input extension.
-  [[ ! -f "$output" || $overwrite == true ]] || confirm "Overwrite '$output'?"
 }
 
 handle_error() {
