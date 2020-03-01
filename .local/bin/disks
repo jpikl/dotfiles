@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Simple frontend for udisksctl.
+
+		Usage:
+		  $(self) [options] [--] <command>
+
+		Options:
+		  -h  Print this help.
+
+		Commands:
+		  l, list              List disks and their status.
+		  m, mount   <device>  Mount disk.
+		  u, unmount <device>  Unmount disk.
+		  e, eject   <device>  Unmount and power-off disk.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  case $1 in
+    l|list) list_disks ;;
+    m|mount) mount_disk "${2-}" ;;
+    u|umount|unmount) unmount_disk "${2-}" ;;
+    e|eject) eject_disk "${2-}" ;;
+  esac
+}
+
+list_disks() {
+  local device
+  local name
+
+  while read -r device name; do
+    local status
+
+    if is_disk_mounted "$device"; then
+      status="x"
+    else
+      status=" "
+    fi
+
+    printf "[%s]|%s|%s\n" "$status" "$device" "$name"
+  done < <(list_disks_raw) | column --table --separator '|'
+}
+
+list_disks_raw() {
+  udisksctl status \
+    | tail -n+3 \
+    | sed -E 's/^(.*)\s+(\S+)\s+(\S+)\s+(\S+)\s+$/\4 \1/g'
+}
+
+is_disk_mounted() {
+  mount | grep --quiet "/dev/$1"
+}
+
+check_disk_arg() {
+  [[ $2 ]] || die_help "$1 requires an argument"
+  [[ -b "/dev/$2" ]] || die "/dev/$2 is not a block device"
+}
+
+mount_disk() {
+  check_disk_arg "mount" "$1"
+  udisksctl mount --block-device "/dev/$1"
+}
+
+unmount_disk() {
+  check_disk_arg "unmount" "$1"
+  udisksctl unmount --block-device "/dev/$1"
+}
+
+eject_disk() {
+  check_disk_arg "eject" "$1"
+  udisksctl unmount --block-device "/dev/$1" \
+    && udisksctl power-off --block-device "/dev/$1"
+}
+
+main "$@"
