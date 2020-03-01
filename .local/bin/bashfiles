@@ -12,8 +12,8 @@ help() {
 		  $(basename "$0") <command>
 
 		Commands:
-		  list   List bash files.
-		  check  Validate bash files using shellcheck.
+		  l, list   List bash files.
+		  c, check  Validate bash files using shellcheck.
 
 		Links:
 		  shellcheck  https://shellcheck.net
@@ -22,8 +22,8 @@ help() {
 
 main() {
   case "${1-}" in
-    list)  list_files ;;
-    check) check_files ;;
+    l|list)  list_files ;;
+    c|check) check_files ;;
     *)     help ;;
   esac
 }

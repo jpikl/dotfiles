@@ -18,10 +18,10 @@ help() {
 		  -h        Print this help.
 
 		Commands:
-		  status   Print directories and mount status.
-		  mount    Mount private directory. Directories are created
-		           and encryption is configured if they do not exist.
-		  unmount  Unmout private directory.
+		  s, status   Print directories and mount status.
+		  m, mount    Mount private directory. Directories are created
+		              and encryption is configured if they do not exist.
+		  u, unmount  Unmout private directory.
 
 		Environment variables:
 		  ENCRYPTED_DIR  Default path to encrypted directory.
@@ -50,9 +50,9 @@ main() {
   [[ $# -eq 0 ]] && die_missing_arg
 
   case "$1" in
-    status) status ;;
-    mount) mount ;;
-    umount|unmount) unmount ;;
+    s|status) status ;;
+    m|mount) mount ;;
+    u|umount|unmount) unmount ;;
     *) die_help "invalid command '$1'" ;;
   esac
 }
