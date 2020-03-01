@@ -192,13 +192,17 @@ list_tar() {
 }
 
 get_tar_compressor() {
-  if [[ $1 =~ lrzip|lz4 ]]; then
+  if tar "--$1" --help &>/dev/null; then
+    echo -n  "--$1" # Tar has native support for such compression.
+  else
+    # We have to specify a command to do the extraction.
+    # Tar expect it to accept -d option, for decompression.
+    # We also expect that it supports --quit option to suppress
+    # unnecessary output. This is needed for lrzip and lz4.
     echo -n "--use-compress-program=$1"
     if [[ $verbose = false || ${2-} == --quiet ]]; then
-      echo -n  " --quiet" # Works for both lrzip and lz4.
+      echo -n  " --quiet"
     fi
-  elif [[ $1 ]]; then
-    echo -n  "--$1"
   fi
 }
 
