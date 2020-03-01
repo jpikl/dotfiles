@@ -259,18 +259,26 @@ list_tar() {
 }
 
 get_tar_compressor() {
-  if tar "--$1" --help &>/dev/null; then
-    echo -n  "--$1" # Tar has native support for such compression.
+  local type=$1
+  local result
+
+  if [[ $type == gzip ]] && is_command pigz; then
+    type=pigz # Use pigz as a gzip replacement when available.
+  fi
+
+  if tar "--$type" --help &>/dev/null; then
+    result="--$type" # Tar has native support for such compression.
   else
     # We have to specify a command to do the extraction.
     # Tar expect it to accept -d option, for decompression.
-    # We also expect that it supports --quit option to suppress
-    # unnecessary output. This is needed for lrzip and lz4.
-    echo -n "--use-compress-program=$1"
-    if [[ $verbose = false || ${2-} == --quiet ]]; then
-      echo -n  " --quiet"
+    result="--use-compress-program=$type"
+
+    if [[ $type =~ lrzip|lz4 && ( $verbose = false || ${2-} == --quiet ) ]]; then
+      result+=" --quiet" # Lrzip and lz4 generate unnnecessary output by default
     fi
   fi
+
+  echo "$result"
 }
 
 extract_compression() {
