@@ -233,12 +233,13 @@ extract_tar() {
   fi
 
   if [[ $wrap == true && $(list_tar "$@" | count_root_entries) -gt 1 ]]; then
-    local out_dir=${1%.*} # Remove file extension.
-    if [[ $out_dir == *.tar ]]; then
-      out_dir=${out_dir%.*} # Once again if the extension was ".tar.*".
+    local output
+    output=$(get_output "$1")
+    if [[ $output == *.tar ]]; then
+      output=${output%.*} # The original extension was "tar.*".
     fi
-    mkdir -p "$out_dir"
-    opts+=("--directory=$out_dir") # Output directory.
+    mkdir -p "$output"
+    opts+=("--directory=$output") # Output directory.
   fi
 
   tar "${opts[@]}" || handle_error
@@ -273,7 +274,8 @@ get_tar_compressor() {
 }
 
 extract_compression() {
-  local output=${1%.*} # Remove file extension.
+  local output
+  output=$(get_output "$1")
 
   if [[ $list == true ]]; then
     echo "$output"
@@ -289,17 +291,18 @@ extract_compression() {
     "--force"      # Overwrite an existing output file.
   )
 
-  if [[ $2 != lrzip ]]; then
-    opts+=("--keep") # Don't delete the input file.
-  fi
-
   if [[ $verbose = true ]]; then
     opts+=("--verbose") # Verbose output.
   else
     opts+=("--quiet") # Quiet mode.
   fi
 
-  "$2" "${opts[@]}" "$1" || handle_error
+  if [[ $2 == lrzip ]]; then
+    # Lrzip does not support --keep and --stdout options
+    "$2" "${opts[@]}" --outfile="$output" "$1" || handle_error
+  else
+    "$2" "${opts[@]}" --keep --stdout "$1" > "$output" || handle_error
+  fi
 }
 
 extract_7z() {
@@ -324,7 +327,7 @@ extract_7z() {
   fi
 
   if [[ $wrap == true && $(list_7z "$1" | count_root_entries) -gt 1 ]]; then
-    opts+=("-o${1%.*}") # Output directory.
+    opts+=("-o$(get_output "$1")") # Output directory.
   fi
 
   if [[ $verbose = false && $force = true ]]; then
@@ -359,7 +362,7 @@ extract_rar() {
   opts+=("$1") # Input file
 
   if [[ $wrap == true && $(list_rar "$1" | count_root_entries) -gt 1 ]]; then
-    opts+=("${1%.*}/") # Output directory.
+    opts+=("$(get_output "$1")/") # Output directory.
   fi
 
   unrar "${opts[@]}" || handle_error
@@ -386,7 +389,7 @@ extract_zip() {
   fi
 
   if [[ $wrap == true && $(list_zip "$1" | count_root_entries) -gt 1 ]]; then
-    opts+=("-d" "${1%.*}") # Output directory.
+    opts+=("-d" "$(get_output "$1")") # Output directory.
   fi
 
   unzip "${opts[@]}" "$1" || handle_error
@@ -398,6 +401,16 @@ list_zip() {
 
 count_root_entries() {
   grep --count '^[^/]*/\?$'
+}
+
+get_output() {
+  local name=${1%.*} # Remove extension from filename.
+  if [[ $name == "$1" ]]; then
+    echo "'$1' has no extension, output will be '$name.out'" >&2
+    echo "$name.out"
+  else
+    echo "$name"
+  fi
 }
 
 handle_error() {
