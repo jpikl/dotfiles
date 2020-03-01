@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -65,65 +66,134 @@ extract() {
     return
   fi
 
+  case $(detect_type "$1") in
+    tar)       extract_tar "$1" ;;
+    tar+bzip2) extract_tar "$1" "bzip2" ;;
+    tar+gzip)  extract_tar "$1" "gzip" ;;
+    tar+lrzip) extract_tar "$1" "lrzip" ;;
+    tar+lz4)   extract_tar "$1" "lz4" ;;
+    tar+lzip)  extract_tar "$1" "lzip" ;;
+    tar+lzma)  extract_tar "$1" "lzma" ;;
+    tar+lzop)  extract_tar "$1" "lzop" ;;
+    tar+xz)    extract_tar "$1" "xz" ;;
+    tar+zstd)  extract_tar "$1" "zst" ;;
+    bzip2)     extract_compression "$1" "bzip2";;
+    gzip)      extract_compression "$1" "gzip";;
+    lrzip)     extract_compression "$1" "lrzip" ;;
+    lz4)       extract_compression "$1" "lz4" ;;
+    lzip)      extract_compression "$1" "lzip" ;;
+    lzop)      extract_compression "$1" "lzop" ;;
+    lzma)      extract_compression "$1" "lzma" ;;
+    xz)        extract_compression "$1" "xz" ;;
+    zstd)      extract_compression "$1" "zstd" ;;
+    7z)        extract_7z  "$1" ;;
+    rar)       extract_rar "$1" ;;
+    zip)       extract_zip "$1" ;;
+    *)         handle_error "don't know how to extract '$1'"
+  esac
+}
+
+detect_type() {
+  detect_type_from_data "$1" || detect_type_from_ext "$1"
+}
+
+detect_type_from_data() {
+  is_command file || return 1
+
+  local type=
+  local archive=
+
+  case $(file --brief --mime-type "$1") in
+    application/gzip)            type=gzip;  archive=false ;;
+    application/x-lzop)          type=lzop;  archive=false ;;
+    application/x-7z-compressed) type=7z;    archive=true ;;
+    application/x-bzip2)         type=bzip2; archive=false ;;
+    application/x-lrzip)         type=lrzip; archive=false ;;
+    application/x-lz4)           type=lz4;   archive=false ;;
+    application/x-lzip)          type=lzip;  archive=false ;;
+    application/x-lzma)          type=lzma;  archive=false ;;
+    application/x-rar)           type=rar;   archive=true ;;
+    application/x-tar)           type=tar;   archive=true ;;
+    application/x-xz)            type=xz;    archive=false ;;
+    application/zip)             type=zip;   archive=true ;;
+    application/zstd)            type=zstd;  archive=false ;;
+  esac
+
+  if [[ $type ]]; then
+    # We want to check if the file is a compressed file tar archive.
+    # There is a file --uncompres option, but it supports only very few
+    # compression methods. So, we just try to list tar contents instead.
+    if [[ $archive == false && $(list_tar "$1" "$type" 2>/dev/null) ]]; then
+      echo "tar+$type";
+    else
+      echo "$type"
+    fi
+    return 0
+  fi
+
+  return 1
+}
+
+detect_type_from_ext() {
   case "${1,,}" in # To lower case.
     # =============== Tar archives + compression only tools ===============
 
-    *.tar)      extract_tar "$1" ;;
+    *.tar)      echo tar ;;
 
     *.tar.bz)   ;&
     *.tar.bz2)  ;&
     *.tbz)      ;&
-    *.tbz2)     extract_tar "$1" "bzip2" ;;
+    *.tbz2)     echo tar+bzip2 ;;
 
     *.taz)      ;&
     *.tar.gz)   ;&
     *.tar.z)    ;&
     *.tgz)      ;&
-    *.tz)       extract_tar "$1" "gzip" ;;
+    *.tz)       echo tar+gzip ;;
 
     *.tar.lrz)  ;&
-    *.tlrz)     extract_tar "$1" "lrzip" ;;
+    *.tlrz)     echo tar+lrzip ;;
 
     *.tlz4)     ;&
-    *.tar.lz4)  extract_tar "$1" "lz4" ;;
+    *.tar.lz4)  echo tar+lz4 ;;
 
     *.tar.lz)   ;&
-    *.tlz)      extract_tar "$1" "lzip" ;;
+    *.tlz)      echo tar+lzip ;;
 
     *.tar.lzma) ;&
-    *.tlzma)    extract_tar "$1" "lzma" ;;
+    *.tlzma)    echo tar+lzma ;;
 
     *.tar.lzo)  ;&
     *.tar.lzop) ;&
     *.tlzo)     ;&
-    *.tlzop)    extract_tar "$1" "lzop" ;;
+    *.tlzop)    echo tar+lzop ;;
 
     *.tar.xz)   ;&
-    *.txz)      extract_tar "$1" "xz" ;;
+    *.txz)      echo tar+xz ;;
 
     *.tar.zst)  ;&
-    *.tzst)     extract_tar "$1" "zst" ;;
+    *.tzst)     echo tar+zst ;;
 
     # =============== Compression only tools ===============
 
     *.bz)   ;&
-    *.bz2)  extract_compression "$1" "bzip2";;
+    *.bz2)  echo bzip2;;
 
     *.gz)   ;&
-    *.z)    extract_compression "$1" "gzip";;
+    *.z)    echo gzip;;
 
-    *.lrz)  extract_compression "$1" "lrzip" ;;
-    *.lz4)  extract_compression "$1" "lz4" ;;
-    *.lz)   extract_compression "$1" "lzip" ;;
-    *.lzo)  extract_compression "$1" "lzop" ;;
-    *.lzma) extract_compression "$1" "lzma" ;;
-    *.xz)   extract_compression "$1" "xz" ;;
-    *.zst)  extract_compression "$1" "zstd" ;;
+    *.lrz)  echo lrzip ;;
+    *.lz4)  echo lz4 ;;
+    *.lz)   echo lzip ;;
+    *.lzo)  echo lzop ;;
+    *.lzma) echo lzma ;;
+    *.xz)   echo xz ;;
+    *.zst)  echo zstd ;;
 
     # =============== Archiving and compression tools ===============
 
-    *.7z)  extract_7z  "$1" ;;
-    *.rar) extract_rar "$1" ;;
+    *.7z)  echo 7z ;;
+    *.rar) echo rar ;;
 
     *.aar) ;&
     *.apk) ;&
@@ -133,11 +203,7 @@ extract() {
     *.war) ;&
     *.whl) ;&
     *.xpi) ;&
-    *.zip) extract_zip "$1" ;;
-
-    # =============== Everything else ===============
-
-    *) handle_error "'$1' has unsupported archive extension" ;;
+    *.zip) echo zip ;;
   esac
 }
 
