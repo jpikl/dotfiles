@@ -12,7 +12,9 @@ help() {
 		  $(self) [options] [--] <file>...
 
 		Options:
+		  -d  Ensure a containing directory.
 		  -f  Force extraction even if output files aready exist.
+		  -l  List archive contents instead of extraction.
 		  -v  Verbose mode with additional output.
 		  -s  Skip extraction errors.
 		  -h  Print this help.
@@ -23,14 +25,18 @@ help() {
 }
 
 main() {
+  local wrap=false
   local force=false
+  local list=false
   local verbose=false
   local skip_errors=false
   local opt
 
-  while getopts ":fvsh" opt; do
+  while getopts ":dflvsh" opt; do
     case "$opt" in
+      d) wrap=true ;;
       f) force=true ;;
+      l) list=true ;;
       v) verbose=true ;;
       s) skip_errors=true ;;
       h) help; exit ;;
@@ -48,7 +54,11 @@ main() {
 }
 
 extract() {
-  echo "Extracting '$1'"
+  if [[ $verbose == true ]]; then
+    echo "---------- $1 ----------"
+  elif [[ $list == false ]]; then
+    echo "Extracting '$1'"
+  fi
 
   if [[ ! -f "$1" ]]; then
     handle_error "'$1' is not a file"
@@ -132,20 +142,18 @@ extract() {
 }
 
 extract_tar() {
+  if [[ $list == true ]]; then
+    list_tar "$@" | sort || handle_error
+    return
+  fi
+
   local opts=(
     "--extract" # Do extraction.
     "--file=$1" # Use the input file.
   )
 
-  # Filter data through a compression program.
-  if [[ ${2-} ]]; then
-    if [[ $2 =~ lrzip|lz4 ]]; then
-      local cmd=$2
-      [[ $verbose = false ]] && cmd+=" --quiet" # Works for both lrzip and lz4.
-      opts+=("--use-compress-program=$cmd")
-    else
-      opts+=("--$2") # Tar supports compression program natively.
-    fi
+  if [[ $# -ge 2 ]]; then
+    opts+=("$(get_tar_compressor "$2")")
   fi
 
   if [[ $force = true ]]; then
@@ -158,11 +166,50 @@ extract_tar() {
     opts+=("--verbose") # Verbose output.
   fi
 
+  if [[ $wrap == true && $(list_tar "$@" | count_root_entries) -gt 1 ]]; then
+    local out_dir=${1%.*} # Remove file extension.
+    if [[ $out_dir == *.tar ]]; then
+      out_dir=${out_dir%.*} # Once again if the extension was ".tar.*".
+    fi
+    mkdir -p "$out_dir"
+    opts+=("--directory=$out_dir") # Output directory.
+  fi
+
   tar "${opts[@]}" || handle_error
 }
 
+list_tar() {
+  local opts=(
+    "--list"    # Do listing.
+    "--file=$1" # Use the input file.
+  )
+
+  if [[ $# -ge 2 ]]; then
+    opts+=("$(get_tar_compressor "$2" --quiet)")
+  fi
+
+  tar "${opts[@]}"
+}
+
+get_tar_compressor() {
+  if [[ $1 =~ lrzip|lz4 ]]; then
+    echo -n "--use-compress-program=$1"
+    if [[ $verbose = false || ${2-} == --quiet ]]; then
+      echo -n  " --quiet" # Works for both lrzip and lz4.
+    fi
+  elif [[ $1 ]]; then
+    echo -n  "--$1"
+  fi
+}
+
 extract_compression() {
-  local output=${1%.*} # Remove input extension.
+  local output=${1%.*} # Remove file extension.
+
+  if [[ $list == true ]]; then
+    echo "$output"
+    return
+  fi
+
   if [[ -f "$output" && $force == false ]] && ! confirm "Overwrite '$output'?"; then
       return
   fi
@@ -186,6 +233,11 @@ extract_compression() {
 }
 
 extract_7z() {
+  if [[ $list == true ]]; then
+    list_7z "$@" | sort || handle_error
+    return
+  fi
+
   local opts=("x") # Do extraction.
 
   if [[ $force = true ]]; then
@@ -196,9 +248,13 @@ extract_7z() {
     # 7z does not have an option to be completely silent.
     # We would have to redirect its output to /dev/null, however
     # there is no way to redirect confirmation messages to stderr.
-    opts+=("-bb0" "-bd") # Disable log and progress indicator.
+    opts+=("-ba" "-bb0" "-bd") # Disable header, log and progress indicator.
   else
     opts+=("-bb3") # Log everything.
+  fi
+
+  if [[ $wrap == true && $(list_7z "$1" | count_root_entries) -gt 1 ]]; then
+    opts+=("-o${1%.*}") # Output directory.
   fi
 
   if [[ $verbose = false && $force = true ]]; then
@@ -210,7 +266,16 @@ extract_7z() {
   fi
 }
 
+list_7z() {
+  7z l -ba -spf "$1" | sed -E 's/^\S+\s+\S+\s+\S+\s+\S+\s+\S+\s+//'
+}
+
 extract_rar() {
+  if [[ $list == true ]]; then
+    list_rar "$@" | sort || handle_error
+    return
+  fi
+
   local opts=("x") # Do extraction.
 
   if [[ $force = true ]]; then
@@ -221,10 +286,25 @@ extract_rar() {
     opts+=("-idq") # Quiet mode.
   fi
 
-  unrar "${opts[@]}" "$1" || handle_error
+  opts+=("$1") # Input file
+
+  if [[ $wrap == true && $(list_rar "$1" | count_root_entries) -gt 1 ]]; then
+    opts+=("${1%.*}/") # Output directory.
+  fi
+
+  unrar "${opts[@]}" || handle_error
+}
+
+list_rar() {
+  unrar lb "$1"
 }
 
 extract_zip() {
+  if [[ $list == true ]]; then
+    list_zip "$1" | sort || handle_error
+    return
+  fi
+
   local opts=()
 
   if [[ $force = true ]]; then
@@ -235,7 +315,19 @@ extract_zip() {
     opts+=("-qq") # Very quiet mode.
   fi
 
+  if [[ $wrap == true && $(list_zip "$1" | count_root_entries) -gt 1 ]]; then
+    opts+=("-d" "${1%.*}") # Output directory.
+  fi
+
   unzip "${opts[@]}" "$1" || handle_error
+}
+
+list_zip() {
+  unzip -Z1 "$1"
+}
+
+count_root_entries() {
+  grep --count '^[^/]*/\?$'
 }
 
 handle_error() {
