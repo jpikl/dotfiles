@@ -60,7 +60,7 @@ cd # In case $HOME is not your current working directory.
 dotfiles submodule update --init
 ```
 
-Customize your personal [configuration](#configuration).
+Customize your personal [configuration](#wrench-configuration).
 
 Logout and login to reload Bash environment.
 
