@@ -6,14 +6,15 @@ readonly SC_EXCLUDE=SC1090 # Can't follow non-constant source.
 
 help() {
   cat <<-EOT
-		Do things with Bash files.
+		Manipulate Bash files that are part of ~/.dotfiles.git repo.
 
 		Usage:
 		  $(basename "$0") <command>
 
 		Commands:
-		  l, list   List bash files.
-		  c, check  Validate bash files using shellcheck.
+		  l, list      List all Bash files.
+		  c, check     Validate Bash files using shellcheck.
+		  d, describe  Print description for each ~/.local/bin/* script.
 
 		Links:
 		  shellcheck  https://shellcheck.net
@@ -22,20 +23,14 @@ help() {
 
 main() {
   case "${1-}" in
-    l|list)  list_files ;;
-    c|check) check_files ;;
-    *)     help ;;
+    l|list)     list_files ;;
+    c|check)    check_files ;;
+    d|describe) describe_files ;;
+    *)          help ;;
   esac
 }
 
 list_files() {
-  cd "$HOME"
-  list_possible_files | grep --fixed-strings \
-                             --line-regexp \
-                             --file=<(list_commited_files)
-}
-
-list_possible_files() {
   local files=(
     ~/.bash_logout
     ~/.bash_profile
@@ -44,10 +39,15 @@ list_possible_files() {
     ~/.local/bin/*
     ~/.local/lib/bash/*.sh
   )
-  printf "%s\n" "${files[@]}"
+  printf "%s\n" "${files[@]}" | filter_git_files
 }
 
-list_commited_files() {
+list_bin_files() {
+  printf "%s\n" ~/.local/bin/* | filter_git_files
+}
+
+list_git_files() {
+  cd "$HOME"
   git --git-dir="$HOME/.dotfiles.git" \
       --work-tree="$HOME" \
       ls-files \
@@ -55,11 +55,24 @@ list_commited_files() {
     | sed "s,^,$HOME/,"
 }
 
+filter_git_files() {
+  grep --fixed-strings \
+       --line-regexp \
+       --file=<(list_git_files)
+}
+
 check_files() {
   local files
   mapfile -t files < <(list_files)
   shellcheck --exclude=$SC_EXCLUDE "${files[@]}"
   echo "All Bash files are valid."
+}
+
+describe_files() {
+  local script
+  while read -r script; do
+    echo "${script##*/}|$("$script" -h | head -n1)"
+  done < <(list_bin_files) | column --table --separator='|'
 }
 
 main "$@"
