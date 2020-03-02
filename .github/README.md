@@ -74,15 +74,23 @@ homefiles -h
 ## :wrench: Configuration
 
 The following files are not part of the `~/.dotfiles.git` repository and
-are intended for machine or user specific configuration.  By convention,
-a configuration file named `.xyz.local` overwrites values in `.xyz`.
+are intended for machine specific configuration. By convention, a configuration
+file named `.xyz.local` overwrites values in `.xyz`.
 
 - `~/.profile.local` - Environment variables.
 - `~/.bashrc.local`  - Bash aliases and functions.
 - `~/.gitconfig.local` - Git configuration.
 - `~/.ssh/config.local` - SSH configuration.
 
-There are also some files with OS specific configuration. See instructions
+### Windows
+
+On Windows, it's more useful to define environment variables through
+**system settings** instead of using `~/.profile.local`. This way, environment
+variables can be also used by programs running outside Bash environment.
+You can even use *Windows-style* paths like `C:\foo\bar` as values. They will
+be automatically converted to *Unix-like* paths `/c/foo/bar` by `~/.profile`.
+
+There are also some files with Windows specific configuration. See instructions
 inside of them for usage.
 
 - `~/.gitconfig.windows` - Tweaks for Git for Windows.
