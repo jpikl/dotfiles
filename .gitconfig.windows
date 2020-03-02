@@ -1,5 +1,7 @@
-# Add the following section to ~/.gitconfig.local
-# to enable this Git configuration file.
+# Tweaks for Git for Windows.
+#
+# Add the following to ~/.gitconfig.local
+# to include this configuration file.
 #
 # [include]
 #    path = ~/.gitconfig.windows
