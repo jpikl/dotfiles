@@ -2,7 +2,16 @@
 
 My personal dotfiles and Bash scripts.
 
-## Prerequisites
+- [:pushpin: Prerequisites](#pushpin-prerequisites)
+- [:package: Installation](#package-installation)
+- [:wrench: Configuration](#wrench-configuration)
+- [:construction: Changes](#construction-changes)
+- [:white_check_mark: Validation](#whitecheckmark-validation)
+- [:desktop_computer: Terminal](#desktopcomputer-terminal)
+- [:ambulance: Troubleshooting](#ambulance-troubleshooting)
+- [:page_facing_up: License](#pagefacingup-license)
+
+## :pushpin: Prerequisites
 
 Linux distro, [WSL](https://github.com/Microsoft/WSL) or [Git for Windows](https://gitforwindows.org/) with:
 
@@ -11,7 +20,7 @@ Linux distro, [WSL](https://github.com/Microsoft/WSL) or [Git for Windows](https
 
 Compatibility with BSD, OS X or others is not guaranteed.
 
-## Installation
+## :package: Installation
 
 Clone bare repository to `~/.dotfiles.git` directory.
 
@@ -51,7 +60,7 @@ Try `-h` option for usage.
 homefiles -h
 ```
 
-## Configuration
+## :wrench: Configuration
 
 The following files are not part of the `~/.dotfiles.git` repository and
 can be used for machine-specific or user-specific configuration.
@@ -59,14 +68,14 @@ can be used for machine-specific or user-specific configuration.
 `~/.profile.local`
 
 - Sourced at the start of `~/.profile`.
-- Can be used to override environment variables defined in `~/.profile`.
+- Can be used to define environment variables.
 
 `~/.bashrc.local`
 
 - Sourced at the end of `~/.bashrc`.
 - Can be used to define custom aliases and functions.
 
-## Changes
+## :construction: Changes
 
 Git commands for the `~/.dotfiles.git` repository have to be executed
 using `dotfiles` command.
@@ -84,7 +93,7 @@ dotfiles commit -m "Add xyz dotfile"
 dotfiles push
 ```
 
-## Validation
+## :white_check_mark: Validation
 
 Use `bashfiles` command to validate Bash scripts with [shellcheck](https://shellcheck.net).
 
@@ -92,7 +101,7 @@ Use `bashfiles` command to validate Bash scripts with [shellcheck](https://shell
 bashfiles check
 ```
 
-## Terminal
+## :desktop_computer: Terminal
 
 ### Font
 
@@ -126,7 +135,7 @@ Bold colors #8-15 are the same as regular colors #0-7.
 
 - **Windows Terminal** - Copy [profiles.json](../.config/templates/WindowsTerminal/profiles.json) to `C:\Users\<user>\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json`
 
-## Troubleshooting
+## :ambulance: Troubleshooting
 
 ### Poor Git performance on Windows
 
@@ -170,6 +179,6 @@ There are two workarounds using [winpty](https://github.com/rprichard/winpty):
    This unfortunately breaks some other commands like `bat` which
    stops printing colors.
 
-## License
+## :page_facing_up: License
 
 Everything in this repository is licensed under the [MIT license](LICENSE.md).

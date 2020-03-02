@@ -1,17 +1,20 @@
 {
-	"folders": [
-		{
-			"path": ".local/bin"
-		},
-		{
-			"path": ".local/lib/bash"
-		},
-		{
-			"path": ".github"
-		}
-	],
-	"settings": {
-        "shellcheck.enableQuickFix": true,
-        "shellcheck.exclude": ["SC1090"]
-	}
+  "folders": [
+    {
+      "path": ".local/bin"
+    },
+    {
+      "path": ".local/lib/bash"
+    },
+    {
+      "path": ".github"
+    }
+  ],
+  "settings": {
+    "shellcheck.enableQuickFix": true,
+    "shellcheck.exclude": [
+      "SC1090"
+    ],
+    "markdown.extension.toc.levels": "2..2"
+  }
 }
