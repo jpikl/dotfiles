@@ -113,6 +113,10 @@ which itself is a hybrid of Dark and Oceanic [materiallshell themes](https://mat
 
 Bold colors #8-15 are the same as regular colors #0-7.
 
+### Configuration
+
+- **Windows Terminal** - Copy [profiles.json](../.config/templates/WindowsTerminal/profiles.json) to `C:\Users\<user>\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\profiles.json`
+
 ## Troubleshooting
 
 ### Poor Git performance on Windows
