@@ -2,6 +2,15 @@
 
 My personal dotfiles and Bash scripts.
 
+## Prerequisites
+
+Linux distro, [WSL](https://github.com/Microsoft/WSL) or [Git for Windows](https://gitforwindows.org/) with:
+
+- [Bash](https://www.gnu.org/software/bash) >= 4.4.0
+- [Git](https://git-scm.com) >= 2.17.0
+
+Compatibility with BSD, OS X or others is not guaranteed.
+
 ## Installation
 
 Clone bare repository to `~/.dotfiles.git` directory.
