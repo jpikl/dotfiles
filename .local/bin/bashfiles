@@ -9,12 +9,13 @@ help() {
 		List or validate Bash files from dotfiles repository.
 
 		Usage:
-		  $(basename "$0") <command>
+		  $(basename "$0") [command]
 
 		Commands:
-		  l, list      List Bash files.
+		  l, list      List Bash files (default command).
 		  d, describe  List Bash scripts and their description.
 		  c, check     Validate Bash files using shellcheck.
+		  h, help      Print this help.
 
 		Links:
 		  shellcheck  https://shellcheck.net
@@ -22,7 +23,7 @@ help() {
 }
 
 main() {
-  case "${1-}" in
+  case "${1-list}" in
     l|list)     list_files ;;
     d|describe) describe_files ;;
     c|check)    check_files ;;
