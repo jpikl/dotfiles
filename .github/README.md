@@ -12,8 +12,8 @@ The following instructions ate intended for:
 - [:pushpin: Prerequisites](#pushpin-prerequisites)
 - [:package: Installation](#package-installation)
 - [:wrench: Configuration](#wrench-configuration)
-- [:construction: Changes](#construction-changes)
-- [:white_check_mark: Validation](#whitecheckmark-validation)
+- [:construction: Repository](#construction-repository)
+- [:card_file_box: Bash](#cardfilebox-bash)
 - [:desktop_computer: Terminal](#desktopcomputer-terminal)
 - [:ambulance: Troubleshooting](#ambulance-troubleshooting)
 - [:page_facing_up: License](#pagefacingup-license)
@@ -95,7 +95,7 @@ inside of them for usage.
 
 - `~/.gitconfig.windows` - Tweaks for Git for Windows.
 
-## :construction: Changes
+## :construction: Repository
 
 Git commands for the `~/.dotfiles.git` repository have to be executed
 using `dotfiles` command.
@@ -113,13 +113,53 @@ dotfiles commit -m "Add xyz dotfile"
 dotfiles push
 ```
 
-## :white_check_mark: Validation
+## :card_file_box: Bash
 
-Use `bashfiles` command to validate Bash scripts with [shellcheck][shellcheck].
+All Bash code is being validated with [shellcheck][shellcheck].
+
+Use `bashfiles` command to run the validation. The command operates
+only on files that are part of the `~/.dotfiles.git` repository.
 
 ```bash
-bashfiles check
+bashfiles list  # List what is being validated
+bashfiles check # Run the validation
 ```
+
+You can also run `bashfiles describe` to print description of executable
+Bash scripts from `~/.local/bin/`:
+
+| Script            | Description                                                                      |
+| ----------------- | -------------------------------------------------------------------------------- |
+| bashfiles         | List or validate Bash files from dotfiles repository.                            |
+| bashgen           | Generate new Bash script using itself as a template.                             |
+| choose            | Let user choose value(s). Simple fzf frontend with Bash fallback.                |
+| confirm           | Aks user for confirmation.                                                       |
+| direnc            | List or (un)mount encrypted directories. Simple encfs frontend.                  |
+| dirsync           | Synchronize two directories. Simple rsync frontend.                              |
+| dirtree           | List contents of a directory as tree. Bash implementation of tree command.       |
+| disks             | List or (un)mount disks. Simple udisksctl frontend.                              |
+| extract           | Extract or list contents of an archive in nearly any format.                     |
+| findex            | Find wrapper with extra capabilities.                                            |
+| findprj           | Find directories with Maven or Node.js projects.                                 |
+| findup            | Find upwards in directory tree.                                                  |
+| git-fast-forward  | Fast-forward local Git branches.                                                 |
+| git-gone-branches | List or delete local Git branches that are gone on remote.                       |
+| git-ls-branches   | List Git branches in machine-readable format.                                    |
+| git-state         | Print state of a Git working tree.                                               |
+| git-super-status  | Git status on steroids.                                                          |
+| homefiles         | Initialize home directory structure.                                             |
+| jestat            | Print statistics of Java exceptions in a log file.                               |
+| mpdm3u            | Generate M3U playlists from MPD database.                                        |
+| mvnpgb            | Print property of a Maven project in each Git branch.                            |
+| mvnsv             | Set version of a Maven project.                                                  |
+| npmr              | List or (silently) run scripts of a Npm package.                                 |
+| open              | Open a file or URL in the user's preferred application.                          |
+| pacfind           | Find ArchLinux packages. Simple pacman frontend wit AUR support.                 |
+| refresh           | Periodically refresh output of a command on change.                              |
+| retty             | Execute command with current TTY as stdin.                                       |
+| sshctl            | Control ssh-agent process.                                                       |
+| sshgen            | Generate SSH key with user-friendly CLI wizard.                                  |
+| wman              | Open online man pages in web browser.                                            |
 
 ## :desktop_computer: Terminal
 

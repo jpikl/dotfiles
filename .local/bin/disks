@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		List or (un)mount disks. Simple udisksctl frontent.
+		List or (un)mount disks. Simple udisksctl frontend.
 
 		Usage:
 		  $(self) [options] [--] <command>

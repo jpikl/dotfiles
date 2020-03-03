@@ -9,7 +9,7 @@ readonly ERR_NO_VALUES=2
 
 help() {
   cat <<-EOT
-		Let user choose value(s). Simple fzf frontent with Bash fallback.
+		Let user choose value(s). Simple fzf frontend with Bash fallback.
 
 		Usage:
 		  $(self) [options] [--] [value]...
