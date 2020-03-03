@@ -134,7 +134,7 @@ bashfiles check
 
 ### Font
 
-[LiterationMono Nerd Font][nf-literation] or any other [Nerd Font][nf].
+[LiterationMono Nerd Font][nf-literation] (11pt) or any other [Nerd Font][nf].
 
 - They provide icons which are used by prompt and commands like `git-super-status`.
 - Run `homefiles -f` to download the latest version to `~/.local/share/fonts`.
