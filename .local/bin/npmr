@@ -6,25 +6,31 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Run script of a Npm package.
+		List or (silently) run scripts of a Npm package.
 
 		Usage:
-		  $(self) [options] [--] <script>...
+		  $(self) [options] [--] [script]...
 
 		Options:
+		  -1  Run only the first available script.
+		  -S  Do not silence npm run output.
 		  -h  Print this help.
 
 		Script:
-		  One or more script names.
-		  First script defined in package.json will be run.
+		  Zero or more script names.
+		  If omitted, list available scripts instead.
 	EOT
 }
 
 main() {
   local opt
+  local single=false
+  local silent=true
 
-  while getopts ":h" opt; do
+  while getopts ":1Sh" opt; do
     case "$opt" in
+      1) single=true ;;
+      S) silent=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -32,29 +38,49 @@ main() {
 
   shift $((OPTIND - 1))
 
-  [[ $# -eq 0 ]] && die_missing_arg
-  [[ -f package.json ]] || die "no package.json in current directory"
+  if [[ ! -f package.json ]]; then
+    die "no package.json in current directory"
+  fi
 
-  local script
-  script=$(get_runnable_script "$@")
+  # Lines with script names start with 2 spaces which we need to cut off.
+  local scripts
+  mapfile -t scripts < <(npm run | grep '^  \S' | cut --characters=3-)
 
-  if [[ $script ]]; then
-    npm run --silent "$script"
-  else
+  if [[ $# -eq 0 ]]; then
+    printf "%s\n" "${scripts[@]}"
+    exit
+  fi
+
+  local input_script
+  local matched_script
+
+  for input_script; do
+    matched_script=
+
+    for script in "${scripts[@]}"; do
+      if [[ $script == "$input_script" ]]; then
+        matched_script=$script
+        break
+      fi
+    done
+
+    if [[ $matched_script ]]; then
+      if [[ $silent == true ]]; then
+        npm run --silent "$matched_script"
+      else
+        npm run "$matched_script"
+      fi
+      if [[ $single == true ]]; then
+        exit
+      fi
+    elif [[ $single == false ]]; then
+      die "missing script: $input_script"
+    fi
+  done
+
+  if [[ $single == true ]]; then
     die "no runnable scripts: $*"
   fi
-}
-
-get_runnable_script() {
-  printf "%s\n" "$@" \
-    | grep --line-regexp --fixed-string --file=<(list_runnable_scripts)  \
-    | head --lines=1 \
-    || true
-}
-
-list_runnable_scripts() {
-  # Lines with script names start with 2 spaces which we need to cut off.
-  npm run | grep '^  \S' | cut --characters=3-
 }
 
 main "$@"

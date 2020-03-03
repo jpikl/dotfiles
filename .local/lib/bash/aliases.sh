@@ -108,7 +108,7 @@ alias mvni='mvn install'
 alias mvnist='mvni -Dmaven.test.skip=true'
 
 # Npm
-alias npmd='npmr webpack-dev dev'
+alias npmd='npmr -1 webpack-dev dev'
 alias npmg='npm --global'
 alias npmgi='npmg install'
 alias npmgl='npmg --depth=0 list'
