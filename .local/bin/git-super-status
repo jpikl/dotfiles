@@ -7,7 +7,7 @@ source "$BASH_LIB_DIR/term.sh"
 
 help() {
   cat <<-EOT
-		Git super status.
+		Git status on steroids.
 
 		Usage:
 		  $(self) [options]

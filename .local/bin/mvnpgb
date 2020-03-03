@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Print property of a Maven project in Git branches.
+		Print property of a Maven project in each Git branch.
 
 		Usage:
 		  $(self) [options] [--] <property> [branch]...

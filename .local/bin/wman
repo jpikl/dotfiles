@@ -30,7 +30,7 @@ print_sources() {
 
 help() {
   cat <<-EOT
-		Open man page in web browser.
+		Open online man pages in web browser.
 
 		Usage:
 		  $(self) [options] [--] <command>[.section]

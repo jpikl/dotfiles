@@ -7,7 +7,7 @@ source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
-		Extract archive in nearly any format.
+		Extract or list contents of an archive in nearly any format.
 
 		Usage:
 		  $(self) [options] [--] <file>...

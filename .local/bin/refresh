@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Refresh output of a command on change.
+		Periodically refresh output of a command on change.
 
 		Usage:
 		  $(self) [options] [--] <command> [args]

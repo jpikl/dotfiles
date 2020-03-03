@@ -9,8 +9,7 @@ readonly ERR_NO_VALUES=2
 
 help() {
   cat <<-EOT
-		Let user select one from multiple values and print it.
-    Uses fzf by default if available.
+		Let user choose value(s). Simple fzf frontent with Bash fallback.
 
 		Usage:
 		  $(self) [options] [--] [value]...
@@ -22,7 +21,7 @@ help() {
 		  -i            Read values from standard input.
 		  -z            Read values delimited by NUL character instead of newline.
 		  -Z            Print results delimited by NUL character instead of newline.
-		  -b            Force basic interface instead of fzf.
+		  -b            Force pure Bash interface instead of fzf.
 		  -h            Print this help.
 
 		Value:

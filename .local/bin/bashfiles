@@ -6,15 +6,15 @@ readonly SC_EXCLUDE=SC1090 # Can't follow non-constant source.
 
 help() {
   cat <<-EOT
-		Manipulate Bash files that are part of ~/.dotfiles.git repo.
+		List or validate Bash files from dotfiles repository.
 
 		Usage:
 		  $(basename "$0") <command>
 
 		Commands:
-		  l, list      List all Bash files.
+		  l, list      List Bash files.
+		  d, describe  List Bash scripts and their description.
 		  c, check     Validate Bash files using shellcheck.
-		  d, describe  Print description for each ~/.local/bin/* script.
 
 		Links:
 		  shellcheck  https://shellcheck.net
@@ -24,8 +24,8 @@ help() {
 main() {
   case "${1-}" in
     l|list)     list_files ;;
-    c|check)    check_files ;;
     d|describe) describe_files ;;
+    c|check)    check_files ;;
     *)          help ;;
   esac
 }
@@ -61,18 +61,18 @@ filter_git_files() {
        --file=<(list_git_files)
 }
 
-check_files() {
-  local files
-  mapfile -t files < <(list_files)
-  shellcheck --exclude=$SC_EXCLUDE "${files[@]}"
-  echo "All Bash files are valid."
-}
-
 describe_files() {
   local script
   while read -r script; do
     echo "${script##*/}|$("$script" -h | head -n1)"
   done < <(list_bin_files) | column --table --separator='|'
+}
+
+check_files() {
+  local files
+  mapfile -t files < <(list_files)
+  shellcheck --exclude=$SC_EXCLUDE "${files[@]}"
+  echo "All Bash files are valid."
 }
 
 main "$@"

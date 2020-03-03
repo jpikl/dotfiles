@@ -7,7 +7,7 @@ source "$BASH_LIB_DIR/term.sh"
 
 help() {
   cat <<-EOT
-		Print directory tree.
+		List contents of a directory as tree. Bash implementation of tree command.
 
 		Usage:
 		  $(self) [options] [--] [path]

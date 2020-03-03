@@ -7,7 +7,7 @@ source "$BASH_LIB_DIR/path.sh"
 
 help() {
   cat <<-EOT
-		Mount directory using encfs.
+		List or (un)mount encrypted directories. Simple encfs frontend.
 
 		Usage:
 		  $(self) [options] [--] <command>

@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Generate SSH key.
+		Generate SSH key with user-frindly CLI wizard.
 
 		Usage:
 		  $(self) [options] [hostname]

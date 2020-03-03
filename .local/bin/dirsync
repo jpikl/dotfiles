@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Synchronize two directories using rsync.
+		Synchronize two directories. Simple rsync frontent.
 
 		Usage:
 		  $(self) [options] [--] <source> <destination>

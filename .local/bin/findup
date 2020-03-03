@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Find command that searches upwards in directory tree.
+		Find upwards in directory tree.
 
 		Usage:
 		  $(self) [options] [path]... [expression]

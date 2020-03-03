@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Count occurrences of Java exceptions in a log file.
+		Print statistics of Java exceptions in a log file.
 
 		Usage:
 		  $(self) [options] [--] [file]

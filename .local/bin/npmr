@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Run script of a npm package.
+		Run script of a Npm package.
 
 		Usage:
 		  $(self) [options] [--] <script>...

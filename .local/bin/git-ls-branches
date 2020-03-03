@@ -8,7 +8,7 @@ readonly FORMAT="--format=%(refname:short)"
 
 help() {
   cat <<-EOT
-		List Git branches.
+		List Git branches in machine-readable format.
 
 		Usage:
 		  $(self) [options]

@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Generate new bash script from this template.
+		Generate new Bash script using itself as a template.
 
 		Usage:
 		  $(self) [options] [--] <name>
