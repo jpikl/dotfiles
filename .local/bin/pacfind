@@ -9,6 +9,9 @@ help() {
   cat <<-EOT
 		Find ArchLinux packages. Simple pacman frontend wit AUR support.
 
+		By default, "$(self)" searches between remote packages,
+		unless one or more -l,g,r,a options is passed.
+
 		Usage:
 		  $(self) [options] [--] [name]
 
@@ -53,7 +56,8 @@ main() {
   shift $((OPTIND - 1))
 
   if [[ $local == false && $gone == false && $repo == false && $aur == false ]]; then
-    die_help "nothing to do"
+    repo=true
+    aur=true
   fi
 
   if [[ ! $colors ]] ; then
