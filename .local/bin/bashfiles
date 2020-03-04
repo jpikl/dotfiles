@@ -26,6 +26,7 @@ main() {
   case "${1-list}" in
     l|list)     list_files ;;
     d|describe) describe_files ;;
+    m|markdown) describe_files_md ;; # Undocumented
     c|check)    check_files ;;
     *)          help ;;
   esac
@@ -65,8 +66,20 @@ filter_git_files() {
 describe_files() {
   local script
   while read -r script; do
-    echo "${script##*/}|$("$script" -h | head -n1)"
+    echo "${script##*/}|$(describe_file "$script")"
   done < <(list_bin_files) | column --table --separator='|'
+}
+
+describe_files_md() {
+  local script
+  while read -r script; do
+    local name=${script##*/}
+    echo "- [$name](../.local/bin/$name) - $(describe_file "$script")"
+  done < <(list_bin_files)
+}
+
+describe_file() {
+  "$1" -h | head --lines=1
 }
 
 check_files() {
