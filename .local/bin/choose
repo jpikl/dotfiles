@@ -18,16 +18,15 @@ help() {
 		  -p <prompt>   Message to print as a prompt.
 		  -d <default>  Default value to print if nothing was chosen.
 		  -m            Enable selection of multiple values.
-		  -z            Values on standard input are delimited by NUL character
-		                instead of newline.
-		  -Z            Print results delimited by NUL character instead of newline.
+		  -z            Values from stdin are delimited by NUL instead of LF.
+		  -Z            Print results delimited by NUL instead of LF.
 		  -b            Force pure Bash interface instead of fzf.
 		  -h            Print this help.
 
 		Value:
 		  Zero or more values to select from.
-		  Ignored when a command is piped to "$(self)".
-		  In that case, "$(self)" reads values from standard input.
+		  Ignored when a command is piped to $(self).
+		  In that case, $(self) reads values from stdin (one per line).
 
 		Exit status:
 		  0  Normal exit.

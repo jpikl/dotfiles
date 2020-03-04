@@ -8,7 +8,7 @@ help() {
   cat <<-EOT
 		Find root directories of software projects.
 
-		By default, "$(self)" searches for all types of projects,
+		By default, $(self) searches for all types of projects,
 		unless one or more -v,m,n options is passed.
 
 		Usage:
@@ -19,7 +19,7 @@ help() {
 		  -m  Include Maven projects.
 		  -n  Include Node.js projects.
 		  -u  Search upwards to find the topmost project root.
-		  -Z  Print results delimited by NUL character instead of newline.
+		  -Z  Print results delimited by NUL instead of LF.
 		  -h  Print this help.
 
 		Path:
