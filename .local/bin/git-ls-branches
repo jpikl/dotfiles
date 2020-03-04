@@ -10,6 +10,9 @@ help() {
   cat <<-EOT
 		List Git branches in machine-readable format.
 
+		By default, "$(self)" lists local branches (-l),
+		unless one or more -c,l,a,b,h,r options is passed.
+
 		Usage:
 		  $(self) [options]
 
@@ -63,7 +66,7 @@ main() {
      && $include_ahead == false
      && $include_behind == false
      && $include_remote == false ]]; then
-     die_help "nothing to do"
+     include_local=true
   fi
 
   # Check we are in a git repository.
