@@ -46,8 +46,13 @@ alias cdwork='cd "$WORKSPACE_DIR"'
 alias cdwrk='cdwork'
 
 # Clipboard
-alias clipi='xclip -in -selection clipboard'
-alias clipo='xclip -out -selection clipboard'
+if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
+  alias clipget='powershell -command "Get-Clipboard"'
+  alias clipset='clip'
+else
+  alias clipget='xclip -out -selection clipboard'
+  alias clipset='xclip -in -selection clipboard'
+fi
 
 # Dir
 alias dir='dir --color=auto'
