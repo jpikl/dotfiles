@@ -9,7 +9,7 @@ help() {
 		List or (un)mount disks. Simple udisksctl frontend.
 
 		Usage:
-		  $(self) [options] [--] <command>
+		  $(self) [options] [--] [command]
 
 		Options:
 		  -h  Print this help.
@@ -33,13 +33,13 @@ main() {
   done
 
   shift $((OPTIND - 1))
-  [[ $# -eq 0 ]] && die_missing_arg
 
-  case $1 in
+  case ${1-list} in
     l|list) list_disks ;;
     m|mount) mount_disk "${2-}" ;;
     u|umount|unmount) unmount_disk "${2-}" ;;
     e|eject) eject_disk "${2-}" ;;
+    *) die_help "invalid command '$1'" ;;
   esac
 }
 
