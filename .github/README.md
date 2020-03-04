@@ -115,7 +115,7 @@ dotfiles push
 
 ## :card_file_box: Bash
 
-All Bash code is being validated with [shellcheck][shellcheck].
+Bash code is validated using [shellcheck][shellcheck].
 
 Use `bashfiles` command to run the validation. The command operates
 only on files that are part of the `~/.dotfiles.git` repository.
@@ -126,7 +126,7 @@ bashfiles check # Run the validation
 ```
 
 You can also run `bashfiles describe` to print description
-of Bash scripts from `~/.local/bin/`:
+of executable Bash scripts from `~/.local/bin/`:
 
 - [bashfiles](../.local/bin/bashfiles) - List or validate Bash files from dotfiles repository.
 - [bashgen](../.local/bin/bashgen) - Generate new Bash script using itself as a template.
