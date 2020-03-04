@@ -6,14 +6,16 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Find directories with Maven or Node.js projects.
+		Find root directories of software projects.
+
+		By default, "$(self)" searches for all types of projects,
+		unless one or more -v,m,n options is passed.
 
 		Usage:
 		  $(self) [options] [--] [path]
 
 		Options:
-		  -a  Include all types of projects.
-		  -v  Include projects that use a version control system.
+		  -v  Include projects using version control system.
 		  -m  Include Maven projects.
 		  -n  Include Node.js projects.
 		  -u  Search upwards to find the topmost project root.
@@ -34,11 +36,8 @@ main() {
   local null_out=false
   local opt
 
-  while getopts ":avmnuZh" opt; do
+  while getopts ":vmnuZh" opt; do
     case "$opt" in
-      a) vcs=true
-         maven=true
-         node=true ;;
       v) vcs=true ;;
       m) maven=true ;;
       n) node=true ;;
@@ -61,6 +60,13 @@ main() {
   local dirs=()
   local files=()
 
+  # Include all by default
+  if [[ $vcs == false && $maven == false && $node == false ]]; then
+    vcs=true
+    maven=true
+    node=true
+  fi
+
   if [[ $vcs == true ]]; then
     dirs+=(
       ".git" # Git
@@ -76,10 +82,6 @@ main() {
 
   if [[ $node == true ]]; then
     files+=("package.json")
-  fi
-
-  if [[ ${#dirs[@]} -eq 0 && ${#files[@]} -eq 0 ]]; then
-    die_help "no project type specified"
   fi
 
   local expression+=("(")

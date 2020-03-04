@@ -140,7 +140,7 @@ Bash scripts from `~/.local/bin/`:
 | disks             | List or (un)mount disks. Simple udisksctl frontend.                              |
 | extract           | Extract or list contents of an archive in nearly any format.                     |
 | findex            | Find wrapper with extra capabilities.                                            |
-| findprj           | Find directories with Maven or Node.js projects.                                 |
+| findprj           | Find root directories of software projects.                                      |
 | findup            | Find upwards in directory tree.                                                  |
 | git-fast-forward  | Fast-forward local Git branches.                                                 |
 | git-gone-branches | List or delete local Git branches that are gone on remote.                       |
