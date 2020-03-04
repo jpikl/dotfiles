@@ -19,7 +19,7 @@ help() {
 		  -h  Print this help.
 
 		Commands:
-		  status   Print ssh-agent status.
+		  status   Print ssh-agent status (defalt command).
 		  start    Start ssh-agent if needed.
 		  stop     Stop ssh-agent if needed.
 		  restart  Restart ssh-agent.
@@ -38,13 +38,16 @@ main() {
 
   shift $((OPTIND - 1))
 
+  local command
+
   if [[ $# -eq 0 ]]; then
-    die_missing_arg
-  elif [[ ! $1 =~ ^(status|start|stop|restart)$ ]]; then
+    command=status
+  elif [[ $1 =~ ^(status|start|stop|restart)$ ]]; then
+    command=$1
+  else
     die_help "invalid command"
   fi
 
-  local command=$1
   local pid_state
   local sock_state
 
