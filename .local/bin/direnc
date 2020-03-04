@@ -10,7 +10,7 @@ help() {
 		List or (un)mount encrypted directories. Simple encfs frontend.
 
 		Usage:
-		  $(self) [options] [--] <command>
+		  $(self) [options] [--] [command]
 
 		Options:
 		  -e <dir>  Path to encrypted directory.
@@ -18,7 +18,7 @@ help() {
 		  -h        Print this help.
 
 		Commands:
-		  s, status   Print directories and mount status.
+		  s, status   Print directories and mount status (default command).
 		  m, mount    Mount private directory. Directories are created
 		              and encryption is configured if they do not exist.
 		  u, unmount  Unmout private directory.
@@ -47,9 +47,8 @@ main() {
   done
 
   shift $((OPTIND - 1))
-  [[ $# -eq 0 ]] && die_missing_arg
 
-  case "$1" in
+  case "${1-status}" in
     s|status) status ;;
     m|mount) mount ;;
     u|umount|unmount) unmount ;;
@@ -59,43 +58,39 @@ main() {
 
 status() {
   if [[ $enc_dir ]]; then
-    echo "Encrypted directory"
-    echo "  path:   $enc_dir"
-    echo -n "  status: "
+    local enc_state
 
     if [ -d "$enc_dir" ]; then
-      echo "exists"
+      enc_state="exists"
     elif [ -e "$enc_dir" ]; then
-      echo "not a directory"
+      enc_state="is not a directory"
     else
-      echo "not exists"
+      enc_state="does not exist"
     fi
-  else
-    echo "No encrypted directory specified"
-  fi
 
-  if [[ $enc_dir || $dec_dir ]]; then
-    echo
+    echo "Encrypted '$enc_dir' $enc_state."
+  else
+    echo "No encrypted directory specified."
   fi
 
   if [[ $dec_dir ]]; then
-    echo "Decrypted directory"
-    echo "  path:  $dec_dir"
-    echo -n "  status: "
+    local dec_state
 
     if [ -d "$dec_dir" ]; then
       if is_mounted; then
-        echo "mounted"
+        dec_state=" is mounted"
       else
-        echo "unmounted"
+        dec_state="is not mounted"
       fi
     elif [ -e "$dec_dir" ]; then
-      echo "not a directory"
+      dec_state="is not a directory"
     else
-      echo "not exists"
+      dec_state="does not exists"
     fi
+
+    echo "Decrypted '$dec_dir' $dec_state."
   else
-    echo "No decrypted directory specified"
+    echo "No decrypted directory specified."
   fi
 }
 
