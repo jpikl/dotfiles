@@ -20,7 +20,8 @@ help() {
 
 		Branch:
 		  Zero or more Git branches.
-		  If omitted, read branches as lines from stdin.
+		  Ignored when a command is piped to $(self).
+		  In that case, $(self) reads branches from stdin (one per line).
 	EOT
 }
 
@@ -35,14 +36,16 @@ main() {
   done
 
   shift $((OPTIND - 1))
-
   [[ $# -eq 0 ]] && die_missing_arg
+
   local property=$1
+  local -a branches
 
   shift 1
-  local branches=("$@")
 
-  if [[ ${#branches[@]} -eq 0 ]]; then
+  if [[ -t 0 ]]; then
+    branches=("$@")
+  else
     mapfile -t branches
   fi
 
