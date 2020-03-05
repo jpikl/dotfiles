@@ -4,8 +4,8 @@
 alias bakmusls='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Bat
-alias batfzf='bat "$(find -type f | fzfbat)"'
-alias batfzfsrc='bat "$(findsrc -type f | fzfbat)"'
+alias batfzf='find -type f | fzfbat | xargs --no-run-if-empty bat'
+alias batfzfsrc='findsrc -type f | fzfbat | xargs --no-run-if-empty bat'
 
 # Cd
 alias ..='cd ..'
@@ -29,14 +29,14 @@ alias cdfzfsrc='cd "$(findsrc -type d | fzfls)"'
 alias cdlib='cd "$LOCAL_LIB_DIR"'
 alias cdmed='cd "$MEDIA_DIR"'
 alias cdmus='cd "$MUSIC_DIR"'
-alias cdmvndir='cd "$(findprj -mZ | choose -zp "Change directory:")"'
+alias cdmvndir='cd "$(findprj -mZ | choose -zp "Directory:")"'
 alias cdmvnroot='cd "$(findprj -mu)"'
-alias cdnpmdir='cd "$(findprj -nZ | choose -zp "Change directory:")"'
+alias cdnpmdir='cd "$(findprj -nZ | choose -zp "Directory:")"'
 alias cdnpmroot='cd "$(findprj -nu)"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplay='cd "$PLAYLISTS_DIR"'
 alias cdplst='cdplay'
-alias cdprj='cd "$WORKSPACE_DIR" && cd "$(choose -p "Go to workspace project:" * || echo "$OLDPWD")"'
+alias cdprj='cd "$WORKSPACE_DIR" && cd "$(choose -p "Project:" * || echo "$OLDPWD")"'
 alias cdpub='cd "$PUBLIC_DIR"'
 alias cdtemp='cd "$TEMP_DIR"'
 alias cdtmp='cd "$TEMP_DIR"'
@@ -79,7 +79,7 @@ alias findsrc='findex -exclude vplo'
 alias fzfbat='fzf --preview="bat --color=always {}"'
 alias fzfls='fzf --preview="ls -l --almost-all --human-readable --color=always {}"'
 alias fzfexif='fzf --preview="exiftool {}"'
-alias fzfxargs='fzf --multi --read0 --print0 | xargs --delimiter="\0" --no-run-if-empty'
+alias fzfxargs='fzf --multi --read0 --print0 | xargs --null --no-run-if-empty'
 alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | cut --delimiter=" " --fields=2'
 
 # Git
@@ -126,7 +126,7 @@ alias npmun='npm uninstall'
 alias npmup='npm update'
 
 # Pacman / Pacaur
-alias paci='pacfind -rac | fzfpac | xargs --no-run-if-empty retty pacaur -S'
+alias paci='pacfind -c | fzfpac | xargs --no-run-if-empty retty pacaur -S'
 alias pacr='pacaur -Sy'
 alias pacri='pacr && paci'
 alias pacun='pacfind -lc | fzfpac | xargs --no-run-if-empty retty pacaur -Rsc'
@@ -136,10 +136,10 @@ alias pacup='pacaur -Syu'
 alias rndebug='adb shell input keyevent 82'
 
 # SSH
-alias ssha='ssh-add "$(choose -p "Add SSH key:" ~/.ssh/*.key)"'
+alias ssha='cd ~/.ssh && find -name "*.key" -printf "%P\0" | choose -zp "SSH key:" | xargs --no-run-if-empty --open-tty ssh-add; cd "$OLDPWD"'
 alias sshi='eval "$(sshctl start)"'
 alias sshk='eval "$(sshctl stop)"'
-alias sshl='grep --fixed-strings --recursive --with-filename --file=<(ssh-add -L | cut --delimiter=" " --fields=2) ~/.ssh/ | cut --delimiter=: --fields=1'
+alias sshl='cd ~/.ssh && grep --fixed-strings --recursive --with-filename --file=<(ssh-add -L | cut --delimiter=" " --fields=2) | cut --delimiter=: --fields=1; cd "$OLDPWD"'
 
 # Terminal
 alias termfit='cut --characters=-$COLUMNS'
