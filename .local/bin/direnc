@@ -10,12 +10,7 @@ help() {
 		List or (un)mount encrypted directories. Simple encfs frontend.
 
 		Usage:
-		  $(self) [options] [--] [command]
-
-		Options:
-		  -e <dir>  Path to encrypted directory.
-		  -d <dir>  Path to decrypted directory.
-		  -h        Print this help.
+		  $(self) [options] [<command>]
 
 		Commands:
 		  s, status   Print directories and mount status (default command).
@@ -23,7 +18,12 @@ help() {
 		              and encryption is configured if they do not exist.
 		  u, unmount  Unmout private directory.
 
-		Environment variables:
+		Options:
+		  -e <dir>  Path to encrypted directory.
+		  -d <dir>  Path to decrypted directory.
+		  -h        Print this help.
+
+		Environment vars:
 		  ENCRYPTED_DIR  Default path to encrypted directory.
 		  DECRYPTED_DIR  Default path to decrypted directory.
 	EOT

@@ -10,9 +10,6 @@ help() {
   cat <<-EOT
 		List Git branches in machine-readable format.
 
-		By default, $(self) lists local branches (-l),
-		unless one or more -c,l,a,b,h,r options is passed.
-
 		Usage:
 		  $(self) [options]
 
@@ -25,6 +22,9 @@ help() {
 		  -r  Include remote branches.
 		  -s  Print short branch names without remote prefix.
 		  -h  Print this help.
+
+		By default, $(self) lists local branches (-l),
+		unless one or more -c,l,a,b,h,r options is passed.
 	EOT
 }
 

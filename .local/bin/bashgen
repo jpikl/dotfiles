@@ -11,11 +11,11 @@ help() {
 		Usage:
 		  $(self) [options] [--] <name>
 
+		Args:
+		  <name>  Name of a new script.
+
 		Options:
 		  -h  Print this help.
-
-		Name:
-		  Name of a new script.
 	EOT
 }
 

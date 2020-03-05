@@ -11,13 +11,13 @@ help() {
 		Usage:
 		  $(self) [options] <version>
 
+		Args:
+		  <version>  Version to set.
+
 		Options:
 		  -b  Create backup of original pom.xml files.
 		  -v  Verbose mode with additional output.
 		  -h  Print this help.
-
-		Version:
-		  Version to set.
 	EOT
 }
 

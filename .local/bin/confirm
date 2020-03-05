@@ -11,11 +11,11 @@ help() {
 		Usage:
 		  $(self) [options] [--] <message>
 
+		Args:
+		  <message>  Confirmation message.
+
 		Options:
 		  -h  Print this help.
-
-		Message:
-		  Confirmation message.
 	EOT
 }
 

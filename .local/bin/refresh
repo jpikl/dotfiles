@@ -9,18 +9,16 @@ help() {
 		Periodically refresh output of a command on change.
 
 		Usage:
-		  $(self) [options] [--] <command> [args]
+		  $(self) [options] <command> [<param>...]
+
+		Args:
+		  <command>   Command to execute.
+		  <param>...  Parameters passed to command.
 
 		Options:
 		  -d <seconds>  Output refresh period in seconds (default: 1).
 		  -c            Continuous output.
 		  -h            Print this help.
-
-		Command:
-		  Command to execute.
-
-		Args:
-		  Arguments passed to command.
 	EOT
 }
 

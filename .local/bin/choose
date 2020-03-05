@@ -9,10 +9,17 @@ readonly ERR_NO_VALUES=2
 
 help() {
   cat <<-EOT
-		Let user choose value(s). Simple fzf frontend with Bash fallback.
+		Let user choose from values. Simple fzf frontend with Bash fallback.
 
 		Usage:
-		  $(self) [options] [--] [value]...
+		  $(self) [options] [--] [<value>...]
+		  command | $(self) [options]
+
+		Args:
+		  <value>...  Values to select from.
+
+		When a command is piped to $(self), values are read from stdin
+		(one per line).
 
 		Options:
 		  -p <prompt>   Message to print as a prompt.
@@ -23,22 +30,13 @@ help() {
 		  -b            Force pure Bash interface instead of fzf.
 		  -h            Print this help.
 
-		Value:
-		  Zero or more values to select from.
-		  Ignored when a command is piped to $(self).
-		  In that case, $(self) reads values from stdin (one per line).
-
 		Exit status:
 		  0  Normal exit.
 		  1  Error.
 		  2  No values.
 
-		Environment variables:
-		  TTY  Filename of a current TTY device.
-		       Used by basic interface when reading from stdin.
-
-		Links:
-		  fzf  https://github.com/junegunn/fzf
+		Environment vars:
+		  TTY  Filename of a current TTY device. Needed when using -b option.
 	EOT
 }
 

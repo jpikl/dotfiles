@@ -9,18 +9,18 @@ help() {
 		List or (un)mount disks. Simple lsblk and udisksctl frontend.
 
 		Usage:
-		  $(self) [options] [command]
+		  $(self) [options] [<command>]
+
+		Commands:
+		  l, list            List disks and their status.
+		  m, mount   <disk>  Mount disk.
+		  u, unmount <disk>  Unmount disk.
+		  e, eject   <disk>  Unmount and power-off disk.
+		  o, open    <disk>  Open disk mountpoint.
 
 		Options:
 		  -o  Open mountpoint after a disk was mounted.
 		  -h  Print this help.
-
-		Commands:
-		  l, list              List disks and their status.
-		  m, mount   <device>  Mount disk.
-		  u, unmount <device>  Unmount disk.
-		  e, eject   <device>  Unmount and power-off disk.
-		  o, open    <device>  Open disk mountpoint.
 	EOT
 }
 

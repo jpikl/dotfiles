@@ -9,13 +9,13 @@ help() {
 		Generate SSH key with user-friendly CLI wizard.
 
 		Usage:
-		  $(self) [options] [hostname]
+		  $(self) [options] [<hostname>]
+
+		Args:
+		  <hostname>  Remote hostname the SSH key will be used for.
 
 		Options:
 		  -h  Print this help.
-
-		Hostname:
-		  Remote hostname the SSH key will be used for.
 	EOT
 }
 

@@ -12,6 +12,9 @@ help() {
 		Usage:
 		  $(self) [options] [--] <file>...
 
+		Args:
+		  <file>...  Files to extract.
+
 		Options:
 		  -d  Ensure a containing directory.
 		  -f  Force extraction even if output files aready exist.
@@ -19,9 +22,6 @@ help() {
 		  -v  Verbose mode with additional output.
 		  -s  Skip extraction errors.
 		  -h  Print this help.
-
-		File:
-		  One or more files to extract.
 	EOT
 }
 

@@ -9,18 +9,16 @@ help() {
 		Execute command with current TTY as stdin.
 
 		Usage:
-		  $(self) [options] [--] <command> [argument]...
+		  $(self) [options] <command> [<param>...]
+
+		Args:
+		  <command>   Command to execute.
+		  <param>...  Parameters passed to command.
 
 		Options:
 		  -h  Print this help.
 
-		Command:
-		  Command to execute.
-
-		Argument:
-		  Zero or more command arguments.
-
-		Environment variables:
+		Environment vars:
 		  TTY  Filename of a current TTY device.
 	EOT
 }

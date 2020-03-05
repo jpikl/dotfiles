@@ -8,11 +8,12 @@ help() {
   cat <<-EOT
 		Find root directories of software projects.
 
-		By default, $(self) searches for all types of projects,
-		unless one or more -v,m,n options is passed.
-
 		Usage:
-		  $(self) [options] [--] [path]
+		  $(self) [options] [--] [<path>]
+
+		Args:
+		  <path>  Search starting point.
+		          Default path is the current working directory.
 
 		Options:
 		  -v  Include projects using version control system.
@@ -22,9 +23,8 @@ help() {
 		  -Z  Print results delimited by NUL instead of LF.
 		  -h  Print this help.
 
-		Path:
-		  Search starting point.
-		  Default path is the current working directory.
+		By default, $(self) searches for all types of projects,
+		unless one or more -v,m,n options is passed.
 	EOT
 }
 

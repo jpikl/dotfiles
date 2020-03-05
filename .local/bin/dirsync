@@ -9,19 +9,17 @@ help() {
 		Synchronize two directories. Simple rsync frontend.
 
 		Usage:
-		  $(self) [options] [--] <source> <destination>
+		  $(self) [options] [--] <source> <dest>
+
+		Args:
+		  <source>  Source directory.
+		  <dest>    Destination directory.
 
 		Options:
 		  -t  Preserve only modification times.
 		  -e  Optimize for exFAT filesystem.
 		  -f  No dry run and skip confirmation.
 		  -h  Print this help.
-
-		Source:
-		  Source directory.
-
-		Destination:
-		  Destination directory.
 	EOT
 }
 
@@ -48,7 +46,7 @@ main() {
   [[ -d $2 ]] || die "'$2' is not a directory"
 
   local source
-  local destination=$2
+  local dest=$2
 
   if [[ $1 == */ ]]; then
     source=$1
@@ -56,8 +54,8 @@ main() {
     source=$1/ # Source directory MUST end with /.
   fi
 
-  if [[ $source -ef $destination ]]; then
-    die "'$source' and '$destination' point to the same directory"
+  if [[ $source -ef $dest ]]; then
+    die "'$source' and '$dest' point to the same directory"
   fi
 
   local opts=("--delete" "--human-readable")
@@ -76,16 +74,16 @@ main() {
   local opts_progress=("--info=progress2")
 
   if [[ $force = true ]]; then
-    echo "Synchronizing '$source' to '$destination'"
-    rsync "${opts[@]}" "${opts_info[@]}" "${opts_progress[@]}" -- "$source" "$destination"
+    echo "Synchronizing '$source' to '$dest'"
+    rsync "${opts[@]}" "${opts_info[@]}" "${opts_progress[@]}" -- "$source" "$dest"
   else
-    echo "Detecting differences from '$source' to '$destination'"
-    rsync "${opts[@]}" "${opts_info[@]}" --dry-run -- "$source" "$destination"
+    echo "Detecting differences from '$source' to '$dest'"
+    rsync "${opts[@]}" "${opts_info[@]}" --dry-run -- "$source" "$dest"
     echo
 
     if confirm "Continue with synchronization?"; then
-        echo "Synchronizing '$source' to '$destination'"
-        rsync "${opts[@]}" "${opts_progress[@]}" -- "$source" "$destination"
+        echo "Synchronizing '$source' to '$dest'"
+        rsync "${opts[@]}" "${opts_progress[@]}" -- "$source" "$dest"
     fi
   fi
 }

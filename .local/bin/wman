@@ -33,18 +33,15 @@ help() {
 		Open online man pages in web browser.
 
 		Usage:
-		  $(self) [options] [--] <command>[.section]
+		  $(self) [options] <command>[.<section>]
+
+		Args:
+		  <command>  Command name.
+		  <section>  Section number. Try every section if not specified.
 
 		Options:
 		  -012..9  Use specific source (default: 0).
 		  -h       Print this help.
-
-		Command:
-		  Command name.
-
-		Section:
-		  Section number.
-		  If not specified, try man page in every section.
 
 		Sources:
 		$(print_sources)

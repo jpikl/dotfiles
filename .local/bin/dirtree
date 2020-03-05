@@ -10,7 +10,11 @@ help() {
 		List contents of a directory as tree. Bash implementation of tree command.
 
 		Usage:
-		  $(self) [options] [--] [path]
+		  $(self) [options] [--] [<path>]
+
+		Args:
+		  <path>  Root of a directory tree to print.
+		          Default path is the current working directory.
 
 		Options:
 		  -m <depth>  The maximum number of levels to descent.
@@ -18,10 +22,6 @@ help() {
 		  -s          Sort directory entries by name.
 		  -c          Force colors in output (-C for no colors).
 		  -h          Print this help.
-
-		Path:
-		  Root of a directory tree to print.
-		  Default path is the current working directory.
 	EOT
 }
 

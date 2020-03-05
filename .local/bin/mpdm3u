@@ -9,26 +9,26 @@ help() {
   cat <<-EOT
 		Generate M3U playlists from MPD database.
 
-		Playlist are generated using the following pattern:
-		  "{YEAR}/{ARTIST} - {ALBUM}.m3u"
-
 		Usage:
-		  $(self) [options] [year]...
+		  $(self) [options] <year>...
+		  $(self) [options] -a
+
+		Args:
+		  <year>... Years for which generate playlists.
 
 		Options:
-		  -m  Path to MPD music directory.
-		  -o  Path to output directory.
-		  -a  Generate playlist for every year found in MPD database.
-		  -v  Verbose mode with additional output.
-		  -h  Print this help.
+		  -m <dir>  Path to MPD music directory.
+		  -o <dir>  Path to output directory.
+		  -a        Use every year found in MPD database.
+		  -v        Verbose mode with additional output.
+		  -h        Print this help.
 
-		Year:
-		  Zero or more years for which generate playlists.
-		  Ignored whem the -a option is passed.
-
-		Environment variables:
+		Environment vars:
 		  MUSIC_DIR      Default path to MPD music directory.
 		  PLAYLISTS_DIR  Default path to output directory.
+
+		Playlists are organized by year using the following pattern:
+		  "{year}/{artist} - {album}.m3u"
 	EOT
 }
 

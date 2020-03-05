@@ -13,16 +13,16 @@ help() {
 		Control ssh-agent process.
 
 		Usage:
-		  $(self) [options] <command>
-
-		Options:
-		  -h  Print this help.
+		  $(self) [options] [<command>]
 
 		Commands:
 		  status   Print ssh-agent status (defalt command).
 		  start    Start ssh-agent if needed.
 		  stop     Stop ssh-agent if needed.
 		  restart  Restart ssh-agent.
+
+		Options:
+		  -h  Print this help.
 	EOT
 }
 

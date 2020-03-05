@@ -22,7 +22,7 @@ help() {
 		  -U  Exclude untracked file list.
 		  -h  Print this help.
 
-		Environment variables:
+		Environment vars:
 		  TERM_ICONS  Enables icons in terminal output (default: false).
 	EOT
 }

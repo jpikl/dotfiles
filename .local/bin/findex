@@ -9,7 +9,7 @@ help() {
 		Find wrapper with extra capabilities.
 
 		Usage:
-		  $(self) [options] [path]... [expression]
+		  $(self) [options] [<path>...] [<expression>]
 
 		Options:
 		  Options accepted by the find command.

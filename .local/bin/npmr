@@ -9,16 +9,15 @@ help() {
 		List or (silently) run scripts of a Npm package.
 
 		Usage:
-		  $(self) [options] [--] [script]...
+		  $(self) [options] [--] [<script>...]
+
+		Args:
+		  <scipt>... Scripts to run. If omitted, list available scripts instead.
 
 		Options:
 		  -1  Run only the first available script.
 		  -S  Do not silence npm run output.
 		  -h  Print this help.
-
-		Script:
-		  Zero or more script names.
-		  If omitted, list available scripts instead.
 	EOT
 }
 

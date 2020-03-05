@@ -9,16 +9,18 @@ help() {
 		Fast-forward local Git branches.
 
 		Usage:
-		  $(self) [options] [--] [branch]...
+		  $(self) [options] [<branch>...]
+		  $(self) [options] -a
+
+		Args:
+		  <branch>... Local branches to fast-forward.
 
 		Options:
 		  -a  Fast-forward all local branches that are behind remote.
 		  -h  Print this help.
 
-		Branch:
-		  Zero or more branches to fast-forward.
-		  If omitted, fast-forward the current branch.
-
+		Fast-forward the current branch when no other branch is passed
+		and -a option is not used.
 	EOT
 }
 

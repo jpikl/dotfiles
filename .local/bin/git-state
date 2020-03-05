@@ -8,6 +8,13 @@ help() {
   cat <<-EOT
 		Print state of a Git working tree.
 
+		Usage:
+		  $(self) [options]
+
+		Options:
+		  -s  Print short name instead of description.
+		  -h  Print this help.
+
 		The following states are being recognized.
 		The "normal" state does not have any output printed.
 
@@ -19,16 +26,6 @@ help() {
 		    RI | Rebasing interactively
 		    CP | Cherry picking
 		    DH | Detached HEAD
-
-		Usage:
-		  $(self) [options]
-
-		Options:
-		  -s  Print short name instead of description.
-		  -h  Print this help.
-
-		Name:
-		  Name of a new script.
 	EOT
 }
 

@@ -9,19 +9,19 @@ help() {
 		Print property of a Maven project in each Git branch.
 
 		Usage:
-		  $(self) [options] [--] <property> [branch]...
+		  $(self) [options] <property> <branch>...
+		  command | $(self) [options] <property>
+
+		Args:
+		  <property>   Name of a property.
+		  <branch>...  Git branches.
+
+		The property is read from pom.xml in the current working directory.
+		When a command is piped to $(self), branches are read from stdin
+		(one per line).
 
 		Options:
 		  -h  Print this help.
-
-		Property:
-		  Name of a property defined in pom.xml file.
-		  The pom.xml is expected to be in the current working directory.
-
-		Branch:
-		  Zero or more Git branches.
-		  Ignored when a command is piped to $(self).
-		  In that case, $(self) reads branches from stdin (one per line).
 	EOT
 }
 
@@ -43,10 +43,12 @@ main() {
 
   shift 1
 
-  if [[ -t 0 ]]; then
+  if [[ ! -t 0 ]]; then
+    mapfile -t branches
+  elif [[ $# -gt 0 ]]; then
     branches=("$@")
   else
-    mapfile -t branches
+    die_help "no branch"
   fi
 
   for branch in "${branches[@]}"; do

@@ -9,11 +9,11 @@ help() {
   cat <<-EOT
 		Find ArchLinux packages. Simple pacman frontend wit AUR support.
 
-		By default, $(self) searches between remote packages,
-		unless one or more -l,g,r,a options is passed.
-
 		Usage:
-		  $(self) [options] [--] [name]
+		  $(self) [options] [--] [<name>]
+
+		Args:
+		  <name> Package name to find. Omit to list all packages.
 
 		Options:
 		  -l  Include local packages.
@@ -24,9 +24,8 @@ help() {
 		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 
-		Name:
-		  Package name to find.
-		  Omit to list all packages.
+		By default, $(self) searches between remote packages,
+		unless one or more -l,g,r,a options is passed.
 	EOT
 }
 

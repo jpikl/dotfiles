@@ -12,12 +12,12 @@ help() {
 		Usage:
 		  $(self) [options] [--] <item>...
 
+		Args:
+		  <item>...  Files or URLs to open.
+
 		Options:
 		  -s  Skip opening errors.
 		  -h  Print this help.
-
-		Item:
-		  One or more files or URLs to open.
 	EOT
 }
 
