@@ -6,12 +6,13 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		List or (un)mount disks. Simple udisksctl frontend.
+		List or (un)mount disks. Simple lsblk and udisksctl frontend.
 
 		Usage:
-		  $(self) [options] [--] [command]
+		  $(self) [options] [command]
 
 		Options:
+		  -o  Open mountpoint after a disk was mounted.
 		  -h  Print this help.
 
 		Commands:
@@ -19,14 +20,17 @@ help() {
 		  m, mount   <device>  Mount disk.
 		  u, unmount <device>  Unmount disk.
 		  e, eject   <device>  Unmount and power-off disk.
+		  o, open    <device>  Open disk mountpoint.
 	EOT
 }
 
 main() {
   local opt
+  local open_after_mount=false
 
-  while getopts ":h" opt; do
+  while getopts ":oh" opt; do
     case "$opt" in
+      o) open_after_mount=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -34,61 +38,106 @@ main() {
 
   shift $((OPTIND - 1))
 
-  case ${1-list} in
+  local command=list
+  if [[ $# -gt 0 ]]; then
+    command=$1
+    shift
+  fi
+
+  case $command in
     l|list) list_disks ;;
-    m|mount) mount_disk "${2-}" ;;
-    u|umount|unmount) unmount_disk "${2-}" ;;
-    e|eject) eject_disk "${2-}" ;;
-    *) die_help "invalid command '$1'" ;;
+    m|mount) mount_disk "$@" ;;
+    u|umount|unmount) unmount_disk "$@" ;;
+    e|eject) eject_disk "$@" ;;
+    o|open) open_mountpoint "$@" ;;
+    *) die_help "invalid command '$command'" ;;
   esac
 }
 
 list_disks() {
-  local device
-  local name
+  local kname pkname name type vendor model label size moutpoint
+  local disk_kname disk_vendor disk_model
 
-  while read -r device name; do
-    local status
-
-    if is_disk_mounted "$device"; then
-      status="x"
-    else
-      status=" "
+  while IFS=';' read -r kname pkname name type vendor model label size moutpoint; do
+    if [[ $type == disk ]]; then
+      disk_kname=$kname
+      disk_vendor=$vendor
+      disk_model=$model
     fi
 
-    printf "[%s]|%s|%s\n" "$status" "$device" "$name"
-  done < <(list_disks_raw) | column --table --separator '|'
+    if [[ $type == part ]] || [[ $type == disk ]] && ! disk_has_partions "$kname"; then
+      local status
+
+      if [[ $moutpoint ]]; then
+        status="x"
+      else
+        status=" "
+      fi
+
+      # We expect partions to follow after their parent disk
+      if [[ $type == part && $pkname == "$disk_kname" ]]; then
+        vendor=$disk_vendor
+        model=$disk_model
+      fi
+
+      echo -e "[$status];$name;$(format_vendor_model "$vendor" "$model");$size;$label;$moutpoint"
+    fi
+  done < <(list_disks_raw) | column --table --separator=';'
 }
 
 list_disks_raw() {
-  udisksctl status \
-    | tail -n+3 \
-    | sed -E 's/^(.*)\s+(\S+)\s+(\S+)\s+(\S+)\s+$/\4 \1/g'
+  lsblk --raw \
+        --noheadings \
+        --output KNAME,PKNAME,NAME,TYPE,VENDOR,MODEL,LABEL,SIZE,MOUNTPOINT \
+        --sort PATH \
+    | tr --delete ';' \
+    | tr ' ' ';'
 }
 
-is_disk_mounted() {
-  mount | grep --quiet "/dev/$1"
+disk_has_partions() {
+  lsblk --raw --output PKNAME | grep --quiet --fixed-strings --line-regexp "$1"
 }
 
-check_disk_arg() {
-  [[ $2 ]] || die_help "$1 requires an argument"
-  [[ -b "/dev/$2" ]] || die "/dev/$2 is not a block device"
+format_vendor_model() {
+  echo -e "$1 $2" | sed --regexp-extended \
+                        --expression='s/_/ /g' \
+                        --expression='s/\s+/ /g' \
+                        --expression='s/\s+$//g'
 }
 
 mount_disk() {
-  check_disk_arg "mount" "$1"
-  udisksctl mount --block-device "/dev/$1"
+  [[ $# -gt 0 ]] || die_help "mount requires an argument"
+  udisksctl mount --block-device "$(get_block_device "$1")"
+  [[ $open_after_mount == true ]] && open_mountpoint "$1"
 }
 
 unmount_disk() {
-  check_disk_arg "unmount" "$1"
-  udisksctl unmount --block-device "/dev/$1"
+  [[ $# -gt 0 ]] || die_help "unmount requires an argument"
+  udisksctl unmount --block-device "$(get_block_device "$1")"
 }
 
 eject_disk() {
-  check_disk_arg "eject" "$1"
-  udisksctl unmount --block-device "/dev/$1" \
-    && udisksctl power-off --block-device "/dev/$1"
+  [[ $# -gt 0 ]] || die_help "eject requires an argument"
+  get_mountpoint "$1" >/dev/null && unmount_disk "$1"
+  udisksctl power-off --block-device "$(get_block_device "$1")"
+}
+
+open_mountpoint() {
+  [[ $# -gt 0 ]] || die_help "open requires an argument"
+  local mountpoint
+  mountpoint=$(get_mountpoint "$1") || die "$1 is not mounted"
+  open "$mountpoint"
+}
+
+get_mountpoint() {
+  lsblk --raw --noheadings --output MOUNTPOINT "$(get_block_device "$1")" \
+    | grep --extended-regexp '.+' # Fail on empty output
+}
+
+get_block_device() {
+  local device="/dev/$1"
+  [[ -b $device ]] || die "$device is not a block device"
+  echo "$device"
 }
 
 main "$@"
