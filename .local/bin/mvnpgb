@@ -17,8 +17,7 @@ help() {
 		  <branch>...  Git branches.
 
 		The property is read from pom.xml in the current working directory.
-		When a command is piped to $(self), branches are read from stdin
-		(one per line).
+		When a command is piped to $(self), branches are read as lines from stdin.
 
 		Options:
 		  -h  Print this help.

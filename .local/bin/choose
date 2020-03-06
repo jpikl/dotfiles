@@ -18,8 +18,7 @@ help() {
 		Args:
 		  <value>...  Values to select from.
 
-		When a command is piped to $(self), values are read from stdin
-		(one per line).
+		When a command is piped to $(self), values are read as lines from stdin.
 
 		Options:
 		  -p <prompt>   Message to print as a prompt.
