@@ -13,10 +13,9 @@ help() {
 		  $(self) [<options>] [<command>]
 
 		Commands:
-		  s, status   Print directories and mount status (default command).
-		  m, mount    Mount private directory. Directories are created
-		              and encryption is configured if they do not exist.
-		  u, unmount  Unmout private directory.
+		  s, status   Print directories and mount status.
+		  m, mount    Mount encrypted directory.
+		  u, unmount  Unmout encrypted directory.
 
 		Options:
 		  -e <dir>  Path to encrypted directory.
@@ -26,6 +25,8 @@ help() {
 		Environment vars:
 		  ENCRYPTED_DIR  Default path to encrypted directory.
 		  DECRYPTED_DIR  Default path to decrypted directory.
+
+		Default command is 'status'.
 	EOT
 }
 
@@ -57,40 +58,28 @@ main() {
 }
 
 status() {
+  echo -n "Encrypted directory: "
+
   if [[ $enc_dir ]]; then
-    local enc_state
-
-    if [ -d "$enc_dir" ]; then
-      enc_state="exists"
-    elif [ -e "$enc_dir" ]; then
-      enc_state="is not a directory"
-    else
-      enc_state="does not exist"
-    fi
-
-    echo "Encrypted '$enc_dir' $enc_state."
+    echo "$enc_dir"
   else
-    echo "No encrypted directory specified."
+    echo "not specified"
   fi
 
+  echo -n "Decrypted directory: "
+
   if [[ $dec_dir ]]; then
-    local dec_state
-
-    if [ -d "$dec_dir" ]; then
-      if is_mounted; then
-        dec_state=" is mounted"
-      else
-        dec_state="is not mounted"
-      fi
-    elif [ -e "$dec_dir" ]; then
-      dec_state="is not a directory"
-    else
-      dec_state="does not exists"
-    fi
-
-    echo "Decrypted '$dec_dir' $dec_state."
+    echo "$dec_dir"
   else
-    echo "No decrypted directory specified."
+    echo "not specified"
+  fi
+
+  echo -n "Status: "
+
+  if is_mounted; then
+    echo "Mounted"
+  else
+    echo "Not mounted"
   fi
 }
 
