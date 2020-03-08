@@ -6,34 +6,32 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		Find wrapper with extra capabilities.
+				Find wrapper with extra capabilities.
 
 		Usage:
 		  $(self) [<options>] [<path>...] [<expression>]
 
-		Options:
-		  Options accepted by the find command.
+		Args:
+		  <options>    Options accepted by the find command.
+		  <path>...    Search starting points.
+		  <expression> Expression accepted by the find command.
 
-		Path:
-		  Zero or more starting points.
-		  Default path is the current working directory.
+		Default path is the current working directory.
+		Default expression is '-print'.
 
-		Expression:
-		  Expression accepted by the find command.
-		  Default expression is '-print'.
-		  The following are new expressions provided by $(self).
+		New expressions provided by $(self).
 
 		  -exclude flags
-		           Exclude certain files and directories from search.
-		           Such directories are always pruned from search using -prune.
-		           Flags is a string of the following characters:
+		      Exclude certain files and directories from search.
+		      Such directories are always pruned from search using -prune.
+		      Flags is a string of the following characters:
 
-		           v  Exclude directories of various version control systems.
-		           p  Exclude metadata of various editors and IDEs.
-		           l  Exlude libraries and dependencies.
-		           o  Exclude output of a compilation or a build process.
-		           D  When excluding a directory, exclude only its contents
-		              not the directory itself.
+		      v  Exclude directories of various version control systems.
+		      p  Exclude metadata of various editors and IDEs.
+		      l  Exlude libraries and dependencies.
+		      o  Exclude output of a compilation or a build process.
+		      D  When excluding a directory, exclude only its contents
+		         not the directory itself.
 
 		See 'find -help' or 'man find' for more details.
 	EOT

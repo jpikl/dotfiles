@@ -11,16 +11,13 @@ help() {
 		Usage:
 		  $(self) [<options>] [<path>...] [<expression>]
 
-		Options:
-		  Options accepted by the find command.
+		Args:
+		  <options>    Options accepted by the find command.
+		  <path>...    Search starting points.
+		  <expression> Expression accepted by the find command.
 
-		Path:
-		  Zero or more starting points.
-		  Default path is the current working directory.
-
-		Expression:
-		  Expression accepted by the find command.
-		  Default expression is '-maxdepth 1 -print'.
+		Default path is the current working directory.
+		Default expression is '-maxdepth 1 -print'.
 
 		See 'find -help' or 'man find' for more details.
 	EOT
