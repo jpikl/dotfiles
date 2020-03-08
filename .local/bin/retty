@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -17,9 +18,6 @@ help() {
 
 		Options:
 		  -h  Print this help.
-
-		Environment vars:
-		  TTY  Filename of a current TTY device.
 	EOT
 }
 
@@ -36,12 +34,13 @@ main() {
   shift $((OPTIND - 1))
 
   [[ $# -eq 0 ]] && die_missing_arg
-  [[ ${TTY-} ]] || die_no_var TTY # Defined in .bashrc
 
-  if [[ ! -t 0 ]]; then
-    "$@" < "$TTY"
-  else
+  if [[ -t 0 ]]; then
     "$@"
+  else
+    local tty
+    tty=$(get_tty)
+    "$@" < "$tty"
   fi
 }
 

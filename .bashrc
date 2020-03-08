@@ -14,10 +14,6 @@ shopt -s globstar     # Enable recursive "**" glob pattern
 # Do not add commands starting with space to history + erase duplicates.
 export HISTCONTROL=ignorespace:erasedups
 
-# Current tty device
-TTY=$(tty)
-export TTY
-
 # Tools that initialize environment
 command -v dircolors >/dev/null && eval "$(dircolors --bourne-shell)"
 command -v thefuck >/dev/null && eval "$(thefuck --alias)"

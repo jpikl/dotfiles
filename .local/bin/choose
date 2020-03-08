@@ -33,9 +33,6 @@ help() {
 		  0  Normal exit.
 		  1  Error.
 		  2  No values.
-
-		Environment vars:
-		  TTY  Filename of a current TTY device. Needed when using -b option.
 	EOT
 }
 
@@ -122,8 +119,9 @@ basic_mode() {
     else
       mapfile -t values
     fi
-    [[ ${TTY-} ]] || die_no_var TTY # Defined in .bashrc
-    exec < "$TTY"  # Redirect stdin back to tty
+    local tty
+    tty="$(get_tty)"
+    exec < "$tty"  # Redirect stdin back to tty
   fi
 
   if [[ ${#values[@]} -eq 1 && $multi == false ]]; then
