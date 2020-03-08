@@ -11,7 +11,7 @@ help() {
 		List Git branches in machine-readable format.
 
 		Usage:
-		  $(self) [options]
+		  $(self) [<options>]
 
 		Options:
 		  -c  Include current branch (-C to exclude).

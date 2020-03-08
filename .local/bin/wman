@@ -33,7 +33,7 @@ help() {
 		Open online man pages in web browser.
 
 		Usage:
-		  $(self) [options] <command>[.<section>]
+		  $(self) [<options>] <command>[.<section>]
 
 		Args:
 		  <command>  Command name.

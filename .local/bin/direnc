@@ -10,7 +10,7 @@ help() {
 		List or (un)mount encrypted directories. Simple encfs frontend.
 
 		Usage:
-		  $(self) [options] [<command>]
+		  $(self) [<options>] [<command>]
 
 		Commands:
 		  s, status   Print directories and mount status (default command).

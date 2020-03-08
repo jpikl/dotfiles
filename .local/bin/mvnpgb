@@ -9,8 +9,8 @@ help() {
 		Print property of a Maven project in each Git branch.
 
 		Usage:
-		  $(self) [options] <property> <branch>...
-		  command | $(self) [options] <property>
+		  $(self) [<options>] <property> <branch>...
+		  command | $(self) [<options>] <property>
 
 		Args:
 		  <property>   Name of a property.

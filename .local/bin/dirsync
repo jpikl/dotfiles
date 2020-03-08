@@ -9,7 +9,7 @@ help() {
 		Synchronize two directories. Simple rsync frontend.
 
 		Usage:
-		  $(self) [options] [--] <source> <dest>
+		  $(self) [<options>] [--] <source> <dest>
 
 		Args:
 		  <source>  Source directory.

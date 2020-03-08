@@ -9,7 +9,7 @@ help() {
 		List or delete local Git branches that are gone on remote.
 
 		Usage:
-		  $(self) [options]
+		  $(self) [<options>]
 
 		Options:
 		  -d  Delete gone branches.

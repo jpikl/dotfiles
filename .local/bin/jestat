@@ -9,8 +9,8 @@ help() {
 		Print statistics of Java exceptions in a log file.
 
 		Usage:
-		  $(self) [options] [--] <file>
-		  command | $(self) [options]
+		  $(self) [<options>] [--] <file>
+		  command | $(self) [<options>]
 
 		File:
 		  <file> Log file to read.

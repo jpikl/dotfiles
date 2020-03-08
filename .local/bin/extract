@@ -10,7 +10,7 @@ help() {
 		Extract or list contents of an archive in nearly any format.
 
 		Usage:
-		  $(self) [options] [--] <file>...
+		  $(self) [<options>] [--] <file>...
 
 		Args:
 		  <file>...  Files to extract.

@@ -10,8 +10,8 @@ help() {
 		Generate M3U playlists from MPD database.
 
 		Usage:
-		  $(self) [options] <year>...
-		  $(self) [options] -a
+		  $(self) [<options>] <year>...
+		  $(self) [<options>] -a
 
 		Args:
 		  <year>... Years for which generate playlists.

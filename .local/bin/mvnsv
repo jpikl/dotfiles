@@ -9,7 +9,7 @@ help() {
 		Set version of a Maven project.
 
 		Usage:
-		  $(self) [options] <version>
+		  $(self) [<options>] <version>
 
 		Args:
 		  <version>  Version to set.

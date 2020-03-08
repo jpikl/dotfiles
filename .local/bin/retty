@@ -9,7 +9,7 @@ help() {
 		Execute command with current TTY as stdin.
 
 		Usage:
-		  $(self) [options] <command> [<param>...]
+		  $(self) [<options>] <command> [<param>...]
 
 		Args:
 		  <command>   Command to execute.

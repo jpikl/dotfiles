@@ -12,8 +12,8 @@ help() {
 		Let user choose from values. Simple fzf frontend with Bash fallback.
 
 		Usage:
-		  $(self) [options] [--] [<value>...]
-		  command | $(self) [options]
+		  $(self) [<options>] [--] [<value>...]
+		  command | $(self) [<options>]
 
 		Args:
 		  <value>...  Values to select from.

@@ -10,7 +10,7 @@ help() {
 		Open a file or URL in the user's preferred application.
 
 		Usage:
-		  $(self) [options] [--] <item>...
+		  $(self) [<options>] [--] <item>...
 
 		Args:
 		  <item>...  Files or URLs to open.

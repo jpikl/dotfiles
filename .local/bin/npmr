@@ -9,7 +9,7 @@ help() {
 		List or (silently) run scripts of a Npm package.
 
 		Usage:
-		  $(self) [options] [--] [<script>...]
+		  $(self) [<options>] [--] [<script>...]
 
 		Args:
 		  <scipt>... Scripts to run. If omitted, list available scripts instead.

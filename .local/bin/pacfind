@@ -10,7 +10,7 @@ help() {
 		Find ArchLinux packages. Simple pacman frontend wit AUR support.
 
 		Usage:
-		  $(self) [options] [--] [<name>]
+		  $(self) [<options>] [--] [<name>]
 
 		Args:
 		  <name> Package name to find. Omit to list all packages.

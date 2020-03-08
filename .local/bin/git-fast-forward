@@ -9,8 +9,8 @@ help() {
 		Fast-forward local Git branches.
 
 		Usage:
-		  $(self) [options] [<branch>...]
-		  $(self) [options] -a
+		  $(self) [<options>] [<branch>...]
+		  $(self) [<options>] -a
 
 		Args:
 		  <branch>... Local branches to fast-forward.

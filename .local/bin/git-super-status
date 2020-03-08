@@ -10,7 +10,7 @@ help() {
 		Git status on steroids.
 
 		Usage:
-		  $(self) [options]
+		  $(self) [<options>]
 
 		Options:
 		  -a  Include all information.

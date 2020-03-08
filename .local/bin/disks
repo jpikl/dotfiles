@@ -9,7 +9,7 @@ help() {
 		List or (un)mount disks. Simple lsblk and udisksctl frontend.
 
 		Usage:
-		  $(self) [options] [<command>]
+		  $(self) [<options>] [<command>]
 
 		Commands:
 		  l, list            List disks and their status.

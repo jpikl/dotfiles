@@ -9,7 +9,7 @@ help() {
 		Find root directories of software projects.
 
 		Usage:
-		  $(self) [options] [--] [<path>]
+		  $(self) [<options>] [--] [<path>]
 
 		Args:
 		  <path>  Search starting point.

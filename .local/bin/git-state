@@ -9,7 +9,7 @@ help() {
 		Print state of a Git working tree.
 
 		Usage:
-		  $(self) [options]
+		  $(self) [<options>]
 
 		Options:
 		  -s  Print short name instead of description.

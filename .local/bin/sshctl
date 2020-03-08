@@ -13,7 +13,7 @@ help() {
 		Control ssh-agent process.
 
 		Usage:
-		  $(self) [options] [<command>]
+		  $(self) [<options>] [<command>]
 
 		Commands:
 		  status   Print ssh-agent status (defalt command).

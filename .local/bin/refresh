@@ -9,7 +9,7 @@ help() {
 		Periodically refresh output of a command on change.
 
 		Usage:
-		  $(self) [options] <command> [<param>...]
+		  $(self) [<options>] <command> [<param>...]
 
 		Args:
 		  <command>   Command to execute.

@@ -9,7 +9,7 @@ help() {
 		Initialize home directory structure.
 
 		Usage:
-		  $(self) [options]
+		  $(self) [<options>]
 
 		Options:
 		  -d  Create directories.
