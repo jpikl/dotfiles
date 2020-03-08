@@ -19,18 +19,15 @@ help() {
 		  o, open    <disk>  Open disk mountpoint.
 
 		Options:
-		  -o  Open mountpoint after a disk was mounted.
 		  -h  Print this help.
 	EOT
 }
 
 main() {
   local opt
-  local open_after_mount=false
 
   while getopts ":oh" opt; do
     case "$opt" in
-      o) open_after_mount=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -108,7 +105,6 @@ format_vendor_model() {
 mount_disk() {
   [[ $# -gt 0 ]] || die_help "mount requires an argument"
   udisksctl mount --block-device "$(get_block_device "$1")"
-  [[ $open_after_mount == true ]] && open_mountpoint "$1"
 }
 
 unmount_disk() {
