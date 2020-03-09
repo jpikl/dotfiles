@@ -14,6 +14,7 @@ The following instructions ate intended for:
 - [:wrench: Configuration](#wrench-configuration)
 - [:construction: Repository](#construction-repository)
 - [:card_file_box: Bash](#card_file_box-bash)
+- [:zap: Tools](#zap-tools)
 - [:desktop_computer: Terminal](#desktop_computer-terminal)
 - [:ambulance: Troubleshooting](#ambulance-troubleshooting)
 - [:page_facing_up: License](#page_facing_up-license)
@@ -151,7 +152,24 @@ bashfiles describe # Print names and descriptions
 bashfiles markdown # The same but with Markdown output
 ```
 
-Here is a current list:
+See [example output](#dotfiles-tools) below.
+
+## :zap: Tools
+
+Tools recommended to install:
+
+- [bat][bat] - A cat(1) clone with wings..
+- [fd][fd] - A simple, fast and user-friendly alternative to 'find'.
+- [fzf][fzf] - A command-line fuzzy finder.
+- [ripgrep][ripgrep] - ripgrep recursively searches directories for a regex pattern.
+
+```bash
+pacman -Sy bat fd fzf ripgrep    # On ArchLinux
+choco install bat fd fzf ripgrep # On Windows using chocolatey
+```
+
+<a name="dotfiles-tools"></a>
+Tools which are part of `~/.dotfiles.git` repository:
 
 - [bashfiles](../.local/bin/bashfiles) - Manage Bash files from dotfiles repository.
 - [bashgen](../.local/bin/bashgen) - Generate new Bash script using itself as a template.
@@ -271,6 +289,7 @@ There are two workarounds using [winpty][winpty]:
 Everything in this repository is licensed under the [MIT license](LICENSE.md).
 
 [bash]: https://www.gnu.org/software/bash
+[bat]: https://github.com/sharkdp/bat
 [color-0]: https://placehold.it/16/252525/000000?text=+
 [color-1]: https://placehold.it/16/FF5252/000000?text=+
 [color-2]: https://placehold.it/16/C3D82C/000000?text=+
@@ -281,6 +300,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [color-7]: https://placehold.it/16/F5F5F5/000000?text=+
 [color-b]: https://placehold.it/16/263238/000000?text=+
 [color-f]: https://placehold.it/16/A1B0B8/000000?text=+
+[fd]: https://github.com/sharkdp/fd
 [fzf-charset-issue]: https://github.com/junegunn/fzf/issues/963
 [fzf]: https://github.com/junegunn/fzf
 [git-win-perf]: https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues
@@ -290,6 +310,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [mvn]: https://maven.apache.org
 [nf-literation]: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/LiberationMono
 [nf]: https://www.nerdfonts.com
+[ripgrep]: https://github.com/BurntSushi/ripgrep
 [shellcheck]: https://shellcheck.net
 [tilix-colors]: https://github.com/gnunn1/tilix/blob/master/data/schemes/material.json
 [tilix]: https://gnunn1.github.io/tilix-web
