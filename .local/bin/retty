@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -46,7 +45,7 @@ main() {
 
   local device
 
-  if is_mingw; then
+  if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
     device=/dev/$(ps -p $$ | tail --lines=+2 | awk '{print $5}') # MinGW ps has very limited options.
   else
     device=/dev/$(ps h -o tty -p $$) # No header, output tty, current PID.

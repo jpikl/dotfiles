@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -98,7 +97,7 @@ detect_type() {
 }
 
 detect_type_from_data() {
-  is_command file || return 1
+  [[ -x "$(command -v file)" ]] || return 1
 
   local type=
   local archive=
@@ -262,7 +261,7 @@ get_tar_compressor() {
   local type=$1
   local result
 
-  if [[ $type == gzip ]] && is_command pigz; then
+  if [[ $type == gzip && -x "$(command -v pigz)" ]]; then
     type=pigz # Use pigz as a gzip replacement when available.
   fi
 

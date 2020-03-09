@@ -104,7 +104,7 @@ alias ll='ls -l --human-readable'
 alias lla='ll --almost-all'
 
 # Man
-command -v man >/dev/null || alias man=wman # MinGW does not have man
+[[ -x "$(command -v man)" ]] || alias man=wman # MinGW does not have man
 
 # Maven
 alias mvnci='mvn clean install'
@@ -145,7 +145,7 @@ alias sshl='cd ~/.ssh && grep --fixed-strings --recursive --with-filename --file
 alias termfit='cut --characters=-$COLUMNS'
 
 # Tree
-command -v tree >/dev/null || alias tree='dirtree -s' # Use our own implementation when not available
+[[ -x "$(command -v tree)" ]] || alias tree='dirtree -s' # Use our own implementation when not available
 
 # Xargs
 alias xargsfzf='find -print0 | fzfxargs'

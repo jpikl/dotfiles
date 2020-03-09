@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -37,9 +36,9 @@ main() {
   [[ $# -eq 0 ]] && die_missing_arg
 
   local cmd
-  if is_command xdg-open; then
+  if [[ -x "$(command -v xdg-open)" ]]; then
     cmd=xdg-open
-  elif is_mingw && is_command start; then
+  elif [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ && -x "$(command -v start)" ]]; then
     cmd=start
   else
     die "unable to detect native open command"

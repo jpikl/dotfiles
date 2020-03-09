@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/system.sh"
 
 help() {
   cat <<-EOT
@@ -56,7 +55,7 @@ main() {
   local values=("$@")
   local results=()
 
-  if [[ $basic = false ]] && is_command fzf; then
+  if [[ $basic = false && -x "$(command -v fzf)" ]]; then
     fzf_mode
   else
     basic_mode

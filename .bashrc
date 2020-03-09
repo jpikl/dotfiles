@@ -15,8 +15,8 @@ shopt -s globstar     # Enable recursive "**" glob pattern
 export HISTCONTROL=ignorespace:erasedups
 
 # Tools that initialize environment
-command -v dircolors >/dev/null && eval "$(dircolors --bourne-shell)"
-command -v thefuck >/dev/null && eval "$(thefuck --alias)"
+[[ -x "$(command -v dircolors)" ]] && eval "$(dircolors --bourne-shell)"
+[[ -x "$(command -v thefuck)" ]] && eval "$(thefuck --alias)"
 
 # Detect icons support in terminal
 if [[ ! $TERM_ICONS ]]; then

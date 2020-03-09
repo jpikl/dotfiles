@@ -3,7 +3,6 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
-source "$BASH_LIB_DIR/system.sh"
 
 readonly VARS_FILENAME=sshctl-vars
 readonly LOCK_FILENAME=sshctl-lock
@@ -74,7 +73,7 @@ exec_command() {
 
   detect_paths
 
-  if is_command flock; then
+  if [[ -x "$(command -v flock)" ]]; then
     exec {lock_fd}>"$lock_file"
     flock "$lock_fd"
   fi
@@ -94,7 +93,7 @@ exec_command() {
     fi
   fi
 
-  if is_command flock; then
+  if [[ -x "$(command -v flock)" ]]; then
     flock -u "$lock_fd"
   fi
 }
