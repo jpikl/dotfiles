@@ -113,7 +113,7 @@ basic_mode() {
       mapfile -t values
     fi
     local tty
-    tty="$(get_tty)"
+    tty="$(retty)"
     exec < "$tty"  # Redirect stdin back to tty
   fi
 

@@ -10,7 +10,7 @@ help() {
 		Execute command with current TTY as stdin.
 
 		Usage:
-		  $(self) [<options>] <command> [<param>...]
+		  $(self) [<options>] [<command> [<param>...]]
 
 		Args:
 		  <command>   Command to execute.
@@ -18,6 +18,8 @@ help() {
 
 		Options:
 		  -h  Print this help.
+
+		When no command is passed, TTY is printed instead.
 	EOT
 }
 
@@ -33,14 +35,31 @@ main() {
 
   shift $((OPTIND - 1))
 
-  [[ $# -eq 0 ]] && die_missing_arg
-
   if [[ -t 0 ]]; then
-    "$@"
+    if [[ $# -gt 0 ]]; then
+      "$@"
+    else
+      tty
+    fi
+    return 0
+  fi
+
+  local device
+
+  if is_mingw; then
+    device=/dev/$(ps -p $$ | tail --lines=+2 | awk '{print $5}') # MinGW ps has very limited options.
   else
-    local tty
-    tty=$(get_tty)
-    "$@" < "$tty"
+    device=/dev/$(ps h -o tty -p $$) # No header, output tty, current PID.
+  fi
+
+  if [[ ! -c $device ]]; then
+    die "unable to detect TTY"
+  fi
+
+  if [[ $# -gt 0 ]]; then
+    "$@" < "$device"
+  else
+    echo "$device"
   fi
 }
 
