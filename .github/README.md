@@ -208,10 +208,24 @@ Tools which are part of `~/.dotfiles.git` repository:
 
 ### Emulators
 
-- [Tilix][tilix] - For Linux.
-- [Windows Terminal][win-term] - For Windows, use
+- [Tilix][tilix] - For Linux. Use the command below to load configuration.
+- [Windows Terminal][win-term] - For Windows. Use
   [profiles.json](../.config/templates/WindowsTerminal/profiles.json)
   as configuration.
+
+```bash
+# List Tilix profiles
+dconf dump /com/gexperts/Tilix/profiles/
+
+# Load values to a Tilix profile
+dconf load /com/gexperts/Tilix/profiles/ <<-EOT
+	[YOUR-TILIX-PROFILE-UUID]
+	font='LiterationMono Nerd Font 11'
+	foreground-color='#A1B0B8'
+	background-color='#263238'
+	palette=['#252525','#FF5252','#C3D82C','#FFC135','#42A5F5','#D81B60','#00ACC1','#F5F5F5','#708284','#FF5252','#C3D82C','#FFC135','#42A5F5','#D81B60','#00ACC1','#F5F5F5']
+EOT
+```
 
 ### Font
 
