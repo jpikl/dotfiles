@@ -19,7 +19,7 @@ help() {
 		  -a  Fast-forward all branches that are behind remote.
 		  -h  Print this help.
 
-		Use current branch when branch(es) or -a are not passed.
+		The current branch is used when no other branch or -a is passed.
 	EOT
 }
 

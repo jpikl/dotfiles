@@ -113,29 +113,54 @@ dotfiles commit -m "Add xyz dotfile"
 dotfiles push
 ```
 
-## :card_file_box: Bash
-
-Bash code is validated using [shellcheck][shellcheck].
-
-Use `bashfiles` command to run the validation. The command operates
-only on files that are part of the `~/.dotfiles.git` repository.
+There is also more low-level `dotenv` command which provides `GIT_DIR`
+and `GIT_WORK_TREE` environment variables:
 
 ```bash
-bashfiles list  # List what is being validated
-bashfiles check # Run the validation
+dotenv git status # Same as 'dotfiles status'
+dotenv vscode     # Run Visual Studio Code with set-up environment
 ```
 
-You can also run `bashfiles describe` to print description
-of executable Bash scripts from `~/.local/bin/`:
+## :card_file_box: Bash
 
-- [bashfiles](../.local/bin/bashfiles) - List or validate Bash files from dotfiles repository.
+Bash files are managed using the `bashfiles` command.
+Try `-h` option for usage.
+
+```bash
+bashfiles -h
+```
+
+The command only operates on files that are part  of the `~/.dotfiles.git`
+repository.
+
+```bash
+bashfiles # List files
+```
+
+These files can be validated using [shellcheck][shellcheck].
+
+```bash
+bashfiles check # Run shellcheck
+```
+
+You can also get description of each executable Bash script
+from `~/.local/bin/`.
+
+```bash
+bashfiles describe # Print names and descriptions
+bashfiles markdown # The same but with Markdown output
+```
+
+Here is a current list:
+
+- [bashfiles](../.local/bin/bashfiles) - Manage Bash files from dotfiles repository.
 - [bashgen](../.local/bin/bashgen) - Generate new Bash script using itself as a template.
-- [choose](../.local/bin/choose) - Let user choose value(s). Simple fzf frontend with Bash fallback.
+- [choose](../.local/bin/choose) - Let user choose from values. Simple fzf frontend with Bash fallback.
 - [confirm](../.local/bin/confirm) - Aks user for confirmation.
 - [direnc](../.local/bin/direnc) - List or (un)mount encrypted directories. Simple encfs frontend.
 - [dirsync](../.local/bin/dirsync) - Synchronize two directories. Simple rsync frontend.
 - [dirtree](../.local/bin/dirtree) - List contents of a directory as tree. Bash implementation of tree command.
-- [disks](../.local/bin/disks) - List or (un)mount disks. Simple udisksctl frontend.
+- [disks](../.local/bin/disks) - List or (un)mount disks. Simple lsblk and udisksctl frontend.
 - [extract](../.local/bin/extract) - Extract or list contents of an archive in nearly any format.
 - [findex](../.local/bin/findex) - Find wrapper with extra capabilities.
 - [findprj](../.local/bin/findprj) - Find root directories of software projects.
@@ -148,10 +173,10 @@ of executable Bash scripts from `~/.local/bin/`:
 - [homefiles](../.local/bin/homefiles) - Initialize home directory structure.
 - [jestat](../.local/bin/jestat) - Print statistics of Java exceptions in a log file.
 - [mpdm3u](../.local/bin/mpdm3u) - Generate M3U playlists from MPD database.
-- [mvnpgb](../.local/bin/mvnpgb) - Print property of a Maven project in each Git branch.
+- [mvnpgb](../.local/bin/mvnpgb) - Print property of a Maven project in Git branches.
 - [mvnsv](../.local/bin/mvnsv) - Set version of a Maven project.
-- [npmr](../.local/bin/npmr) - List or (silently) run scripts of a Npm package.
-- [open](../.local/bin/open) - Open a file or URL in the user's preferred application.
+- [npmr](../.local/bin/npmr) - List or (silently) run scripts of a npm package.
+- [open](../.local/bin/open) - Open file or URL in the user's preferred application.
 - [pacfind](../.local/bin/pacfind) - Find ArchLinux packages. Simple pacman frontend wit AUR support.
 - [refresh](../.local/bin/refresh) - Periodically refresh output of a command on change.
 - [retty](../.local/bin/retty) - Execute command with current TTY as stdin.

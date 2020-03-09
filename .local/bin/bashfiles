@@ -2,30 +2,44 @@
 
 set -euo pipefail
 
+source "$BASH_LIB_DIR/core.sh"
+
 readonly SC_EXCLUDE=SC1090 # Can't follow non-constant source.
 
 help() {
   cat <<-EOT
-		List or validate Bash files from dotfiles repository.
+		Manage Bash files from dotfiles repository.
 
 		Usage:
-		  $(basename "$0") [<command>]
+		  $(self) [<options>] [<command>]
 
 		Commands:
 		  l, list      List Bash files.
-		  d, describe  List Bash scripts and their description.
-		  c, check     Validate Bash files using shellcheck.
-		  h, help      Print this help.
+		  c, check     Run shellcheck on Bash files.
+		  d, describe  Print name and description of executable Bash files.
+		  m, markdown  Same as 'describe' but with Markdown output.
+
+		Options:
+		  -h  Print this help.
 
 		Default command is 'list'.
 	EOT
 }
 
 main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
   case "${1-list}" in
     l|list)     list_files ;;
     d|describe) describe_files ;;
-    m|markdown) describe_files_md ;; # Undocumented
+    m|markdown) markdown_files ;; # Undocumented
     c|check)    check_files ;;
     *)          help ;;
   esac
@@ -40,11 +54,11 @@ list_files() {
     ~/.local/bin/*
     ~/.local/lib/bash/*.sh
   )
-  printf "%s\n" "${files[@]}" | filter_git_files
+  printf "%s\n" "${files[@]}" | filter_git_files | LC_ALL=C sort
 }
 
 list_bin_files() {
-  printf "%s\n" ~/.local/bin/* | filter_git_files
+  printf "%s\n" ~/.local/bin/* | filter_git_files | LC_ALL=C sort
 }
 
 list_git_files() {
@@ -63,17 +77,17 @@ filter_git_files() {
 }
 
 describe_files() {
-  local script
-  while read -r script; do
-    echo "${script##*/}|$(describe_file "$script")"
+  local file
+  while read -r file; do
+    echo "${file##*/}|$(describe_file "$file")"
   done < <(list_bin_files) | column --table --separator='|'
 }
 
-describe_files_md() {
-  local script
-  while read -r script; do
-    local name=${script##*/}
-    echo "- [$name](../.local/bin/$name) - $(describe_file "$script")"
+markdown_files() {
+  local file
+  while read -r file; do
+    local name=${file##*/}
+    echo "- [$name](../.local/bin/$name) - $(describe_file "$file")"
   done < <(list_bin_files)
 }
 
@@ -82,10 +96,8 @@ describe_file() {
 }
 
 check_files() {
-  local files
-  mapfile -t files < <(list_files)
-  shellcheck --exclude=$SC_EXCLUDE "${files[@]}"
-  echo "All Bash files are valid."
+  list_files | xargs shellcheck --exclude=$SC_EXCLUDE "${files[@]}"
+  echo "Bash files are valid."
 }
 
 main "$@"

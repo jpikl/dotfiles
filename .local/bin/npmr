@@ -6,7 +6,7 @@ source "$BASH_LIB_DIR/core.sh"
 
 help() {
   cat <<-EOT
-		List or (silently) run scripts of a Npm package.
+		List or (silently) run scripts of a npm package.
 
 		Usage:
 		  $(self) [<options>] [<script>...]
