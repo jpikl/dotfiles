@@ -23,8 +23,7 @@ help() {
 		  -s  Print short branch names without remote prefix.
 		  -h  Print this help.
 
-		By default, $(self) lists local branches (-l),
-		unless one or more -c,l,a,b,h,r options is passed.
+		Local branches are listed by default unless one of -clabgr is passed.
 	EOT
 }
 

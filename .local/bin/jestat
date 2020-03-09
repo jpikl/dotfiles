@@ -9,18 +9,17 @@ help() {
 		Print statistics of Java exceptions in a log file.
 
 		Usage:
-		  $(self) [<options>] [--] <file>
-		  command | $(self) [<options>]
+		  $(self) [<options>] [<file>]
 
-		File:
+		Args:
 		  <file> Log file to read.
-
-		Log is read from stdin when no file is passed.
 
 		Options:
 		  -m        Include exception messages.
 		  -n <max>  Limit exception messages to N characters.
 		  -h        Print this help.
+
+		Log is read from stdin when no file is passed.
 	EOT
 }
 

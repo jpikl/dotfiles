@@ -1,9 +1,5 @@
 # shellcheck shell=bash
 
-# shellcheck disable=SC2034
-readonly ERR_OK=0
-readonly ERR_GENERIC=1
-
 self() {
   basename "$0"
 }
@@ -14,13 +10,13 @@ alert() {
 
 die() {
   [[ "${1-}" ]] && alert "$1"
-  exit $ERR_GENERIC
+  exit 1
 } >&2
 
 die_help() {
   alert "$1"
   echo "Try '$(self) -h' for more information."
-  exit $ERR_GENERIC
+  exit 1
 } >&2
 
 die_invalid_opt() {

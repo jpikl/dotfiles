@@ -16,14 +16,14 @@ help() {
 		  <value>...  Values to select from.
 
 		Options:
-		  -p <prompt>   Message to print as a prompt.
-		  -d <default>  Default value to print if nothing was chosen.
-		  -m            Enable selection of multiple values.
-		  -i            Read values as lines from stdin, ignore args.
-		  -z            Values from stdin are delimited by NUL instead of LF.
-		  -Z            Print results delimited by NUL instead of LF.
-		  -b            Force pure Bash interface instead of fzf.
-		  -h            Print this help.
+		  -p <prompt>  Message to print as a prompt.
+		  -d <value>   Default value to print if nothing was chosen.
+		  -m           Enable selection of multiple values.
+		  -i           Read values as lines from stdin.
+		  -z           Values from stdin are delimited by NUL instead of LF.
+		  -Z           Print results delimited by NUL instead of LF.
+		  -b           Force pure Bash interface instead of fzf.
+		  -h           Print this help.
 	EOT
 }
 

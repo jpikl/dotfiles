@@ -9,7 +9,7 @@ help() {
 		Generate new Bash script using itself as a template.
 
 		Usage:
-		  $(self) [<options>] [--] <name>
+		  $(self) [<options>] <name>
 
 		Args:
 		  <name>  Name of a new script.

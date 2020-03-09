@@ -9,11 +9,10 @@ help() {
 		Find root directories of software projects.
 
 		Usage:
-		  $(self) [<options>] [--] [<path>]
+		  $(self) [<options>] [<path>]
 
 		Args:
 		  <path>  Search starting point.
-		          Default path is the current working directory.
 
 		Options:
 		  -v  Include projects using version control system.
@@ -23,8 +22,8 @@ help() {
 		  -Z  Print results delimited by NUL instead of LF.
 		  -h  Print this help.
 
-		By default, $(self) searches for all types of projects,
-		unless one or more -v,m,n options is passed.
+		Default path is the current working directory.
+		All projects are searched by default unless one of -vmn is passed.
 	EOT
 }
 

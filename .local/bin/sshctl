@@ -16,13 +16,15 @@ help() {
 		  $(self) [<options>] [<command>]
 
 		Commands:
-		  status   Print ssh-agent status (defalt command).
+		  status   Print ssh-agent status.
 		  start    Start ssh-agent if needed.
 		  stop     Stop ssh-agent if needed.
 		  restart  Restart ssh-agent.
 
 		Options:
 		  -h  Print this help.
+
+		Default command is 'status'.
 	EOT
 }
 

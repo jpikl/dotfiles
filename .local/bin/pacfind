@@ -10,10 +10,10 @@ help() {
 		Find ArchLinux packages. Simple pacman frontend wit AUR support.
 
 		Usage:
-		  $(self) [<options>] [--] [<name>]
+		  $(self) [<options>] [<name>]
 
 		Args:
-		  <name> Package name to find. Omit to list all packages.
+		  <name> Package name to find.
 
 		Options:
 		  -l  Include local packages.
@@ -24,8 +24,8 @@ help() {
 		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 
-		By default, $(self) searches between remote packages,
-		unless one or more -l,g,r,a options is passed.
+		Remote packages are searched by default unless one of -lgra is passed.
+		Packages are listed without search when no package name is passed.
 	EOT
 }
 

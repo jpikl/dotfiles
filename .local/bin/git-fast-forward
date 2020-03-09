@@ -13,14 +13,13 @@ help() {
 		  $(self) [<options>] -a
 
 		Args:
-		  <branch>... Local branches to fast-forward.
+		  <branch>...  Branches to fast-forward.
 
 		Options:
-		  -a  Fast-forward all local branches that are behind remote.
+		  -a  Fast-forward all branches that are behind remote.
 		  -h  Print this help.
 
-		Fast-forward the current branch when no other branch is passed
-		and -a option is not used.
+		Use current branch when branch(es) or -a are not passed.
 	EOT
 }
 

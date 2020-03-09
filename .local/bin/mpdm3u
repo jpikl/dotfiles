@@ -27,7 +27,7 @@ help() {
 		  MUSIC_DIR      Default path to MPD music directory.
 		  PLAYLISTS_DIR  Default path to output directory.
 
-		Playlists are organized by year using the following pattern:
+		Playlists are organized by year using the following pattern.
 		  "{year}/{artist} - {album}.m3u"
 	EOT
 }

@@ -10,7 +10,7 @@ help() {
 		List contents of a directory as tree. Bash implementation of tree command.
 
 		Usage:
-		  $(self) [<options>] [--] [<path>]
+		  $(self) [<options>] [<path>]
 
 		Args:
 		  <path>  Root of a directory tree to print.

@@ -9,7 +9,7 @@ help() {
 		Aks user for confirmation.
 
 		Usage:
-		  $(self) [<options>] [--] <message>
+		  $(self) [<options>] <message>
 
 		Args:
 		  <message>  Confirmation message.

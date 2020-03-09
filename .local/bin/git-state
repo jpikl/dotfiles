@@ -9,23 +9,21 @@ help() {
 		Print state of a Git working tree.
 
 		Usage:
-		  $(self) [<options>]
+		  $(self) [options]
 
 		Options:
 		  -s  Print short name instead of description.
 		  -h  Print this help.
 
-		The following states are being recognized.
-		The "normal" state does not have any output printed.
+		States:
+		  E   No commits
+		  M   Merging
+		  R   Rebasing
+		  RI  Rebasing interactively
+		  CP  Cherry picking
+		  DH  Detached HEAD
 
-		  Name | Description
-		  -----+-------------------------
-		     E | No commits
-		     M | Merging
-		     R | Rebasing
-		    RI | Rebasing interactively
-		    CP | Cherry picking
-		    DH | Detached HEAD
+		Normal state does not have any output printed.
 	EOT
 }
 

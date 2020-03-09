@@ -20,6 +20,8 @@ help() {
 
 		Options:
 		  -h  Print this help.
+
+		Default command is 'list'.
 	EOT
 }
 
