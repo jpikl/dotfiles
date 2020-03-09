@@ -5,34 +5,25 @@ set -euo pipefail
 source "$BASH_LIB_DIR/core.sh"
 source "$BASH_LIB_DIR/system.sh"
 
-readonly ERR_NO_VALUES=2
-
 help() {
   cat <<-EOT
 		Let user choose from values. Simple fzf frontend with Bash fallback.
 
 		Usage:
-		  $(self) [<options>] [--] [<value>...]
-		  command | $(self) [<options>]
+		  $(self) [<options>] [<value>...]
 
 		Args:
 		  <value>...  Values to select from.
-
-		When a command is piped to $(self), values are read as lines from stdin.
 
 		Options:
 		  -p <prompt>   Message to print as a prompt.
 		  -d <default>  Default value to print if nothing was chosen.
 		  -m            Enable selection of multiple values.
+		  -i            Read values as lines from stdin, ignore args.
 		  -z            Values from stdin are delimited by NUL instead of LF.
 		  -Z            Print results delimited by NUL instead of LF.
 		  -b            Force pure Bash interface instead of fzf.
 		  -h            Print this help.
-
-		Exit status:
-		  0  Normal exit.
-		  1  Error.
-		  2  No values.
 	EOT
 }
 
@@ -40,16 +31,18 @@ main() {
   local prompt=
   local default=
   local multi=false
+  local stdin=false
   local null_in=false
   local null_out=false
   local basic=false
   local opt
 
-  while getopts ":p:d:mzZbh" opt; do
+  while getopts ":p:d:mizZbh" opt; do
     case "$opt" in
       p) prompt=$OPTARG ;;
       d) default=$OPTARG ;;
       m) multi=true ;;
+      i) stdin=true ;;
       z) null_in=true ;;
       Z) null_out=true ;;
       b) basic=true ;;
@@ -73,7 +66,7 @@ main() {
     if [[ $default ]]; then
       results=("$default")
     else
-      exit $ERR_NO_VALUES
+      exit 0
     fi
   fi
 
@@ -87,7 +80,7 @@ main() {
 fzf_mode() {
   local opts=("--exit-0" "--print0")
 
-  if [[ ! -t 0 ]]; then
+  if [[ $stdin == true ]]; then
     export FZF_DEFAULT_COMMAND=cat # To force reading from stdin
     if [[ $null_in = true ]]; then
       opts+=("--read0")
@@ -113,7 +106,7 @@ fzf_mode() {
 }
 
 basic_mode() {
-  if [[ ! -t 0 ]]; then
+  if [[ $stdin == true ]]; then
     if [[ $null_in = true ]]; then
       mapfile -td '' values
     else
