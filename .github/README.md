@@ -13,10 +13,10 @@ The following instructions ate intended for:
 - [:package: Installation](#package-installation)
 - [:wrench: Configuration](#wrench-configuration)
 - [:construction: Repository](#construction-repository)
-- [:card_file_box: Bash](#cardfilebox-bash)
-- [:desktop_computer: Terminal](#desktopcomputer-terminal)
+- [:card_file_box: Bash](#card_file_box-bash)
+- [:desktop_computer: Terminal](#desktop_computer-terminal)
 - [:ambulance: Troubleshooting](#ambulance-troubleshooting)
-- [:page_facing_up: License](#pagefacingup-license)
+- [:page_facing_up: License](#page_facing_up-license)
 
 ## :pushpin: Prerequisites
 
