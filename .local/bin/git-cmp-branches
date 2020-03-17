@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Compare two Git branches.
+
+		Usage:
+		  $(self) [<options>] <branch-1> <branch-2>
+
+		Args:
+		  <branch-1>  First branch to compare.
+		  <branch-2>  Second branch to compare.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -ge 2 ]] || die_missing_arg
+
+  local target
+  target=$(dirname "$0")/$1
+  [[ -e $target ]] && die "'$target' already exists"
+
+  local commits_1
+  local commits_2
+
+  read -r commits_1 commits_2 < <(git rev-list --count --left-right "$1...$2")
+
+  echo "$1 has $commits_1 commit(s) that are not in $2"
+  echo "$2 has $commits_2 commit(s) that are not in $1"
+}
+
+main "$@"

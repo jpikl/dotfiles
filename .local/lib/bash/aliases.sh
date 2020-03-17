@@ -84,6 +84,7 @@ alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | cut --de
 
 # Git
 alias gitcb='git ls-branches -lrsC | choose -ip "Checkout:" | xargs --no-run-if-empty git checkout'
+alias gitcmpb='git ls-branches -lr | choose -imp "Compare:" | xargs --no-run-if-empty git cmp-branches'
 alias gitct='git tag | choose -ip "Checkout tag:" | xargs --no-run-if-empty git checkout'
 alias gitdb='git ls-branches -lC | choose -imp "Delete:" | xargs --no-run-if-empty git branch --delete'
 alias gitdbf='gitdb --force'

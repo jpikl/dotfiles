@@ -10,6 +10,7 @@
     postBuffer = 134217728 # 128 MiB
 [alias]
     chmodx = add --chmod=+x --
+    cmpb = cmp-branches
     diffc = diff --word-diff-regex=.
     diffw = diff --word-diff
     drm= push origin --delete
