@@ -1,7 +1,8 @@
 # shellcheck shell=bash
 
 self() {
-  echo "${0##*/}"
+  # echo "${0##*/}" does not work for custom Git commands on Windows.
+  basename "$0"
 }
 
 alert() {
