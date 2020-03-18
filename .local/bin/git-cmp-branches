@@ -3,6 +3,7 @@
 set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/term.sh"
 
 help() {
   cat <<-EOT
@@ -16,15 +17,19 @@ help() {
 		  <others>...  Branches to compare with target.
 
 		Options:
+		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 	EOT
 }
 
 main() {
+  local colors=
   local opt
 
-  while getopts ":h" opt; do
+  while getopts ":cCh" opt; do
     case "$opt" in
+      c) colors=true ;;
+      C) colors=false ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -33,22 +38,44 @@ main() {
   shift $((OPTIND - 1))
   [[ $# -ge 2 ]] || die_missing_arg
 
-  local target
-  target=$(dirname "$0")/$1
-  [[ -e $target ]] && die "'$target' already exists"
+  if [[ ! $colors ]] ; then
+    if term_has_colors; then
+      colors=true
+    else
+      colors=false
+    fi
+  fi
+
+  local fmt_primary=
+  local fmt_secondary=
+  local fmt_commits=
+  local fmt_clear=
+
+  if [[ $colors = true ]]; then
+    fmt_primary=$(tput setaf 5)
+    fmt_secondary=$(tput setaf 4)
+    fmt_commits=$(tput setaf 2)
+    fmt_clear=$(tput sgr0)
+  fi
 
   local branch_1=$1
   local branch_2
   shift
 
-  local commits_1
-  local commits_2
-
   for branch_2; do
+    local commits_1
+    local commits_2
+
     read -r commits_1 commits_2 < <(git rev-list --count --left-right "$branch_1...$branch_2")
 
-    echo "$branch_1 has $commits_1 commit(s) that are not in $branch_2"
-    echo "$branch_2 has $commits_2 commit(s) that are not in $branch_1"
+    local branch_1_fmt=$fmt_primary$branch_1$fmt_clear
+    local branch_2_fmt=$fmt_secondary$branch_2$fmt_clear
+
+    local commits_1_fmt=$fmt_commits$commits_1$fmt_clear
+    local commits_2_fmt=$fmt_commits$commits_2$fmt_clear
+
+    echo "$branch_1_fmt has $commits_1_fmt commit(s) that are not in $branch_2_fmt"
+    echo "$branch_2_fmt has $commits_2_fmt commit(s) that are not in $branch_1_fmt"
   done
 }
 
