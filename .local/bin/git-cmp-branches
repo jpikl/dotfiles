@@ -9,11 +9,11 @@ help() {
 		Compare two Git branches.
 
 		Usage:
-		  $(self) [<options>] <branch-1> <branch-2>
+		  $(self) [<options>] <branch> <others>...
 
 		Args:
-		  <branch-1>  First branch to compare.
-		  <branch-2>  Second branch to compare.
+		  <branch>     Target branch.
+		  <others>...  Branches to compare with target.
 
 		Options:
 		  -h  Print this help.
@@ -37,13 +37,19 @@ main() {
   target=$(dirname "$0")/$1
   [[ -e $target ]] && die "'$target' already exists"
 
+  local branch_1=$1
+  local branch_2
+  shift
+
   local commits_1
   local commits_2
 
-  read -r commits_1 commits_2 < <(git rev-list --count --left-right "$1...$2")
+  for branch_2; do
+    read -r commits_1 commits_2 < <(git rev-list --count --left-right "$branch_1...$branch_2")
 
-  echo "$1 has $commits_1 commit(s) that are not in $2"
-  echo "$2 has $commits_2 commit(s) that are not in $1"
+    echo "$branch_1 has $commits_1 commit(s) that are not in $branch_2"
+    echo "$branch_2 has $commits_2 commit(s) that are not in $branch_1"
+  done
 }
 
 main "$@"
