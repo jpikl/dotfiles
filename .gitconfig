@@ -16,6 +16,7 @@
     drm= push origin --delete
     fap = fetch --all --prune
     ff = fast-forward
+    ffa = fast-forward -a
     gb = gone-branches
     ladog = log --all --decorate --oneline --graph
     last = log --max-count=1 --stat
