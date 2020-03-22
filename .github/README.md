@@ -162,11 +162,13 @@ Tools recommended to install:
 - [exa][exa] - A modern version of ‘ls’.
 - [fd][fd] - A simple, fast and user-friendly alternative to 'find'.
 - [fzf][fzf] - A command-line fuzzy finder.
+- [hexyl][hexyl] - A command-line hex viewer.
 - [ripgrep][ripgrep] - ripgrep recursively searches directories for a regex pattern.
 
 ```bash
-pacman -Sy bat exa fd fzf ripgrep # On ArchLinux
-choco install bat fd fzf ripgrep  # On Windows using chocolatey
+pacman -Sy bat exa fd fzf hexyl ripgrep # On ArchLinux
+choco install bat fd fzf ripgrep        # On Windows using chocolatey (no exa, hexyl)
+cargo install bat fd-find hexyl ripgrep # Using cargo (no fzf)
 ```
 
 <a name="dotfiles-tools"></a>
@@ -322,6 +324,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [git-win-perf]: https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues
 [git-win]: https://gitforwindows.org/
 [git]: https://git-scm.com
+[hexyl]: https://github.com/sharkdp/hexyl
 [material-colors]: https://materialshell.carloscuesta.me
 [mvn]: https://maven.apache.org
 [nf-literation]: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/LiberationMono
