@@ -158,14 +158,15 @@ See [example output](#dotfiles-tools) below.
 
 Tools recommended to install:
 
-- [bat][bat] - A cat(1) clone with wings..
+- [bat][bat] - A cat(1) clone with wings.
+- [exa][exa] - A modern version of ‘ls’.
 - [fd][fd] - A simple, fast and user-friendly alternative to 'find'.
 - [fzf][fzf] - A command-line fuzzy finder.
 - [ripgrep][ripgrep] - ripgrep recursively searches directories for a regex pattern.
 
 ```bash
-pacman -Sy bat fd fzf ripgrep    # On ArchLinux
-choco install bat fd fzf ripgrep # On Windows using chocolatey
+pacman -Sy bat exa fd fzf ripgrep # On ArchLinux
+choco install bat fd fzf ripgrep  # On Windows using chocolatey
 ```
 
 <a name="dotfiles-tools"></a>
@@ -314,6 +315,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [color-7]: https://placehold.it/16/F5F5F5/000000?text=+
 [color-b]: https://placehold.it/16/263238/000000?text=+
 [color-f]: https://placehold.it/16/A1B0B8/000000?text=+
+[exa]: https://github.com/ogham/exa
 [fd]: https://github.com/sharkdp/fd
 [fzf-charset-issue]: https://github.com/junegunn/fzf/issues/963
 [fzf]: https://github.com/junegunn/fzf
