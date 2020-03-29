@@ -98,7 +98,7 @@ alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
 alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
-# Ls / Exa
+# Ls / Exa / Tree
 if [[ -x "$(command -v exa)" ]]; then
   if [[ ${TERM_ICONS-} == true ]]; then
     alias ls='exa --git --icons'
@@ -108,11 +108,13 @@ if [[ -x "$(command -v exa)" ]]; then
   alias la='ls --all'
   alias ll='ls --long'
   alias lla='ll --all'
+  alias tree='ls --tree'
 else
   alias ls='ls --color=auto'
   alias la='ls --almost-all'
   alias ll='ls -l --human-readable'
   alias lla='ll --almost-all'
+  [[ -x "$(command -v tree)" ]] || alias tree='dirtree -s' # Use our own implementation when not available
 fi
 
 # Man
@@ -155,9 +157,6 @@ alias sshl='cd ~/.ssh && grep --fixed-strings --recursive --with-filename --file
 
 # Terminal
 alias termfit='cut --characters=-$COLUMNS'
-
-# Tree
-[[ -x "$(command -v tree)" ]] || alias tree='dirtree -s' # Use our own implementation when not available
 
 # Xargs
 alias xargsfzf='find -print0 | fzfxargs'
