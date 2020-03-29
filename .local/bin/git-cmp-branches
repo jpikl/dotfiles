@@ -17,6 +17,7 @@ help() {
 		  <others>...  Branches to compare with target.
 
 		Options:
+		  -a  List authors and number of their commits.
 		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 	EOT
@@ -24,10 +25,12 @@ help() {
 
 main() {
   local colors=
+  local authors=false
   local opt
 
-  while getopts ":cCh" opt; do
+  while getopts ":acCh" opt; do
     case "$opt" in
+      a) authors=true ;;
       c) colors=true ;;
       C) colors=false ;;
       h) help; exit ;;
@@ -75,7 +78,16 @@ main() {
     local commits_2_fmt=$fmt_commits$commits_2$fmt_clear
 
     echo "$branch_1_fmt has $commits_1_fmt commit(s) that are not in $branch_2_fmt"
+
+    if [[ $authors == true ]]; then
+      git authors "$branch_1" --not "$branch_2"
+    fi
+
     echo "$branch_2_fmt has $commits_2_fmt commit(s) that are not in $branch_1_fmt"
+
+    if [[ $authors == true ]]; then
+      git authors "$branch_2" --not "$branch_1"
+    fi
   done
 }
 

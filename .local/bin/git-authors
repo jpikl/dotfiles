@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+source "$BASH_LIB_DIR/term.sh"
+
+help() {
+  cat <<-EOT
+		List authors and number of their Git commits.
+
+		Usage:
+		  $(self) [<options>] <revision range>
+
+		Args:
+		  <revision range>  Revision range accepter by the git log command.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -ge 1 ]] || die_missing_arg
+
+  git log --format='%aN' "$@" \
+    | sort \
+    | uniq --count \
+    | sort --numeric-sort --reverse
+}
+
+main "$@"
