@@ -186,6 +186,8 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [findex](../.local/bin/findex) - Find wrapper with extra capabilities.
 - [findprj](../.local/bin/findprj) - Find root directories of software projects.
 - [findup](../.local/bin/findup) - Find upwards in directory tree.
+- [git-authors](../.local/bin/git-authors) - List authors and number of their Git commits.
+- [git-cmp-branches](../.local/bin/git-cmp-branches) - Compare two Git branches.
 - [git-fast-forward](../.local/bin/git-fast-forward) - Fast-forward local Git branches.
 - [git-gone-branches](../.local/bin/git-gone-branches) - List or delete local Git branches that are gone on remote.
 - [git-ls-branches](../.local/bin/git-ls-branches) - List Git branches in machine-readable format.
