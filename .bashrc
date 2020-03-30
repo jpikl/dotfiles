@@ -8,7 +8,6 @@ fi
 
 # Shell options
 shopt -s histappend   # Append entries to history file
-shopt -s checkwinsize # Check window size after each command
 shopt -s globstar     # Enable recursive "**" glob pattern
 
 # Do not add commands starting with space to history + erase duplicates.
