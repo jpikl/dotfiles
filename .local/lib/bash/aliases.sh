@@ -98,6 +98,11 @@ alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
 alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
+# Links
+if [[ -x $(command -v links) ]]; then
+  alias links='env CONFIG_DIR=$LINKS_CONFIG_DIR links' # Links unfortunately uses the same CONFIG_DIR variable as we do
+fi
+
 # Ls / Exa / Tree
 if [[ -x "$(command -v exa)" ]]; then
   if [[ ${TERM_ICONS-} == true ]]; then
@@ -105,6 +110,7 @@ if [[ -x "$(command -v exa)" ]]; then
   else
     alias ls='exa --git'
   fi
+
   alias la='ls --all'
   alias ll='ls --long'
   alias lla='ll --all'
@@ -114,11 +120,16 @@ else
   alias la='ls --almost-all'
   alias ll='ls -l --human-readable'
   alias lla='ll --almost-all'
-  [[ -x "$(command -v tree)" ]] || alias tree='dirtree -s' # Use our own implementation when not available
+
+  if [[ ! -x "$(command -v tree)" ]]; then
+    alias tree='dirtree -s' # Use our own implementation when not available
+  fi
 fi
 
 # Man
-[[ -x "$(command -v man)" ]] || alias man=wman # MinGW does not have man
+if [[ ! -x "$(command -v man)" ]]; then
+  alias man=wman # MinGW does not have man
+fi
 
 # Maven
 alias mvnci='mvn clean install'

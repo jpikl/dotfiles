@@ -16,6 +16,24 @@ normalize_path() {
   echo "$path"
 }
 
+detect_program() {
+  local file
+  local files
+
+  if [[ $DISPLAY ]]; then
+    files="$1 $2" # GUI programs and then terminal programs
+  else
+    files=$2 # Terminal programs only
+  fi
+
+  for file in $files; do
+    if [[ -x $(command -v "$file") ]]; then
+      echo "$file"
+      break
+    fi
+  done
+}
+
 # Home directories
 export CACHE_DIR="$HOME/.cache"
 export CONFIG_DIR="$HOME/.config"
@@ -78,24 +96,31 @@ export MEDIA_LINK
 export VOLUMES_LINK
 
 # Tool variables
-export EDITOR=vim
-export FZF_DEFAULT_OPTS="--layout=reverse --exact --cycle"
+export LINKS_CONFIG_DIR="${CONFIG_DIR##*/}" # Has to be relative to the HOME dir
 export LUAROCKS_CONFIG="$CONFIG_DIR/luarocks/config.lua"
 
 # Configurable tool variables
+BROWSER=${BROWSER:-$(detect_program "chromium chrome firefox" "links lynx")}
+FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS:-"--layout=reverse --exact --cycle"}
 IDEA_PROPERTIES=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/idea.properties"}")
 IDEA_VM_OPTIONS=$(normalize_path "${IDEA_VM_OPTIONS:-"$CONFIG_DIR/IntelliJIdea/idea.vmoptions"}")
 NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
 MAVEN_LOCAL_REPO=$(normalize_path "${MAVEN_LOCAL_REPO:-"$LOCAL_LIB_DIR/maven"}")
+VISUAL=${VISUAL:-$(detect_program "subl3 code" "vim nano")}
+
+# Links unfortunately uses the same CONFIG_DIR variable as we do
+if [[ $BROWSER == links ]]; then
+  BROWSER="env CONFIG_DIR=$LINKS_CONFIG_DIR links"
+fi
 
 # Export configured tool variables
+export BROWSER
+export FZF_DEFAULT_OPTS
 export IDEA_PROPERTIES
 export IDEA_VM_OPTIONS
 export NPM_PREFIX
 export MAVEN_LOCAL_REPO
-
-# Cleanup
-unset normalize_path
+export VISUAL
 
 # Path for local binaries
 PATH=$PATH:$LOCAL_BIN_DIR
@@ -113,3 +138,7 @@ export PATH
 # Tools that initialize environment
 [[ -x "$(command -v luarocks)" ]] && eval "$(luarocks path --append)"
 [[ -x "$(command -v ssh-agent)" ]] && eval "$(sshctl start)" # After we exported PATH
+
+# Cleanup
+unset normalize_path
+unset detect_program
