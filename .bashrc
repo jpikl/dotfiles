@@ -19,10 +19,10 @@ export HISTCONTROL=ignorespace:erasedups
 
 # Detect icons support in terminal
 if [[ ! $TERM_ICONS ]]; then
-  if [[ $TERM == linux ]]; then
-    TERM_ICONS=false
-  else
+  if [[ $DISPLAY ]]; then
     TERM_ICONS=true
+  else
+    TERM_ICONS=false
   fi
   export TERM_ICONS
 fi
