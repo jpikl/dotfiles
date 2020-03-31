@@ -106,11 +106,17 @@ IDEA_PROPERTIES=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/i
 IDEA_VM_OPTIONS=$(normalize_path "${IDEA_VM_OPTIONS:-"$CONFIG_DIR/IntelliJIdea/idea.vmoptions"}")
 NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
 MAVEN_LOCAL_REPO=$(normalize_path "${MAVEN_LOCAL_REPO:-"$LOCAL_LIB_DIR/maven"}")
-VISUAL=${VISUAL:-$(detect_program "subl3 code" "vim nano")}
+VISUAL=${VISUAL:-$(detect_program "sublime_text subl3 subl code codium" "vim nano")}
 
 # Links unfortunately uses the same CONFIG_DIR variable as we do
 if [[ $BROWSER == links ]]; then
   BROWSER="env CONFIG_DIR=$LINKS_CONFIG_DIR links"
+fi
+
+# If we want to use Sublime Text or Visual Studio Code as Git commit editor,
+# they need their process to be foreground until they are really closed.
+if [[ $VISUAL =~ ^sublime_text|subl3|subl|code|codium$ ]]; then
+  VISUAL="$VISUAL --wait"
 fi
 
 # Export configured tool variables
