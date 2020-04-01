@@ -16,8 +16,10 @@
     ff = fast-forward
     ffa = fast-forward -a
     gb = gone-branches
-    ladog = log --all --decorate --oneline --graph
-    last = log --max-count=1 --stat
+    loga = log --oneline --decorate --graph --all
+    logd =  log --oneline --no-decorate @{upstream} --not HEAD
+    logm = log --oneline --decorate
+    logu =  log --oneline --no-decorate HEAD --not @{upstream}
     lsb = ls-branches
     ss = super-status
 [include]
