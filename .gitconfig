@@ -17,9 +17,13 @@
     ffa = fast-forward -a
     gb = gone-branches
     loga = log --oneline --decorate --graph --all
+    logax = loga --no-merges
     logd =  log --oneline --no-decorate @{upstream} --not HEAD
+    logdx =  logd --no-merges
     logm = log --oneline --decorate
+    logmx = logm  --no-merges
     logu =  log --oneline --no-decorate HEAD --not @{upstream}
+    logux =  logu --no-merges
     lsb = ls-branches
     ss = super-status
 [include]
