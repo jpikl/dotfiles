@@ -49,7 +49,7 @@ main() {
   shift $((OPTIND - 1))
 
   if [[ $# -ge 1 ]]; then
-    [[ -f "$1" ]] || die "'$1' is not a file"
+    [[ -r "$1" && -f "$1" ]] || die "'$1' is not a readable file"
     exec <"$1"
   fi
 
