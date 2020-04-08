@@ -151,10 +151,10 @@ alias npmun='npm uninstall'
 alias npmup='npm update'
 
 # Pacman / Pacaur
-alias paci='pacfind -c | fzfpac | xargs --no-run-if-empty retty pacaur -S'
+alias paci='pacfind -c | fzfpac | xargs --no-run-if-empty --open-tty pacaur -S'
 alias pacr='pacaur -Sy'
 alias pacri='pacr && paci'
-alias pacun='pacfind -lc | fzfpac | xargs --no-run-if-empty retty pacaur -Rsc'
+alias pacun='pacfind -lc | fzfpac | xargs --no-run-if-empty --open-tty pacaur -Rsc'
 alias pacup='pacaur -Syu'
 
 # React Native
