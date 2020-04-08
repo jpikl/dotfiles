@@ -4,8 +4,8 @@
 alias bakmusls='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Bat
-alias batfzf='find -type f | fzfbat | xargs --no-run-if-empty bat'
-alias batfzfsrc='findsrc -type f | fzfbat | xargs --no-run-if-empty bat'
+alias batfzf='find -type f | fzfbat | xargs -r bat'
+alias batfzfsrc='findsrc -type f | fzfbat | xargs -r bat'
 
 # Cd
 alias ..='cd ..'
@@ -36,7 +36,7 @@ alias cdnpmroot='cd "$(findprj -nu)"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplay='cd "$PLAYLISTS_DIR"'
 alias cdplst='cdplay'
-alias cdprj='cd "$WORKSPACE_DIR" && cd "$(find -mindepth 1 -maxdepth 1 -type d -printf "%P\0" | sort --zero-terminated | choose -izp "Project:" -d "$OLDPWD")"'
+alias cdprj='cd "$WORKSPACE_DIR" && cd "$(find -mindepth 1 -maxdepth 1 -type d -printf "%P\0" | sort -z | choose -izp "Project:" -d "$OLDPWD")"'
 alias cdpub='cd "$PUBLIC_DIR"'
 alias cdtemp='cd "$TEMP_DIR"'
 alias cdtmp='cd "$TEMP_DIR"'
@@ -79,18 +79,18 @@ alias findsrc='findex -exclude vplo'
 alias fzfbat='fzf --preview="bat --color=always {}"'
 alias fzfls='fzf --preview="ls -l --almost-all --human-readable --color=always {}"'
 alias fzfexif='fzf --preview="exiftool {}"'
-alias fzfxargs='fzf --multi --read0 --print0 | xargs --null --no-run-if-empty'
-alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | cut --delimiter=" " --fields=2'
+alias fzfxargs='fzf --multi --read0 --print0 | xargs -0r'
+alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | cut -d" " -f2'
 
 # Git
-alias gitcb='git ls-branches -lrsC | choose -ip "Checkout:" | xargs --no-run-if-empty git checkout'
-alias gitcmpb='git ls-branches -lr | choose -imp "Compare:" | xargs --no-run-if-empty git cmp-branches'
-alias gitct='git tag | choose -ip "Checkout tag:" | xargs --no-run-if-empty git checkout'
-alias gitdb='git ls-branches -lC | choose -imp "Delete:" | xargs --no-run-if-empty git branch --delete'
-alias gitdbf='gitdb --force'
-alias gitffb=' git ls-branches -b | choose -imp "Fast-forward:" | xargs --no-run-if-empty git fast-forward'
-alias gitmb='git ls-branches -lrC | choose -ip "Merge to \""$(git ls-branches -c)"\":" | xargs --no-run-if-empty git merge'
-alias gitrb='git ls-branches -lrC | choose -ip "Rebase \""$(git ls-branches -c)"\" onto:" | xargs --no-run-if-empty git rebase'
+alias gitcb='git lsb -lrsC | choose -ip "Checkout:" | xargs -r git checkout'
+alias gitcmpb='git lsb -lr | choose -imp "Compare:" | xargs -r git cmpb'
+alias gitct='git tag | choose -ip "Checkout tag:" | xargs -r git checkout'
+alias gitdb='git lsb -lC | choose -imp "Delete:" | xargs -r git branch -d'
+alias gitdbf='gitdb -f'
+alias gitffb=' git lsb -b | choose -imp "Fast-forward:" | xargs -r git ff'
+alias gitmb='git lsb -lrC | choose -ip "Merge to \""$(git lsb -c)"\":" | xargs -r git merge'
+alias gitrb='git lsb -lrC | choose -ip "Rebase \""$(git lsb -c)"\" onto:" | xargs -r git rebase'
 
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'
@@ -145,26 +145,26 @@ alias npmgl='npmg --depth=0 list'
 alias npmgun='npmg uninstall'
 alias npmgup='npmg update'
 alias npmi='npm install'
-alias npmii='rm --force --recursive node_modules && npmi'
+alias npmii='rm -rf node_modules && npmi'
 alias npml='npm --depth=0 list'
 alias npmun='npm uninstall'
 alias npmup='npm update'
 
 # Pacman / Pacaur
-alias paci='pacfind -c | fzfpac | xargs --no-run-if-empty --open-tty pacaur -S'
+alias paci='pacfind -c | fzfpac | xargs -ro pacaur -S'
 alias pacr='pacaur -Sy'
 alias pacri='pacr && paci'
-alias pacun='pacfind -lc | fzfpac | xargs --no-run-if-empty --open-tty pacaur -Rsc'
+alias pacun='pacfind -lc | fzfpac | xargs -ro pacaur -Rsc'
 alias pacup='pacaur -Syu'
 
 # React Native
 alias rndebug='adb shell input keyevent 82'
 
 # SSH
-alias ssha='cd ~/.ssh && find -name "*.key" -printf "%P\0" | choose -izp "SSH key:" | xargs --no-run-if-empty --open-tty ssh-add; cd "$OLDPWD"'
+alias ssha='cd ~/.ssh && find -name "*.key" -printf "%P\0" | choose -izp "SSH key:" | xargs -ro ssh-add; cd "$OLDPWD"'
 alias sshi='eval "$(sshctl start)"'
 alias sshk='eval "$(sshctl stop)"'
-alias sshl='cd ~/.ssh && grep --fixed-strings --recursive --with-filename --file=<(ssh-add -L | cut --delimiter=" " --fields=2) | cut --delimiter=: --fields=1; cd "$OLDPWD"'
+alias sshl='cd ~/.ssh && fgrep -rHf <(ssh-add -L | cut -d" " -f2) | cut -d: -f1; cd "$OLDPWD"'
 
 # Terminal
 alias termfit='cut --characters=-$COLUMNS'
