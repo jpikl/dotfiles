@@ -164,11 +164,14 @@ Tools recommended to install:
 - [fzf][fzf] - A command-line fuzzy finder.
 - [hexyl][hexyl] - A command-line hex viewer.
 - [ripgrep][ripgrep] - ripgrep recursively searches directories for a regex pattern.
+- [sd][sd] - Intuitive find & replace CLI (sed alternative).
+- [tealdeer][tealdeer] - A very fast implementation of tldr in Rust.
 
 ```bash
-pacman -Sy bat exa fd fzf hexyl ripgrep # On ArchLinux
-choco install bat fd fzf ripgrep        # On Windows using chocolatey (no exa, hexyl)
-cargo install bat fd-find hexyl ripgrep # Using cargo (no fzf)
+pacman -Sy bat exa fd fzf hexyl sd ripgrep          # On ArchLinux
+pacaur -Sy tealdeer                                 # On ArchLinux (AUR)
+choco install bat fd fzf ripgrep                    # On Windows using chocolatey
+cargo install bat fd-find hexyl ripgrep sd tealdeer # Using cargo
 ```
 
 <a name="dotfiles-tools"></a>
@@ -332,7 +335,9 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [nf-literation]: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/LiberationMono
 [nf]: https://www.nerdfonts.com
 [ripgrep]: https://github.com/BurntSushi/ripgrep
+[sd]: https://github.com/chmln/sd
 [shellcheck]: https://shellcheck.net
+[tealdeer]: https://github.com/dbrgn/tealdeer
 [tilix-colors]: https://github.com/gnunn1/tilix/blob/master/data/schemes/material.json
 [tilix]: https://gnunn1.github.io/tilix-web
 [win-term]: https://github.com/microsoft/terminal
