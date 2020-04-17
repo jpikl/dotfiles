@@ -39,7 +39,7 @@ main() {
   local key_name="id_$key_type"
   [[ $remote_hostname ]] && key_name+="_$remote_hostname"
 
-  local key_file="$HOME/.ssh/$key_name.key"
+  local key_file="$HOME/.ssh/$key_name"
   local key_file_pub="$HOME/.ssh/$key_name.pub"
 
   if [[ -e $key_file || -e $key_file_pub ]] && ! confirm "Overwrite existing $key_name.{key,pub}?"; then
