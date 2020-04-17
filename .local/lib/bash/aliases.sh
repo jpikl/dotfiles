@@ -161,7 +161,7 @@ alias pacup='pacaur -Syu'
 alias rndebug='adb shell input keyevent 82'
 
 # SSH
-alias ssha='cd ~/.ssh && find -name "*.key" -printf "%P\0" | choose -izp "SSH key:" | xargs -ro ssh-add; cd "$OLDPWD"'
+alias ssha='cd ~/.ssh && find -name "id_*" -not -name "*.pub" -printf "%P\0" | choose -izp "SSH key:" | xargs -ro ssh-add; cd "$OLDPWD"'
 alias sshi='eval "$(sshctl start)"'
 alias sshk='eval "$(sshctl stop)"'
 alias sshl='cd ~/.ssh && fgrep -rHf <(ssh-add -L | cut -d" " -f2) | cut -d: -f1; cd "$OLDPWD"'
