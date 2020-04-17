@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Get slice of input. Simple head/tail frontend.
+
+		Usage:
+		  $(self) [<options>] [<file>]
+
+		Args:
+		  <file>  File to read.
+
+		Options:
+		  -s <num>  Starting line number.
+		  -e <num>  Ending line number.
+		  -l <num>  Number of lines to print.
+		  -c        Values are bytes, not line numbers.
+		  -z        Line delimiter is NUL, not newline.
+		  -h        Print this help.
+
+		Input is read from stdin when no file is passed.
+		Options -s -e -l cannot be used all together. Any other combination is permited.
+	EOT
+}
+
+main() {
+  local start=
+  local end=
+  local length=
+  local bytes=false
+  local null=false
+  local opt
+
+  while getopts ":s:e:l:czh" opt; do
+    case "$opt" in
+      s) start=$OPTARG ;;
+      e) end=$OPTARG ;;
+      l) length=$OPTARG ;;
+      c) bytes=true ;;
+      z) null=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  [[ $start && ! $start =~ ^[0-9]+$ ]] && die_help "option -s requires positive integer as its argument"
+  [[ $end && ! $end =~ ^[0-9]+$ ]] && die_help "option -e requires positive integer as its argument"
+  [[ $length && ! $length =~ ^[0-9]+$ ]] && die_help "option -l requires positive integer as its argument"
+  [[ $start && $end && $length ]] && die_help "options -s -e -l cannot be used all together"
+
+  if [[ $start && $end ]]; then
+    length=$((end - start + 1))
+  elif [[ $end && $length ]]; then
+    start=$((end - length + 1))
+    if [[ $start -lt 1 ]]; then
+      length=$((length + start - 1))
+      start=1
+    fi
+  elif [[ $end ]]; then
+    length=$end
+  fi
+
+  if [[ $length && $length -le 0 ]]; then
+    exit 0
+  fi
+
+  if [[ $# -ge 1 ]]; then
+    [[ -r "$1" && -f "$1" ]] || die "'$1' is not a readable file"
+    exec <"$1"
+  fi
+
+  local opt_name
+  if [[ $bytes == true ]]; then
+    opt_name="bytes"
+  else
+    opt_name="lines"
+  fi
+
+  local extra_opts=()
+  if [[ $null == true ]]; then
+    extra_opts+=(--zero-terminated)
+  fi
+
+  if [[ $start && $length ]]; then
+    tail --$opt_name="+$start" "${extra_opts[@]}" \
+    | head --$opt_name="$length" "${extra_opts[@]}"
+  elif [[ $start ]]; then
+    tail --$opt_name="+$start" "${extra_opts[@]}"
+  elif [[ $length ]]; then
+    head --$opt_name="$length" "${extra_opts[@]}"
+  else
+    cat
+  fi
+}
+
+main "$@"

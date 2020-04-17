@@ -19,7 +19,7 @@ help() {
 		  -m  Include Maven projects.
 		  -n  Include Node.js projects.
 		  -u  Search upwards to find the topmost project root.
-		  -Z  Print results delimited by NUL instead of LF.
+		  -Z  Print results delimited by NUL, not newline.
 		  -h  Print this help.
 
 		Default path is the current working directory.

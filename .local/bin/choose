@@ -19,8 +19,8 @@ help() {
 		  -d <value>   Default value to print if nothing was chosen.
 		  -m           Enable selection of multiple values.
 		  -i           Read values as lines from stdin.
-		  -z           Values from stdin are delimited by NUL instead of LF.
-		  -Z           Print results delimited by NUL instead of LF.
+		  -z           Read values delimited by NUL, not newline.
+		  -Z           Print values delimited by NUL, not newline.
 		  -b           Force pure Bash interface instead of fzf.
 		  -h           Print this help.
 	EOT

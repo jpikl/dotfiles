@@ -206,6 +206,7 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [pacfind](../.local/bin/pacfind) - Find ArchLinux packages. Simple pacman frontend wit AUR support.
 - [refresh](../.local/bin/refresh) - Periodically refresh output of a command on change.
 - [retty](../.local/bin/retty) - Execute command with current TTY as stdin.
+- [slice](../.local/bin/slice) - Get slice of input. Simple head/tail frontend.
 - [sshctl](../.local/bin/sshctl) - Control ssh-agent process.
 - [sshgen](../.local/bin/sshgen) - Generate SSH key with user-friendly CLI wizard.
 - [wman](../.local/bin/wman) - Open online man pages in web browser.
