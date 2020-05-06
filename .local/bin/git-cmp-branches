@@ -17,19 +17,25 @@ help() {
 		  <others>...  Branches to compare with target.
 
 		Options:
-		  -a  List authors and number of their commits.
+		  -l  Print only left side of comparison.
+		  -r  Print only right side of comparison.
+		  -a  Print authors and number of their commits.
 		  -c  Force colors in output (-C for no colors).
 		  -h  Print this help.
 	EOT
 }
 
 main() {
+  local left=true
+  local right=true
   local colors=
   local authors=false
   local opt
 
-  while getopts ":acCh" opt; do
+  while getopts ":lracCh" opt; do
     case "$opt" in
+      l) right=false ;;
+      r) left=false ;;
       a) authors=true ;;
       c) colors=true ;;
       C) colors=false ;;
@@ -37,6 +43,10 @@ main() {
       *) die_invalid_opt "$opt" ;;
     esac
   done
+
+  if [[ $left = false && $right = false ]]; then
+    die_help "options -l -r are mutually exclusive"
+  fi
 
   shift $((OPTIND - 1))
   [[ $# -ge 2 ]] || die_missing_arg
@@ -77,16 +87,20 @@ main() {
     local commits_1_fmt=$fmt_commits$commits_1$fmt_clear
     local commits_2_fmt=$fmt_commits$commits_2$fmt_clear
 
-    echo "$branch_1_fmt has $commits_1_fmt commit(s) that are not in $branch_2_fmt"
+    if [[ $left = true ]]; then
+      echo "$branch_1_fmt has $commits_1_fmt commit(s) that are not in $branch_2_fmt"
 
-    if [[ $authors == true ]]; then
-      git authors "$branch_1" --not "$branch_2"
+      if [[ $authors == true ]]; then
+        git authors "$branch_1" --not "$branch_2"
+      fi
     fi
 
-    echo "$branch_2_fmt has $commits_2_fmt commit(s) that are not in $branch_1_fmt"
+    if [[ $right = true ]]; then
+      echo "$branch_2_fmt has $commits_2_fmt commit(s) that are not in $branch_1_fmt"
 
-    if [[ $authors == true ]]; then
-      git authors "$branch_2" --not "$branch_1"
+      if [[ $authors == true ]]; then
+        git authors "$branch_2" --not "$branch_1"
+      fi
     fi
   done
 }
