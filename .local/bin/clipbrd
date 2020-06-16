@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Access clipboard contents.
+
+		Usage:
+		  $(self) [<options>] <command>
+
+		Commands:
+		  g, get            Print clipboard contents.
+		  s, set [<value>]  Set clipboard contents (from an argument or stdin).
+		  c, clear          Clear clipboard contents.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+  local command=$1
+  shift
+
+  case "${command-}" in
+    g|get) get_clipboard ;;
+    s|set) set_clipboard "$@" ;;
+    c|clear) set_clipboard </dev/null ;;
+    *) die_help "invalid command '$command'" ;;
+  esac
+}
+
+get_clipboard() {
+  if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
+    powershell -command "Get-Clipboard"
+  else
+    xclip -out -selection clipboard
+  fi
+}
+
+set_clipboard() {
+  if [[ $# -gt 0 ]]; then
+    exec < <(printf "%s" "$1")
+  fi
+  if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
+    clip
+  else
+    xclip -in -selection clipboard
+  fi
+}
+
+main "$@"

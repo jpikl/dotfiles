@@ -180,6 +180,7 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [bashfiles](../.local/bin/bashfiles) - Manage Bash files from dotfiles repository.
 - [bashgen](../.local/bin/bashgen) - Generate new Bash script using itself as a template.
 - [choose](../.local/bin/choose) - Let user choose from values. Simple fzf frontend with Bash fallback.
+- [clipbrd](../.local/bin/clipbrd) - Access clipboard contents.
 - [confirm](../.local/bin/confirm) - Aks user for confirmation.
 - [direnc](../.local/bin/direnc) - List or (un)mount encrypted directories. Simple encfs frontend.
 - [dirsync](../.local/bin/dirsync) - Synchronize two directories. Simple rsync frontend.
