@@ -9,7 +9,7 @@ help() {
 		List authors and number of their Git commits.
 
 		Usage:
-		  $(self) [<options>] <revision range>
+		  $(self) [<options>] [<revision range>]
 
 		Args:
 		  <revision range>  Revision range accepter by the git log command.
@@ -30,7 +30,6 @@ main() {
   done
 
   shift $((OPTIND - 1))
-  [[ $# -ge 1 ]] || die_missing_arg
 
   git log --format='%aN' "$@" \
     | sort \
