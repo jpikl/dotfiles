@@ -66,7 +66,7 @@ main() {
   grep --extended-regexp --only-matching "$pattern" \
     | LC_ALL=C sort \
     | LC_ALL=C uniq --count  \
-    | LC_ALL=C sort --reverse
+    | LC_ALL=C sort --numeric-sort --reverse
 }
 
 main "$@"

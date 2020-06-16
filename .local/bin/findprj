@@ -126,10 +126,9 @@ find_upwards() {
 
 find_downards() {
   # A directory will be printed twice if if contains two different
-  # project files, so we are using 'uniq' to merge them.
+  # project files, so we are using 'sort --unique' to merge them.
   findex "$path" -exclude vploD "${expression[@]}" \
-    | LC_ALL=C sort --zero-terminated \
-    | uniq --zero-terminated \
+    | LC_ALL=C sort --unique --zero-terminated \
     | replace_line_endings \
     | check_any_result \
     || die "unable find any project directory"

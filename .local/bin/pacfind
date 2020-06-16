@@ -76,7 +76,7 @@ main() {
   fi
 
   if [[ $quiet == true ]]; then
-    print_names | filter_names "${1-}" | LC_ALL=C sort | LC_ALL=C uniq
+    print_names | filter_names "${1-}" | LC_ALL=C sort --unique
   else
     print_packages | filter_packages "${1-}"
   fi
@@ -126,7 +126,7 @@ print_remote_names() {
   {
     print_repo_names
     print_aur_names
-  } | LC_ALL=C sort | LC_ALL=C uniq
+  } | LC_ALL=C sort --unique
 }
 
 print_repo_packages() {

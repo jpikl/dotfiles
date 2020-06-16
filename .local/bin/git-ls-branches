@@ -75,10 +75,10 @@ main() {
     { # We want to print mix of local and remote branches.
       print_included_local
       print_included_remote | remove_remote_prefix
-    } | LC_ALL=C sort | uniq | filter_excluded_local
+    } | LC_ALL=C sort --unique | filter_excluded_local
   else
     # We want to print local branches before the remote ones.
-    print_included_local | sort | uniq | filter_excluded_local
+    print_included_local | sort --unique | filter_excluded_local
     print_included_remote | sort
   fi
 }
