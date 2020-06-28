@@ -19,6 +19,7 @@ help() {
 		  -f  Force extraction even if output files aready exist.
 		  -l  List archive contents instead of extraction.
 		  -v  Verbose mode with additional output.
+		  -p  Generate output for zenity progress dialog.
 		  -e  Do no exit after a first error, fail at end.
 		  -h  Print this help.
 	EOT
@@ -29,29 +30,39 @@ main() {
   local force=false
   local list=false
   local verbose=false
+  local zenity=false
   local skip_errors=false
   local opt
 
-  while getopts ":dflveh" opt; do
+  while getopts ":dflvpeh" opt; do
     case "$opt" in
       d) wrap=true ;;
       f) force=true ;;
       l) list=true ;;
       v) verbose=true ;;
+      p) zenity=true ;;
       e) skip_errors=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
 
+  [[ $zenity = true && $list = true ]] && die_help "options -p -l are mutually exclusive"
+  [[ $zenity = true && $verbose = true ]] && die_help "options -p -v are mutually exclusive"
+  [[ $list = true && $verbose = true ]] && die_help "options -l -v are mutually exclusive"
+
   shift $((OPTIND - 1))
   [[ $# -eq 0 ]] && die_missing_arg
 
-  local file
+  local index
+  local files=("$@")
   local die_at_end=false
 
-  for file; do
-    extract "$file"
+  for index in "${!files[@]}"; do
+    extract "${files[$index]}"
+    if [[ $zenity == true ]]; then
+      echo "$((100 * (index + 1) / ${#files[@]}))"
+    fi
   done
 
   [[ $die_at_end == false ]]
@@ -60,6 +71,8 @@ main() {
 extract() {
   if [[ $verbose == true ]]; then
     echo "---------- $1 ----------"
+  elif [[ $zenity == true ]]; then
+    echo "#Extracting '$1'"
   elif [[ $list == false ]]; then
     echo "Extracting '$1'"
   fi
