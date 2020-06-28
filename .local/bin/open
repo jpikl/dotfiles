@@ -15,7 +15,7 @@ help() {
 		  <item>...  Files or URLs to open.
 
 		Options:
-		  -s  Skip opening errors.
+		  -e  Do no exit after a first error, fail at end.
 		  -h  Print this help.
 	EOT
 }
@@ -24,9 +24,9 @@ main() {
   local skip_errors=false
   local opt
 
-  while getopts ":sh" opt; do
+  while getopts ":eh" opt; do
     case "$opt" in
-      s) skip_errors=true ;;
+      e) skip_errors=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -45,10 +45,20 @@ main() {
   fi
 
   local item
+  local die_at_end=false
+
   for item; do
     echo "Opening '$item'"
-    "$cmd" "$item" || [[ $skip_errors = true ]] || die
+    if ! "$cmd" "$item"; then
+      if [[ $skip_errors = true ]]; then
+        die_at_end=true
+      else
+        die
+      fi
+    fi
   done
+
+  [[ $die_at_end == false ]]
 }
 
 main "$@"

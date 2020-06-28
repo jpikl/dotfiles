@@ -19,7 +19,7 @@ help() {
 		  -f  Force extraction even if output files aready exist.
 		  -l  List archive contents instead of extraction.
 		  -v  Verbose mode with additional output.
-		  -s  Skip extraction errors.
+		  -e  Do no exit after a first error, fail at end.
 		  -h  Print this help.
 	EOT
 }
@@ -32,13 +32,13 @@ main() {
   local skip_errors=false
   local opt
 
-  while getopts ":dflvsh" opt; do
+  while getopts ":dflveh" opt; do
     case "$opt" in
       d) wrap=true ;;
       f) force=true ;;
       l) list=true ;;
       v) verbose=true ;;
-      s) skip_errors=true ;;
+      e) skip_errors=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
@@ -48,9 +48,13 @@ main() {
   [[ $# -eq 0 ]] && die_missing_arg
 
   local file
+  local die_at_end=false
+
   for file; do
     extract "$file"
   done
+
+  [[ $die_at_end == false ]]
 }
 
 extract() {
@@ -422,7 +426,11 @@ get_output() {
 
 handle_error() {
   [[ ${1-} ]] && alert "$1" >&2
-  [[ $skip_errors = true ]] || die
+  if [[ $skip_errors = true ]]; then
+    die_at_end=true
+  else
+    die
+  fi
 }
 
 main "$@"
