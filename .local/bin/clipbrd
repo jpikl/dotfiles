@@ -33,14 +33,15 @@ main() {
 
   shift $((OPTIND - 1))
   [[ $# -eq 0 ]] && die_missing_arg
-  local command=$1
-  shift
 
-  case "${command-}" in
+  case "${1-}" in
     g|get) get_clipboard ;;
-    s|set) set_clipboard "$@" ;;
-    c|clear) set_clipboard </dev/null ;;
-    *) die_help "invalid command '$command'" ;;
+    s|set) if [[ $# -gt 1 ]];
+        then set_clipboard_from_arg "$2"
+        else set_clipboard_from_stdin
+      fi ;;
+    c|clear) clear_clipboard ;;
+    *) die_help "invalid command '$1'" ;;
   esac
 }
 
@@ -52,14 +53,27 @@ get_clipboard() {
   fi
 }
 
-set_clipboard() {
-  if [[ $# -gt 0 ]]; then
-    exec < <(printf "%s" "$1")
-  fi
+set_clipboard_from_arg() {
   if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
-    clip
+    printf "%s" "$1" | clip
+  else
+    printf "%s" "$1" | xclip -in -selection clipboard
+  fi
+}
+
+set_clipboard_from_stdin() {
+  if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
+    cat | clip
   else
     xclip -in -selection clipboard
+  fi
+}
+
+clear_clipboard() {
+  if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
+    printf "" | clip
+  else
+    xclip -in -selection clipboard </dev/null
   fi
 }
 
