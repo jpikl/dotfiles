@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Show GUI progress dialog for a command.
+
+		Usage:
+		  $(self) [<options>] <command> [<param>...]
+
+		Args:
+		  <command>   Command to execute.
+		  <param>...  Parameters passed to command.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  local err_file
+  err_file=$(mktemp)
+
+  if ! "$@" 2>"$err_file" | zenity --progress --auto-close --width=480; then
+    zenity --text-info \
+           --filename="$err_file" \
+           --width=640 \
+           --height=480 \
+           --title=Errors \
+           --window-icon=error
+  fi
+
+  rm --force "$err_file"
+}
+
+main "$@"

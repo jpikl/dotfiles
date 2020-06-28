@@ -197,6 +197,7 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [git-ls-branches](../.local/bin/git-ls-branches) - List Git branches in machine-readable format.
 - [git-state](../.local/bin/git-state) - Print state of a Git working tree.
 - [git-super-status](../.local/bin/git-super-status) - Git status on steroids.
+- [guitask](../.local/bin/guitask) - Show GUI progress dialog for a command.
 - [homefiles](../.local/bin/homefiles) - Initialize home directory structure.
 - [jestat](../.local/bin/jestat) - Print statistics of Java exceptions in a log file.
 - [mpdm3u](../.local/bin/mpdm3u) - Generate M3U playlists from MPD database.
