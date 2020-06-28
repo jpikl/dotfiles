@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+<action>
+	<icon>archive-extract</icon>
+	<name>Extract archive</name>
+	<unique-id>1589640351261290-1</unique-id>
+	<command>guitask extract -defp %F</command>
+	<description></description>
+	<patterns>*</patterns>
+	<startup-notify/>
+	<other-files/>
+</action>
+<action>
+	<icon>utilities-terminal</icon>
+	<name>Open terminal here</name>
+	<unique-id>1368401260678759-1</unique-id>
+	<command>exo-open --working-directory %f --launch TerminalEmulator</command>
+	<description></description>
+	<patterns>*</patterns>
+	<startup-notify/>
+	<directories/>
+</action>
+</actions>
