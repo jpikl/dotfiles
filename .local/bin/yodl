@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Simple youtube-dl frontend.
+
+		Usage:
+		  $(self) [<options>] <url>...
+
+		Args:
+		  <url>...  URLs to download.
+
+		Options:
+		  -a  Force audio download.
+		  -v  Verbose mode with additional output.
+		  -p  Generate output for zenity progress dialog.
+		  -e  Continue after an error, fail at end.
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local audio=false
+  local verbose=false
+  local progress=false
+  local die_on_error=true
+  local opt
+
+  while getopts ":avpeh" opt; do
+    case "$opt" in
+      a) audio=true ;;
+      v) verbose=true ;;
+      p) progress=true ;;
+      e) die_on_error=false ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  if [[ $progress = true && $verbose = true ]]; then
+    die_help "options -p -v are mutually exclusive"
+  fi
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  local url
+  local count=0
+  local die_at_end=false
+
+  for url; do
+    download "$url"
+    if [[ $progress == true ]]; then
+      echo "$((100 * (++count) / $#))"
+    fi
+  done
+
+  [[ $die_at_end == false ]]
+}
+
+download() {
+  if [[ $verbose == true ]]; then
+    echo "---------- $1 ----------"
+  elif [[ $progress == true ]]; then
+    echo "#Downloading '$1'"
+  else
+    echo "Downloading '$1'"
+  fi
+
+  local opts=()
+
+  if [[ $audio == true ]]; then
+    if [[ $1 == *"youtube"* || $1 == *"youtu.be"* ]]; then
+      opts+=(--format 140)
+    else
+      opts+=(--format bestaudio)
+    fi
+  fi
+
+  if [[ $verbose == false ]]; then
+    opts+=(--quiet)
+  fi
+
+  if ! youtube-dl "${opts[@]}" -- "$1"; then
+    [[ $die_on_error = true ]] && die || die_at_end=true
+  fi
+}
+
+main "$@"

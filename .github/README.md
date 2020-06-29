@@ -212,6 +212,7 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [sshctl](../.local/bin/sshctl) - Control ssh-agent process.
 - [sshgen](../.local/bin/sshgen) - Generate SSH key with user-friendly CLI wizard.
 - [wman](../.local/bin/wman) - Open online man pages in web browser.
+- [yodl](../.local/bin/yodl) - Simple youtube-dl frontend.
 
 ## :desktop_computer: Terminal
 
