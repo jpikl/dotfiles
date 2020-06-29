@@ -20,4 +20,14 @@
 	<startup-notify/>
 	<directories/>
 </action>
+<action>
+	<icon>multimedia-audio-player</icon>
+	<name>Download audio from clipboard here</name>
+	<unique-id>1593439140960141-1</unique-id>
+	<command>bash -c &quot;clipbrd get | grep -Eo &apos;https?://\S+&apos; | xargs -r guitask yodl -ape&quot;</command>
+	<description></description>
+	<patterns>*</patterns>
+	<startup-notify/>
+	<directories/>
+</action>
 </actions>
