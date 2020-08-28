@@ -131,6 +131,9 @@ export VISUAL
 # Path for local binaries
 PATH=$PATH:$LOCAL_BIN_DIR
 
+# Path for cargo binaries
+PATH=$PATH:${CARGO_HOME-$HOME/.cargo}/bin
+
 # Path for npm binaries
 if [[ ${MSYSTEM:-} =~ ^MINGW(32|64)$ ]]; then
   PATH=$PATH:$NPM_PREFIX # Npm on Windows puts binaries here, not in $NPM_PREFIX/bin
