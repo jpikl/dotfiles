@@ -5,5 +5,5 @@ term_has_colors() {
 }
 
 term_has_icons() {
-  [[ -t 1 && ${TERM_ICONS-} == true ]]
+  [[ -t 1 && ${TERM_ICONS-} == true ]] # Variable defined in ~/.bashrc
 }

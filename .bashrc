@@ -44,11 +44,9 @@ elif [[ -x $(command -v less) ]]; then
   export MANPAGER
 fi
 
-# Source libraries
-if [[ $BASH_LIB_DIR ]]; then
-  source "$BASH_LIB_DIR/aliases.sh"
-else
-  echo "${BASH_SOURCE[0]}: BASH_LIB_DIR variable was not set by .profile" >&2
+# Aliases are in a separate file
+if [[ -f ~/.bash_aliases ]]; then
+  source ~/.bash_aliases
 fi
 
 # Local override not committed in git
