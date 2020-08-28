@@ -16,6 +16,7 @@ export HISTCONTROL=ignorespace:erasedups
 # Tools that initialize environment
 [[ -x "$(command -v dircolors)" ]] && eval "$(dircolors --bourne-shell)"
 [[ -x "$(command -v thefuck)" ]] && eval "$(thefuck --alias)"
+[[ -x "$(command -v starship)" ]] && eval "$(starship init bash)"
 
 # Detect icons support in terminal
 if [[ ! $TERM_ICONS ]]; then
@@ -46,7 +47,6 @@ fi
 # Source libraries
 if [[ $BASH_LIB_DIR ]]; then
   source "$BASH_LIB_DIR/aliases.sh"
-  source "$BASH_LIB_DIR/prompt.sh"
 else
   echo "${BASH_SOURCE[0]}: BASH_LIB_DIR variable was not set by .profile" >&2
 fi

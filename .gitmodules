@@ -1,3 +1,0 @@
-[submodule ".local/lib/bash/pureline"]
-	path = .local/lib/bash/pureline
-	url = https://github.com/chris-marsh/pureline.git

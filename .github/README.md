@@ -54,14 +54,9 @@ dotfiles checkout
 dotfiles checkout -f # To overwrite possible conflicts.
 ```
 
-Initialize Git submodules.
-
-```bash
-cd # In case $HOME is not your current working directory.
-dotfiles submodule update --init
-```
-
 Customize your personal [configuration](#wrench-configuration).
+
+Install [starship] as mentioned in [tools](#zap-Tools).
 
 Logout and login to reload Bash environment.
 
@@ -165,13 +160,14 @@ Tools recommended to install:
 - [hexyl][hexyl] - A command-line hex viewer.
 - [ripgrep][ripgrep] - ripgrep recursively searches directories for a regex pattern.
 - [sd][sd] - Intuitive find & replace CLI (sed alternative).
+- [starship][starship] - The minimal, blazing-fast, and infinitely customizable prompt for any shell!
 - [tealdeer][tealdeer] - A very fast implementation of tldr in Rust.
 
 ```bash
-pacman -Sy bat exa fd fzf hexyl sd ripgrep          # On ArchLinux
-pacaur -Sy tealdeer                                 # On ArchLinux (AUR)
-choco install bat fd fzf ripgrep                    # On Windows using chocolatey
-cargo install bat fd-find hexyl ripgrep sd tealdeer # Using cargo
+pacman -Sy bat exa fd fzf hexyl sd ripgrep # On ArchLinux
+pacaur -Sy starship tealdeer               # On ArchLinux (AUR)
+choco install bat fd fzf ripgrep           # On Windows using chocolatey
+cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
 ```
 
 <a name="dotfiles-tools"></a>
@@ -340,6 +336,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [nf]: https://www.nerdfonts.com
 [ripgrep]: https://github.com/BurntSushi/ripgrep
 [sd]: https://github.com/chmln/sd
+[starship]: https://github.com/starship/starship
 [shellcheck]: https://shellcheck.net
 [tealdeer]: https://github.com/dbrgn/tealdeer
 [tilix-colors]: https://github.com/gnunn1/tilix/blob/master/data/schemes/material.json
