@@ -164,6 +164,9 @@ alias sshl='cd ~/.ssh && fgrep -rHf <(ssh-add -L | cut -d" " -f2) | cut -d: -f1;
 # Terminal
 alias termfit='cut --characters=-$COLUMNS'
 
+# Wc
+alias wcl='wc --lines'
+
 # Xargs
 alias xargsfzf='find -print0 | fzfxargs'
 alias xargsfzfsrc='findsrc -print0 | fzfxargs'
