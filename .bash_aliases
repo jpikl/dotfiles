@@ -53,6 +53,13 @@ alias clipset='clipbrd set'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 
+# Docker
+doba() { docker exec -it "$1" bash -li; }
+alias doco='docker container'
+alias doex='docker exec -it'
+alias doim='docker image'
+alias dovo='docker volume'
+
 # Dotfiles
 alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
 alias dotfiles='dotenv git'
