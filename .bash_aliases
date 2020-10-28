@@ -162,6 +162,9 @@ alias pacup='pacaur -Syu'
 # React Native
 alias rndebug='adb shell input keyevent 82'
 
+# Sort
+alias sortu='sort --unique'
+
 # SSH
 alias ssha='cd ~/.ssh && find -name "id_*" -not -name "*.pub" -printf "%P\0" | choose -izp "SSH key:" | xargs -ro ssh-add; cd "$OLDPWD"'
 alias sshi='eval "$(sshctl start)"'
