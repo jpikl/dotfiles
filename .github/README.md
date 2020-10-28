@@ -207,6 +207,7 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [slice](../.local/bin/slice) - Get slice of input. Simple head/tail frontend.
 - [sshctl](../.local/bin/sshctl) - Control ssh-agent process.
 - [sshgen](../.local/bin/sshgen) - Generate SSH key with user-friendly CLI wizard.
+- [trim](../.local/bin/trim) - Trim input lines.
 - [wman](../.local/bin/wman) - Open online man pages in web browser.
 - [yodl](../.local/bin/yodl) - Simple youtube-dl frontend.
 

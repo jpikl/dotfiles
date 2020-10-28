@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+help() {
+  cat <<-EOT
+		Trim input lines.
+
+		Usage:
+		  $(self) [<options>]
+
+		Options:
+		  -z  Read values delimited by NUL, not newline.
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+  local null_data=false
+
+  while getopts ":zh" opt; do
+    case "$opt" in
+      z) null_data=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  local sed_opts=(--expression='s/^\s*//' --expression='s/\s*$//')
+  [[ $null_data = true ]] && sed_opts+=(--null-data)
+  sed "${sed_opts[@]}"
+}
+
+main "$@"
