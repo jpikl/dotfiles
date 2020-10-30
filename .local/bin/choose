@@ -111,9 +111,7 @@ basic_mode() {
     else
       mapfile -t values
     fi
-    local tty
-    tty="$(retty)"
-    exec < "$tty"  # Redirect stdin back to tty
+    exec < "/dev/tty"
   fi
 
   if [[ ${#values[@]} -eq 1 && $multi == false ]]; then
