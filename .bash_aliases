@@ -100,6 +100,13 @@ alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
 alias iso88592-utf8='iconv --from-code=ISO-8859-2 --to-code=UTF-8'
 alias utf8-iso88592='iconv --from-code=UTF-8 --to-code=ISO-8859-2'
 
+# Ip
+alias ip='ip -color=auto'
+alias ip4='ip -brief -family inet address show'
+alias ip4u='ip4 | fgrep " UP " | egrep --color=never --only-matching "[0-9]+(\.[0-9]+){3}"'
+alias ip6='ip -brief -family inet6 address show'
+alias iplink='ip -brief link show'
+
 # Links
 if [[ -x $(command -v links) ]]; then
   alias links='env CONFIG_DIR=$LINKS_CONFIG_DIR links' # Links unfortunately uses the same CONFIG_DIR variable as we do
