@@ -65,6 +65,9 @@ alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
 alias dotfiles='dotenv git'
 alias dotcode='dotenv code ~/.dotfiles.code-workspace'
 
+# Edit
+alias edit='${VISUAL/ --wait}'
+
 # Exif
 alias exiffzf='exiftool "$(find -type f | fzfexif)"'
 
