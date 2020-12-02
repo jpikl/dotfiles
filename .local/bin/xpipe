@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$BASH_LIB_DIR/core.sh"
+
+# TODO rename to xpipe
+
+help() {
+  cat <<-EOT
+		Execute command on a file constructed from standard input.
+
+		Usage:
+		  $(self) [<options>] <command> [<param>...]
+
+		Args:
+		  <command>   Command to execute.
+		  <param>...  Parameters passed to command.
+
+		Options:
+		  -e <ext>  Extension of a file.
+		  -h        Print this help.
+	EOT
+}
+
+main() {
+  local extension=
+  local opt
+
+  while getopts ":e:h" opt; do
+    case "$opt" in
+      e) extension=$OPTARG ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  local tmp_file
+
+  if [[ $extension ]]; then
+    tmp_file=$(mktemp --suffix=".$extension")
+  else
+    tmp_file=$(mktemp)
+  fi
+
+  cat >"$tmp_file"
+  "$@" "$tmp_file"
+}
+
+main "$@"

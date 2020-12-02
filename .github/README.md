@@ -208,7 +208,9 @@ Tools which are part of `~/.dotfiles.git` repository:
 - [sshgen](../.local/bin/sshgen) - Generate SSH key with user-friendly CLI wizard.
 - [trim](../.local/bin/trim) - Trim input lines.
 - [wman](../.local/bin/wman) - Open online man pages in web browser.
+- [xpipe](../.local/bin/xpipe) - Execute command on a file constructed from standard input.
 - [yodl](../.local/bin/yodl) - Simple youtube-dl frontend.
+
 
 ## :desktop_computer: Terminal
 
@@ -299,7 +301,7 @@ There are two workarounds using [winpty][winpty]:
 
 2. Wrap `bash` execution using `winpty`.
 
-    ```bash
+   ```bash
    winpty bash -li
    ```
 

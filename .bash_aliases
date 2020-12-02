@@ -66,7 +66,8 @@ alias dotfiles='dotenv git'
 alias dotcode='dotenv code ~/.dotfiles.code-workspace'
 
 # Edit
-alias edit='${VISUAL/ --wait}'
+alias edit='$EDITOR_CMD'
+alias editpipe='xpipe $EDITOR_CMD'
 
 # Exif
 alias exiffzf='exiftool "$(find -type f | fzfexif)"'
@@ -146,6 +147,7 @@ fi
 # Maven
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
+alias mvndeps='mvn dependency:tree'
 alias mvni='mvn install'
 alias mvnist='mvni -Dmaven.test.skip=true'
 
