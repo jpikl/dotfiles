@@ -169,8 +169,7 @@ alias npmup='npm update'
 
 # Pacman / Pacaur
 alias paci='pacfind -c | fzfpac | xargs -ro pacaur -S'
-alias pacr='pacaur -Sy'
-alias pacri='pacr && paci'
+alias pacii='pacaur -Sy && paci'
 alias pacun='pacfind -lc | fzfpac | xargs -ro pacaur -Rsc'
 alias pacup='pacaur -Syu'
 
