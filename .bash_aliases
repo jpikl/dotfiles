@@ -144,6 +144,9 @@ if [[ ! -x "$(command -v man)" ]]; then
   alias man=wman # MinGW does not have man
 fi
 
+# Mkdir
+alias mkdirp='mkdir --parents'
+
 # Maven
 alias mvnci='mvn clean install'
 alias mvncist='mvnci -Dmaven.test.skip=true'
@@ -173,6 +176,9 @@ alias pacup='pacaur -Syu'
 
 # React Native
 alias rndebug='adb shell input keyevent 82'
+
+# Rm
+alias rmrf='rm --recursive --force'
 
 # Sort
 alias sortu='sort --unique'
