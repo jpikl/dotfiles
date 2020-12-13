@@ -101,9 +101,11 @@ export LUAROCKS_CONFIG="$CONFIG_DIR/luarocks/config.lua"
 
 # Configurable tool variables
 BROWSER=${BROWSER:-$(detect_program "chromium chrome firefox" "links lynx")}
+CARGO_HOME=$(normalize_path "${CARGO_HOME:-"$HOME/.cargo"}")
 EDITOR=${EDITOR:-$(detect_program "sublime_text subl3 subl code codium" "vim nano")}
 EDITOR_CMD=$EDITOR # EDITOR might get modified later, we use this to preserve the original value
 FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS:-"--layout=reverse --exact --cycle"}
+GOPATH=$(normalize_path "${GOPATH:-"$HOME/.go"}")
 IDEA_PROPERTIES=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/idea.properties"}")
 IDEA_VM_OPTIONS=$(normalize_path "${IDEA_VM_OPTIONS:-"$CONFIG_DIR/IntelliJIdea/idea.vmoptions"}")
 NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
@@ -131,11 +133,10 @@ export NPM_PREFIX
 export MAVEN_LOCAL_REPO
 export VISUAL=$EDITOR
 
-# Path for local binaries
+# Path for binaries
 PATH=$PATH:$LOCAL_BIN_DIR
-
-# Path for cargo binaries
-PATH=$PATH:${CARGO_HOME-$HOME/.cargo}/bin
+PATH=$PATH:$CARGO_HOME/bin
+PATH=$PATH:$GOPATH/bin
 
 # Path for npm binaries
 if [[ ${MSYSTEM:-} =~ ^MINGW(32|64)$ ]]; then
