@@ -74,11 +74,17 @@ download() {
   local opts=()
 
   if [[ $audio == true ]]; then
-    if [[ $1 == *"youtube"* || $1 == *"youtu.be"* ]]; then
+    if [[ $1 == *youtube* || $1 == *youtu.be* ]]; then
       opts+=(--format 140)
     else
       opts+=(--format bestaudio)
     fi
+  fi
+
+  if [[ $1 == *youtube*/playlist* || $1 == *youtu.be*/playlist* ]]; then
+    opts+=(--output "%(autonumber)03d - %(title)s.%(ext)s")
+  else
+    opts+=(--output "%(title)s.%(ext)s")
   fi
 
   if [[ $verbose == false ]]; then
