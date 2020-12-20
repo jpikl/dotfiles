@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Backup
-alias bakmusls='dirtree -s $MUSIC_DIR > $BACKUP_DIR/music.txt'
+alias bakmusls='dirtree -ds $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Bat
 alias batfzf='find -type f | fzfbat | xargs -r bat'
