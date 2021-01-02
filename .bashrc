@@ -44,6 +44,13 @@ elif [[ -x $(command -v less) ]]; then
   export MANPAGER
 fi
 
+# Bash command_not_found_handle provided by Arch Linux pgkfile package
+# Requires manual DB update using: pkgfile --update
+if [[ -f /usr/share/doc/pkgfile/command-not-found.bash ]]; then
+  # shellcheck disable=SC1091
+  source /usr/share/doc/pkgfile/command-not-found.bash
+fi
+
 # Aliases are in a separate file
 if [[ -f ~/.bash_aliases ]]; then
   source ~/.bash_aliases
