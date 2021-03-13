@@ -82,7 +82,7 @@ download() {
   fi
 
   if [[ $1 == *youtube*/playlist* || $1 == *youtu.be*/playlist* ]]; then
-    opts+=(--output "%(autonumber)03d - %(title)s.%(ext)s")
+    opts+=(--output "%(playlist_title)s/%(autonumber)03d - %(title)s.%(ext)s")
   else
     opts+=(--output "%(title)s.%(ext)s")
   fi
