@@ -16,6 +16,7 @@ help() {
 
 		Options:
 		  -a  Force audio download.
+		  -N  Do not autonumber playlists.
 		  -v  Verbose mode with additional output.
 		  -p  Generate output for zenity progress dialog.
 		  -e  Continue after an error, fail at end.
@@ -25,14 +26,16 @@ help() {
 
 main() {
   local audio=false
+  local no_autonum=false
   local verbose=false
   local progress=false
   local die_on_error=true
   local opt
 
-  while getopts ":avpeh" opt; do
+  while getopts ":aNvpeh" opt; do
     case "$opt" in
       a) audio=true ;;
+      N) no_autonum=true ;;
       v) verbose=true ;;
       p) progress=true ;;
       e) die_on_error=false ;;
@@ -82,7 +85,11 @@ download() {
   fi
 
   if [[ $1 == *youtube*/playlist* || $1 == *youtu.be*/playlist* ]]; then
-    opts+=(--output "%(playlist_title)s/%(autonumber)03d - %(title)s.%(ext)s")
+    if [[ $no_autonum == true ]]; then
+      opts+=(--output "%(playlist_title)s/%(title)s.%(ext)s")
+    else
+      opts+=(--output "%(playlist_title)s/%(autonumber)03d - %(title)s.%(ext)s")
+    fi
   else
     opts+=(--output "%(title)s.%(ext)s")
   fi
