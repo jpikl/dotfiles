@@ -1,29 +1,17 @@
 # shellcheck shell=bash
 
 # Backup
-alias bakmusls='dirtree -ds $MUSIC_DIR > $BACKUP_DIR/music.txt'
-
-# Bat
-alias batfzf='find -type f | fzfbat | xargs -r bat'
-alias batfzfsrc='findsrc -type f | fzfbat | xargs -r bat'
+alias bakmuslist='dirtree -ds $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
 # Cd
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
 alias cdbak='cd "$BACKUP_DIR"'
 alias cdbin='cd "$LOCAL_BIN_DIR"'
 alias cdcach='cd "$CACHE_DIR"'
-alias cdcfg='cdconf'
 alias cdconf='cd "$CONFIG_DIR"'
 alias cddat='cd "$LOCAL_SHARE_DIR"'
 alias cddesk='cd "$DESKTOP_DIR"'
 alias cddoc='cd "$DOCUMENTS_DIR"'
-alias cddok='cddoc'
 alias cddown='cd "$DOWNLOAD_DIR"'
-alias cddsk='cddesk'
-alias cddwn='cddown'
 alias cdfzf='cd "$(find -type d | fzfls)"'
 alias cdfzfsrc='cd "$(findsrc -type d | fzfls)"'
 alias cdlib='cd "$LOCAL_LIB_DIR"'
@@ -35,15 +23,12 @@ alias cdnpmdir='cd "$(findprj -nZ | choose -izp "Directory:")"'
 alias cdnpmroot='cd "$(findprj -nu)"'
 alias cdpic='cd "$PICTURES_DIR"'
 alias cdplay='cd "$PLAYLISTS_DIR"'
-alias cdplst='cdplay'
 alias cdprj='cd "$WORKSPACE_DIR" && cd "$(find -mindepth 1 -maxdepth 1 -type d -printf "%P\0" | sort -z | choose -izp "Project:" -d "$OLDPWD")"'
 alias cdpub='cd "$PUBLIC_DIR"'
-alias cdtemp='cd "$TEMP_DIR"'
 alias cdtmp='cd "$TEMP_DIR"'
 alias cdvid='cd "$VIDEOS_DIR"'
 alias cdvol='cd "$VOLUMES_DIR"'
 alias cdwork='cd "$WORKSPACE_DIR"'
-alias cdwrk='cdwork'
 
 # Clipboard
 alias clipget='clipbrd get'
@@ -69,9 +54,6 @@ alias dotcode='dotenv code ~/.dotfiles.code-workspace'
 alias edit='$EDITOR_CMD'
 alias editpipe='xpipe $EDITOR_CMD'
 
-# Exif
-alias exiffzf='exiftool "$(find -type f | fzfexif)"'
-
 # Grep
 alias grep='grep --color=auto'
 alias egrep='grep --extended-regexp'
@@ -82,10 +64,7 @@ alias pgrep='grep --perl-regexp'
 alias findsrc='findex -exclude vplo'
 
 # Fzf
-alias fzfbat='fzf --preview="bat --color=always {}"'
 alias fzfls='fzf --preview="ls -l --almost-all --human-readable --color=always {}"'
-alias fzfexif='fzf --preview="exiftool {}"'
-alias fzfxargs='fzf --multi --read0 --print0 | xargs -0r'
 alias fzfpac='fzf --multi --no-sort --ansi --preview="pacaur -Si {2}" | cut -d" " -f2'
 
 # Git
@@ -193,7 +172,3 @@ alias termfit='cut --characters=-$COLUMNS'
 
 # Wc
 alias wcl='wc --lines'
-
-# Xargs
-alias xargsfzf='find -print0 | fzfxargs'
-alias xargsfzfsrc='findsrc -print0 | fzfxargs'
