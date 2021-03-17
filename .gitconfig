@@ -7,6 +7,9 @@
 [http]
     postBuffer = 134217728 # 128 MiB
 [alias]
+    ca = commit --all
+    cm = commit --message
+    cam = commit --all --message
     chmodx = add --chmod=+x --
     cmpb = cmp-branches
     diffc = diff --word-diff-regex=.
@@ -25,6 +28,7 @@
     logu =  log --oneline --no-decorate HEAD --not @{upstream}
     logux =  logu --no-merges
     lsb = ls-branches
+    p = pull
     ss = super-status
 [include]
     path = ~/.gitconfig.local
