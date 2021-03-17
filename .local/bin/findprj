@@ -18,6 +18,8 @@ help() {
 		  -v  Include projects using version control system.
 		  -m  Include Maven projects.
 		  -n  Include Node.js projects.
+		  -d  Min depth for downward search.
+		  -D  Max depth for downward search.
 		  -u  Search upwards to find the topmost project root.
 		  -Z  Print results delimited by NUL, not newline.
 		  -h  Print this help.
@@ -31,15 +33,19 @@ main() {
   local vcs=false
   local maven=false
   local node=false
+  local min_depth=
+  local max_depth=
   local upwards=false
   local null_out=false
   local opt
 
-  while getopts ":vmnuZh" opt; do
+  while getopts ":vmnd:D:uZh" opt; do
     case "$opt" in
       v) vcs=true ;;
       m) maven=true ;;
       n) node=true ;;
+      d) min_depth=$OPTARG ;;
+      D) max_depth=$OPTARG ;;
       u) upwards=true ;;
       Z) null_out=true ;;
       h) help; exit ;;
@@ -125,9 +131,12 @@ find_upwards() {
 }
 
 find_downards() {
+  local args=()
+  [[ $min_depth ]] && args+=("-mindepth" "$min_depth")
+  [[ $max_depth ]] && args+=("-maxdepth" "$max_depth")
   # A directory will be printed twice if if contains two different
   # project files, so we are using 'sort --unique' to merge them.
-  findex "$path" -exclude vploD "${expression[@]}" \
+  findex "$path" "${args[@]}" -exclude vploD "${expression[@]}" \
     | LC_ALL=C sort --unique --zero-terminated \
     | replace_line_endings \
     | check_any_result \
