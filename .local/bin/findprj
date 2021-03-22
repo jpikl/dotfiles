@@ -79,6 +79,9 @@ main() {
       ".bzr" # Bazaar
       ".svn" # Subversion
     )
+    files+=(
+      ".git" # Git (worktree)
+    )
   fi
 
   if [[ $maven == true ]]; then
