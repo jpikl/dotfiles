@@ -100,7 +100,7 @@ export LINKS_CONFIG_DIR="${CONFIG_DIR##*/}" # Has to be relative to the HOME dir
 export LUAROCKS_CONFIG="$CONFIG_DIR/luarocks/config.lua"
 
 # Configurable tool variables
-BROWSER=${BROWSER:-$(detect_program "chromium chrome firefox" "links lynx")}
+BROWSER=${BROWSER:-$(detect_program "chromium chrome google-chrome google-chrome-stable firefox" "links lynx")}
 CARGO_HOME=$(normalize_path "${CARGO_HOME:-"$HOME/.cargo"}")
 EDITOR=${EDITOR:-$(detect_program "sublime_text subl3 subl code codium" "vim nano")}
 EDITOR_CMD=$EDITOR # EDITOR might get modified later, we use this to preserve the original value
