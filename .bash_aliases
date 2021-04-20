@@ -77,6 +77,10 @@ alias gitffb=' git lsb -b | choose -imp "Fast-forward:" | xargs -r git ff'
 alias gitmb='git lsb -lrC | choose -ip "Merge to \""$(git lsb -c)"\":" | xargs -r git merge'
 alias gitrb='git lsb -lrC | choose -ip "Rebase \""$(git lsb -c)"\" onto:" | xargs -r git rebase'
 
+# Http
+alias hs='http-server'
+alias hsdev='hs -c-1 -o --' # Disable cache + open browser window
+
 # Iconv
 alias win1250-utf8='iconv --from-code=WINDOWS-1250 --to-code=UTF-8'
 alias utf8-win1250='iconv --from-code=UTF-8 --to-code=WINDOWS-1250'
