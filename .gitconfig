@@ -15,7 +15,7 @@
     diffc = diff --word-diff-regex=.
     diffw = diff --word-diff
     drm= push origin --delete
-    fap = fetch --all --prune
+    fap = fetch --all --tags --prune
     ff = fast-forward
     ffa = fast-forward -a
     gb = gone-branches
