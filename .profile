@@ -108,7 +108,6 @@ FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS:-"--layout=reverse --exact --cycle"}
 GOPATH=$(normalize_path "${GOPATH:-"$HOME/.go"}")
 IDEA_PROPERTIES=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/idea.properties"}")
 NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
-MAVEN_LOCAL_REPO=$(normalize_path "${MAVEN_LOCAL_REPO:-"$LOCAL_LIB_DIR/maven"}")
 
 # Links unfortunately uses the same CONFIG_DIR variable as we do
 if [[ $BROWSER == links ]]; then
@@ -129,7 +128,6 @@ export FZF_DEFAULT_OPTS
 export IDEA_PROPERTIES
 export IDEA_VM_OPTIONS
 export NPM_PREFIX
-export MAVEN_LOCAL_REPO
 export VISUAL=$EDITOR
 
 # Path for binaries
