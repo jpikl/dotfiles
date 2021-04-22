@@ -29,6 +29,7 @@
     logux =  logu --no-merges
     lsb = ls-branches
     p = pull
+    s = status
     ss = super-status
 [include]
     path = ~/.gitconfig.local
