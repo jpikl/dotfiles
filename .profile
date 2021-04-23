@@ -107,7 +107,6 @@ EDITOR_CMD=$EDITOR # EDITOR might get modified later, we use this to preserve th
 FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS:-"--layout=reverse --exact --cycle"}
 GOPATH=$(normalize_path "${GOPATH:-"$HOME/.go"}")
 IDEA_PROPERTIES=$(normalize_path "${IDEA_PROPERTIES:-"$CONFIG_DIR/IntelliJIdea/idea.properties"}")
-NPM_PREFIX=$(normalize_path "${NPM_PREFIX:-"$LOCAL_DIR"}")
 
 # Links unfortunately uses the same CONFIG_DIR variable as we do
 if [[ $BROWSER == links ]]; then
@@ -127,7 +126,6 @@ export EDITOR_CMD
 export FZF_DEFAULT_OPTS
 export IDEA_PROPERTIES
 export IDEA_VM_OPTIONS
-export NPM_PREFIX
 export VISUAL=$EDITOR
 
 # Path for binaries
@@ -137,9 +135,9 @@ PATH=$PATH:$GOPATH/bin
 
 # Path for npm binaries
 if [[ ${MSYSTEM:-} =~ ^MINGW(32|64)$ ]]; then
-  PATH=$PATH:$NPM_PREFIX # Npm on Windows puts binaries here, not in $NPM_PREFIX/bin
+  PATH=$PATH:$HOME/.npm-global # Npm on Windows puts binaries here, not in bin
 elif [[ $NPM_PREFIX != "$LOCAL_DIR" ]]; then
-  PATH=$PATH:$NPM_PREFIX/bin # Otherwise $NPM_PREFIX/bin matches $LOCAL_BIN_DIR which is already in PATH
+  PATH=$PATH:$HOME/.npm-global/bin
 fi
 
 # Export final path
