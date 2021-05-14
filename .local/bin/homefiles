@@ -47,7 +47,7 @@ main() {
 create_dirs() {
   create_dir "$BACKUP_DIR"
   create_dir "$CACHE_DIR"
-  create_dir "$CONFIG_DIR"
+  create_dir "$CONF_DIR"
   create_dir "$DECRYPTED_DIR"
   create_dir "$DESKTOP_DIR"
   create_dir "$DOCUMENTS_DIR"
@@ -75,7 +75,7 @@ create_dir() {
 create_sym_links() {
   create_sym_link "$BINARIES_LINK" "$LOCAL_BIN_DIR"
   create_sym_link "$CACHE_LINK" "$CACHE_DIR"
-  create_sym_link "$CONFIG_LINK" "$CONFIG_DIR"
+  create_sym_link "$CONF_LINK" "$CONF_DIR"
   create_sym_link "$DATA_LINK" "$LOCAL_SHARE_DIR"
   create_sym_link "$LIBRARIES_LINK" "$LOCAL_LIB_DIR"
   create_sym_link "$MEDIA_LINK" "$MEDIA_DIR"

@@ -6,8 +6,8 @@ alias cdbak='cd "$BACKUP_DIR"'
 alias cdbin='cd "$LOCAL_BIN_DIR"'
 ## Change directory to $CACHE_DIR
 alias cdcach='cd "$CACHE_DIR"'
-## Change directory to $CONFIG_DIR
-alias cdconf='cd "$CONFIG_DIR"'
+## Change directory to $CONF_DIR
+alias cdconf='cd "$CONF_DIR"'
 ## Change directory to $LOCAL_SHARE_DIR
 alias cddat='cd "$LOCAL_SHARE_DIR"'
 ## Change directory to $DESKTOP_DIR

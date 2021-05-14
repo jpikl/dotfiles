@@ -2,7 +2,7 @@
 
 # Home directories
 export CACHE_DIR="$HOME/.cache"
-export CONFIG_DIR="$HOME/.config"
+export CONF_DIR="$HOME/.config"
 export LOCAL_DIR="$HOME/.local"
 export LOCAL_BIN_DIR="$LOCAL_DIR/bin"
 export LOCAL_LIB_DIR="$LOCAL_DIR/lib"
