@@ -1,14 +1,17 @@
 {
   "folders": [
     {
+      "path": ".github"
+    },
+    {
       "path": ".local/bin"
     },
     {
       "path": ".local/lib/bash"
     },
     {
-      "path": ".github"
-    }
+      "path": ".bashrc.d"
+    },
   ],
   "settings": {
     "shellcheck.enableQuickFix": true,

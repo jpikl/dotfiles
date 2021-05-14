@@ -1,62 +1,21 @@
 # shellcheck shell=bash
 
-# Check interactive mode
-if [[ $- != *i* ]]; then
-  echo "${BASH_SOURCE[0]} sourced in non-interactive bash mode" >&2
-  return
-fi
+# Numbering convention of scripts in ~/.bashrc.d/
+# 0x - Initialization
+# 1x - Bash configuration
+# 2x - Environment setup
+# 3x - Core utilities (expected to be always available)
+# 4x - System utilities (might not be available in MinGW)
+# 5x - Installed applications
+# 6x - Things provided by dotfiles
+# 9x - Cleanup
 
-# Shell options
-shopt -s histappend   # Append entries to history file
-shopt -s globstar     # Enable recursive "**" glob pattern
-
-# Do not add commands starting with space to history + erase duplicates.
-export HISTCONTROL=ignorespace:erasedups
-
-# Tools that initialize environment
-[[ -x "$(command -v dircolors)" ]] && eval "$(dircolors --bourne-shell)"
-[[ -x "$(command -v thefuck)" ]] && eval "$(thefuck --alias)"
-[[ -x "$(command -v starship)" ]] && eval "$(starship init bash)"
-
-# Detect icons support in terminal
-if [[ ! $TERM_ICONS ]]; then
-  if [[ $DISPLAY ]]; then
-    export TERM_ICONS=true
-  else
-    export TERM_ICONS=false
-  fi
-fi
-
-# Use colored pager for man
-if [[ -x $(command -v bat) ]]; then
-  export MANPAGER="$SHELL -c 'col --no-backspaces --spaces | bat --plain --language man'"
-elif [[ -x $(command -v most) ]]; then
-  export MANPAGER=most
-elif [[ -x $(command -v less) ]]; then
-  MANPAGER="env LESS_TERMCAP_mb=$(printf '\e[1;31m') \
-                LESS_TERMCAP_md=$(printf '\e[1;36m') \
-                LESS_TERMCAP_me=$(printf '\e[0m') \
-                LESS_TERMCAP_so=$(printf '\e[01;44;33m') \
-                LESS_TERMCAP_se=$(printf '\e[0m') \
-                LESS_TERMCAP_us=$(printf '\e[1;32m') \
-                LESS_TERMCAP_ue=$(printf '\e[0m') \
-                less"
-  export MANPAGER
-fi
-
-# Bash command_not_found_handle provided by Arch Linux pgkfile package
-# Requires manual DB update using: pkgfile --update
-if [[ -f /usr/share/doc/pkgfile/command-not-found.bash ]]; then
-  # shellcheck disable=SC1091
-  source /usr/share/doc/pkgfile/command-not-found.bash
-fi
-
-# Aliases are in a separate file
-if [[ -f ~/.bash_aliases ]]; then
-  source ~/.bash_aliases
-fi
-
-# Local override not committed in git
-if [[ -f ~/.bashrc.local ]]; then
-  source ~/.bashrc.local
+if [[ $- == *i* ]]; then
+  for file in ~/.bashrc.d/*.sh; do
+    echo "Sourcing $file"
+    source "$file"
+  done
+  unset file
+else
+  echo "${BASH_SOURCE[0]} sourced in non-interactive mode" >&2
 fi
