@@ -3,6 +3,9 @@
 # Backup
 alias bakmuslist='dirtree -ds $MUSIC_DIR > $BACKUP_DIR/music.txt'
 
+# Bash
+alias bashreload='source ~/.bash_profile'
+
 # Cd
 alias cdbak='cd "$BACKUP_DIR"'
 alias cdbin='cd "$LOCAL_BIN_DIR"'
@@ -140,6 +143,7 @@ alias mvncist='mvnci -Dmaven.test.skip=true'
 alias mvndeps='mvn dependency:tree'
 alias mvni='mvn install'
 alias mvnist='mvni -Dmaven.test.skip=true'
+alias mvnprgb='git lsb -r | xargs -r mvnpgb --'
 
 # Npm
 alias npmd='npmr -1 webpack-dev dev start'
