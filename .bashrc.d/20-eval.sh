@@ -11,13 +11,3 @@ if [[ -f /usr/share/doc/pkgfile/command-not-found.bash ]]; then
   # shellcheck disable=SC1091
   source /usr/share/doc/pkgfile/command-not-found.bash
 fi
-
-# Icon support in terminal
-# This is later used by some aliases and by ~/.local/bin/ sripts.
-if [[ ! $TERM_ICONS ]]; then
-  if [[ $DISPLAY ]]; then
-    export TERM_ICONS=true
-  else
-    export TERM_ICONS=false
-  fi
-fi
