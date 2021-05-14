@@ -12,6 +12,9 @@
     {
       "path": ".bashrc.d"
     },
+    {
+      "path": ".profile.d"
+    },
   ],
   "settings": {
     "shellcheck.enableQuickFix": true,
