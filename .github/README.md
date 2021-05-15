@@ -9,17 +9,17 @@ The following instructions ate intended for:
 
 ## Contents
 
-- [:pushpin: Prerequisites](#pushpin-prerequisites)
-- [:package: Installation](#package-installation)
-- [:wrench: Configuration](#wrench-configuration)
-- [:construction: Repository](#construction-repository)
-- [:card_file_box: Bash](#card_file_box-bash)
-- [:zap: Tools](#zap-tools)
-- [:desktop_computer: Terminal](#desktop_computer-terminal)
-- [:ambulance: Troubleshooting](#ambulance-troubleshooting)
-- [:page_facing_up: License](#page_facing_up-license)
+- 📌 [Prerequisites](#-prerequisites)
+- 📦 [Installation](#-installation)
+- 🔧 [Configuration](#-configuration)
+- 🚧 [Repository](#-repository)
+- 🗃️ [Bash](#-bash)
+- ⚡ [Tools](#-tools)
+- 🖥️ [Terminal](#-terminal)
+- 🚑 [Troubleshooting](#-troubleshooting)
+- 📄 [License](#-license)
 
-## :pushpin: Prerequisites
+## 📌 Prerequisites
 
 Linux distro, [WSL][wsl] or [Git for Windows][git-win] with:
 
@@ -28,10 +28,10 @@ Linux distro, [WSL][wsl] or [Git for Windows][git-win] with:
 
 Compatibility with BSD, OS X or others is not guaranteed.
 
-## :package: Installation
+## 📦 Installation
 
-> :rotating_light: Be careful when running any of the commands mentioned
-> bellow. You can easily lose your own configuration or data if you don't
+> 🚨 Be careful when running any of the commands mentioned bellow.
+> You can easily lose your own configuration or data if you don't
 > know what you are doing.
 
 Clone bare repository to `~/.dotfiles.git` directory.
@@ -67,7 +67,7 @@ Try `-h` option for usage.
 homefiles -h
 ```
 
-## :wrench: Configuration
+## 🔧 Configuration
 
 The following files are not part of the `~/.dotfiles.git` repository and
 are intended for machine specific configuration. By convention, a configuration
@@ -91,7 +91,7 @@ inside of them for usage.
 
 - `~/.gitconfig.windows` - Tweaks for Git for Windows.
 
-## :construction: Repository
+## 🚧 Repository
 
 Git commands for the `~/.dotfiles.git` repository have to be executed
 using `dotfiles` command.
@@ -117,7 +117,7 @@ dotenv git status # Same as 'dotfiles status'
 dotenv vscode     # Run Visual Studio Code with set-up environment
 ```
 
-## :card_file_box: Bash
+## 🗃️ Bash
 
 Bash files are managed using the `bashfiles` command.
 Try `-h` option for usage.
@@ -147,7 +147,7 @@ bashfiles describe # Print names and descriptions
 bashfiles markdown # The same but with Markdown output
 ```
 
-## :zap: Tools
+## ⚡ Tools
 
 ### Included in this repository
 
@@ -172,9 +172,9 @@ choco install bat fd fzf ripgrep           # On Windows using chocolatey
 cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
 ```
 
-## :desktop_computer: Terminal
+## 🖥️ Terminal
 
-> :fire: The following is highly opinionated.
+> 🔥 The following is highly opinionated.
 
 ### Emulators
 
@@ -224,7 +224,7 @@ Dark and Oceanic [materiallshell themes][material-colors].
 
 Bold colors #8-15 are the same as regular colors #0-7.
 
-## :ambulance: Troubleshooting
+## 🚑 Troubleshooting
 
 ### Poor Git performance on Windows
 
@@ -268,7 +268,7 @@ There are two workarounds using [winpty][winpty]:
    This unfortunately breaks some other commands like `bat` which
    stops printing colors.
 
-## :page_facing_up: License
+## 📄 License
 
 Everything in this repository is licensed under the [MIT license](LICENSE.md).
 
