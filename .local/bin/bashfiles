@@ -50,7 +50,9 @@ list_files() {
     ~/.bash_logout
     ~/.bash_profile
     ~/.bashrc
+    ~/.bashrc.d/*.sh
     ~/.profile
+    ~/.profile.d/*.sh
     ~/.local/bin/*
     ~/.local/lib/bash/*.sh
   )

@@ -29,9 +29,13 @@ main() {
     esac
   done
 
-  local sed_opts=(--expression='s/^\s*//' --expression='s/\s*$//')
-  [[ $null_data = true ]] && sed_opts+=(--null-data)
-  sed "${sed_opts[@]}"
+  local expr='s/^\s*//;s/\s*$//'
+
+  if [[ $null_data = true ]]; then
+    sed --null-data "$expr"
+  else
+    sed "$expr"
+  fi
 }
 
 main "$@"
