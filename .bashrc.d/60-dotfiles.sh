@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-## Execute command with Git dotfiles environment
+## Execute command with dotfiles environment
 alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
 
 ## Git for dotfiles

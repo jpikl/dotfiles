@@ -151,7 +151,7 @@ bashfiles markdown # The same but with Markdown output
 
 ### Included in this repository
 
-See generated list of [bianaries and aliases](commands).
+See generated list of [bianaries and aliases](commands.md).
 
 ### Recommended to install
 
