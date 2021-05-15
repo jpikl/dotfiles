@@ -52,7 +52,7 @@ alias cdprj='cd "$WORKSPACE_DIR" && cd "$(findprj -vZ -d2 -D3 | sed -z "s;^\./;;
 
 ## Change directory to a Maven project search result
 alias cdmvndir='cd "$(findprj -mZ | choose -izp "Directory:")"'
-## Change directory to a Maven project root (upward search)
+## Change directory to a Maven project root
 alias cdmvnroot='cd "$(findprj -mu)"'
 
 ## Change directory to a NodeJS project search result
