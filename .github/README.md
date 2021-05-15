@@ -274,16 +274,16 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 
 [bash]: https://www.gnu.org/software/bash
 [bat]: https://github.com/sharkdp/bat
-[color-0]: https://placehold.it/16/252525/000000?text=+
-[color-1]: https://placehold.it/16/FF5252/000000?text=+
-[color-2]: https://placehold.it/16/C3D82C/000000?text=+
-[color-3]: https://placehold.it/16/FFC135/000000?text=+
-[color-4]: https://placehold.it/16/42A5F5/000000?text=+
-[color-5]: https://placehold.it/16/D81B60/000000?text=+
-[color-6]: https://placehold.it/16/00ACC1/000000?text=+
-[color-7]: https://placehold.it/16/F5F5F5/000000?text=+
-[color-b]: https://placehold.it/16/263238/000000?text=+
-[color-f]: https://placehold.it/16/A1B0B8/000000?text=+
+[color-0]: https://via.placeholder.com/16/252525/000000?text=+
+[color-1]: https://via.placeholder.com/16/FF5252/000000?text=+
+[color-2]: https://via.placeholder.com/16/C3D82C/000000?text=+
+[color-3]: https://via.placeholder.com/16/FFC135/000000?text=+
+[color-4]: https://via.placeholder.com/16/42A5F5/000000?text=+
+[color-5]: https://via.placeholder.com/16/D81B60/000000?text=+
+[color-6]: https://via.placeholder.com/16/00ACC1/000000?text=+
+[color-7]: https://via.placeholder.com/16/F5F5F5/000000?text=+
+[color-b]: https://via.placeholder.com/16/263238/000000?text=+
+[color-f]: https://via.placeholder.com/16/A1B0B8/000000?text=+
 [exa]: https://github.com/ogham/exa
 [fd]: https://github.com/sharkdp/fd
 [fzf-charset-issue]: https://github.com/junegunn/fzf/issues/963
