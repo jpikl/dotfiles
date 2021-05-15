@@ -147,11 +147,13 @@ bashfiles describe # Print names and descriptions
 bashfiles markdown # The same but with Markdown output
 ```
 
-See [example output](#dotfiles-tools) below.
-
 ## :zap: Tools
 
-Tools recommended to install:
+### Included in this repository
+
+See generated list of [bianaries and aliases](commands).
+
+### Recommended to install
 
 - [bat][bat] - A cat(1) clone with wings.
 - [exa][exa] - A modern version of ‘ls’.
@@ -169,48 +171,6 @@ pacaur -Sy starship tealdeer               # On ArchLinux (AUR)
 choco install bat fd fzf ripgrep           # On Windows using chocolatey
 cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
 ```
-
-<a name="dotfiles-tools"></a>
-Tools which are part of `~/.dotfiles.git` repository:
-
-- [bashfiles](../.local/bin/bashfiles) - Manage Bash files from dotfiles repository.
-- [bashgen](../.local/bin/bashgen) - Generate new Bash script using itself as a template.
-- [choose](../.local/bin/choose) - Let user choose from values. Simple fzf frontend with Bash fallback.
-- [clipbrd](../.local/bin/clipbrd) - Access clipboard contents.
-- [confirm](../.local/bin/confirm) - Aks user for confirmation.
-- [direnc](../.local/bin/direnc) - List or (un)mount encrypted directories. Simple encfs frontend.
-- [dirsync](../.local/bin/dirsync) - Synchronize two directories. Simple rsync frontend.
-- [dirtree](../.local/bin/dirtree) - List contents of a directory as tree. Bash implementation of tree command.
-- [disks](../.local/bin/disks) - List or (un)mount disks. Simple lsblk and udisksctl frontend.
-- [extract](../.local/bin/extract) - Extract or list contents of an archive in nearly any format.
-- [findex](../.local/bin/findex) - Find wrapper with extra capabilities.
-- [findprj](../.local/bin/findprj) - Find root directories of software projects.
-- [findup](../.local/bin/findup) - Find upwards in directory tree.
-- [git-authors](../.local/bin/git-authors) - List authors and number of their Git commits.
-- [git-cmp-branches](../.local/bin/git-cmp-branches) - Compare two Git branches.
-- [git-fast-forward](../.local/bin/git-fast-forward) - Fast-forward local Git branches.
-- [git-gone-branches](../.local/bin/git-gone-branches) - List or delete local Git branches that are gone on remote.
-- [git-ls-branches](../.local/bin/git-ls-branches) - List Git branches in machine-readable format.
-- [git-state](../.local/bin/git-state) - Print state of a Git working tree.
-- [git-super-status](../.local/bin/git-super-status) - Git status on steroids.
-- [guitask](../.local/bin/guitask) - Show GUI progress dialog for a command.
-- [homefiles](../.local/bin/homefiles) - Initialize home directory structure.
-- [jestat](../.local/bin/jestat) - Print statistics of Java exceptions in a log file.
-- [mpdm3u](../.local/bin/mpdm3u) - Generate M3U playlists from MPD database.
-- [mvnpgb](../.local/bin/mvnpgb) - Print property of a Maven project in Git branches.
-- [mvnsv](../.local/bin/mvnsv) - Set version of a Maven project.
-- [npmr](../.local/bin/npmr) - List or (silently) run scripts of a npm package.
-- [open](../.local/bin/open) - Open file or URL in the user's preferred application.
-- [pacfind](../.local/bin/pacfind) - Find ArchLinux packages. Simple pacman frontend wit AUR support.
-- [refresh](../.local/bin/refresh) - Periodically refresh output of a command on change.
-- [slice](../.local/bin/slice) - Get slice of input. Simple head/tail frontend.
-- [sshctl](../.local/bin/sshctl) - Control ssh-agent process.
-- [sshgen](../.local/bin/sshgen) - Generate SSH key with user-friendly CLI wizard.
-- [trim](../.local/bin/trim) - Trim input lines.
-- [wman](../.local/bin/wman) - Open online man pages in web browser.
-- [xpipe](../.local/bin/xpipe) - Execute command on a file constructed from standard input.
-- [yodl](../.local/bin/yodl) - Simple youtube-dl frontend.
-
 
 ## :desktop_computer: Terminal
 
