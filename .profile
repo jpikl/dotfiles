@@ -10,7 +10,6 @@
 # 9x - Cleanup
 
 for file in ~/.profile.d/*.sh; do
-  echo "Sourcing $file"
   source "$file"
 done
 
