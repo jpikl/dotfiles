@@ -1,4 +1,2 @@
-rocks_trees = {
-    { name = "user", root = home .. "/.local" },
-    { name = "system", root = "/usr" },
-}
+home_tree = home .. "/.local"
+local_by_default = true
