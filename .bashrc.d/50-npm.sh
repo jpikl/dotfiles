@@ -1,11 +1,8 @@
 # shellcheck shell=bash
 
 # shellcheck disable=SC2139
-## Install globaly the mostt essential npm packages
+## Install globaly the most essential npm packages
 alias npmboot="npmgi ${NPM_BOOT_PACKAGES[*]}"
-
-## Start npm development script
-alias npmd='npmr -1 webpack-dev dev start'
 
 ## Npm in global mode
 alias npmg='npm --global'
@@ -28,3 +25,6 @@ alias npmup='npm update'
 alias npmun='npm uninstall'
 ## List installed npm packages
 alias npml='npm --depth=0 list'
+
+## Start npm development script
+alias npmd='npmr -1 webpack-dev dev start'
