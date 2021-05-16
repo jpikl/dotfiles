@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-source "$BASH_LIB_DIR/core.sh"
+source ~/.local/lib/bash/core.sh
 
-readonly SC_EXCLUDE=SC1090,SC1091 # Problems with sourcing of other files
+readonly SC_EXCLUDE=SC1090 # Problems with sourcing of other files
 
 help() {
   cat <<-EOT

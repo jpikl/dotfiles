@@ -25,7 +25,6 @@ export USER_LIBRARIES_LINK=${USER_LIBRARIES_LINK:-"$HOME/Libraries"}
 export USER_MEDIA_LINK=${USER_MEDIA_LINK:-"$HOME/Media"}
 
 # Home directories
-export BASH_LIB_DIR="$USER_LIBRARIES_DIR/bash"
 export USER_BINARIES_DIR=".$HOME/.local/bin"
 export USER_CACHE_DIR="$HOME/.cache"
 export USER_CONFIG_DIR="$HOME/.config"
