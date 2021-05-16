@@ -1,6 +1,7 @@
 # shellcheck shell=bash
 
 # Configurable home directories
+export USER_AUDIO_DIR=${USER_BACKUP_DIR:-"$HOME/Audio"}
 export USER_BACKUP_DIR=${USER_BACKUP_DIR:-"$HOME/Backup"}
 export USER_DECRYPTED_DIR=${USER_DECRYPTED_DIR:-"$HOME/Private"}
 export USER_DESKTOP_DIR=${USER_DESKTOP_DIR:-"$HOME/Desktop"}

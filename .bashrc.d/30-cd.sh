@@ -5,6 +5,8 @@ alias cdbarc='cd ~/.bashrc.d'
 ## Change directory to ~/.profile.d
 alias cdprof='cd ~/.profile.d'
 
+## Change directory to $USER_AUDIO_DIR
+alias cdaud='cd "$USER_AUDIO_DIR"'
 ## Change directory to $USER_BACKUP_DIR
 alias cdbak='cd "$USER_BACKUP_DIR"'
 ## Change directory to $USER_BINARIES_DIR

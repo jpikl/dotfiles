@@ -45,6 +45,7 @@ main() {
 }
 
 create_dirs() {
+  create_dir "$USER_AUDIO_DIR"
   create_dir "$USER_BACKUP_DIR"
   create_dir "$USER_CACHE_DIR"
   create_dir "$USER_CONFIG_DIR"
