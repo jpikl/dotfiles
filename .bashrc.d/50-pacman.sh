@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 ## Select packages to install using pacman/pacaur
-alias paci='pacfind -lgrc | fzfpacman | xargs -ro pacman -S'
+alias paci='pacfind -rc | fzfpacman | xargs -ro pacman -S'
 ## Select packages to install using pacman/pacaur (with refresh)
 alias pacii='pacman -Sy && paci'
 
