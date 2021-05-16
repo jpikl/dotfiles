@@ -17,6 +17,3 @@ alias mvndeps='mvn dependency:tree'
 mvnsv() {
   mvn versions:set -DnewVersion="$1" -DgenerateBackupPoms=false --quiet
 }
-
-## Print maven property for each remote Git branch
-alias mvnprgb='git lsb -r | xargs -r mvnpgb --'

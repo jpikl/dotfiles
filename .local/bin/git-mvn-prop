@@ -9,11 +9,11 @@ help() {
 		Print property of a Maven project in Git branches.
 
 		Usage:
-		  $(self) [<options>] <property> <branch>...
+		  $(self) [<options>] <property> [<branch>...]
 
 		Args:
 		  <property>   Name of a property.
-		  <branch>...  Git branches.
+		  <branch>...  Git branches (all remote branches by default).
 
 		Options:
 		  -h  Print this help.
@@ -33,24 +33,32 @@ main() {
   done
 
   shift $((OPTIND - 1))
-  [[ $# -le 1 ]] && die_missing_arg
+  [[ $# -eq 0 ]] && die_missing_arg
 
   local property=$1
   shift 1
 
   local branch
-  for branch; do
-    print_table_row "$branch" "$property"
+  local branches
+
+  if [[ $# -gt 0 ]]; then
+    branches=("$@")
+  else
+    mapfile -t branches < <(git ls-branches -r)
+  fi
+
+  for branch in "${branches[@]}"; do
+    print_row "$branch" "$property"
   done | format_table
 }
 
-print_table_row() {
+print_row() {
   local value
-  value=$(print_property_value "$1" "$2") || value="?"
+  value=$(print_value "$1" "$2") || value="?"
   printf "%s;%s\n" "$value" "$1"
 }
 
-print_property_value() {
+print_value() {
   git grep --fixed-strings "<$2>" "$1" -- pom.xml \
     | sed --regexp-extended 's/.*>(.*)<\/.*/\1/'
 }

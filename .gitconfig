@@ -19,6 +19,7 @@
     ff = fast-forward
     ffa = fast-forward -a
     gb = gone-branches
+    mvnp = mvn-prop
     loga = log --oneline --decorate --graph --all
     logax = loga --no-merges
     logd =  log --oneline --no-decorate @{upstream} --not HEAD
