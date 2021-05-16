@@ -1,5 +1,10 @@
 # shellcheck shell=bash
 
+## Change directory to ~/.bashrc.d
+alias cdbarc='cd ~/.bashrc.d'
+## Change directory to ~/.profile.d
+alias cdprof='cd ~/.profile.d'
+
 ## Change directory to $BACKUP_DIR
 alias cdbak='cd "$BACKUP_DIR"'
 ## Change directory to $LOCAL_BIN_DIR
