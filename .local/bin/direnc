@@ -23,8 +23,8 @@ help() {
 		  -h        Print this help.
 
 		Environment vars:
-		  ENCRYPTED_DIR  Default path to encrypted directory.
-		  DECRYPTED_DIR  Default path to decrypted directory.
+		  USER_ENCRYPTED_DIR  Default path to encrypted directory.
+		  USER_DECRYPTED_DIR  Default path to decrypted directory.
 
 		Default command is 'status'.
 	EOT
@@ -35,8 +35,8 @@ main() {
   local dec_dir
   local opt
 
-  enc_dir=$(path_from_env ENCRYPTED_DIR)
-  dec_dir=$(path_from_env DECRYPTED_DIR)
+  enc_dir=$(path_from_env USER_ENCRYPTED_DIR)
+  dec_dir=$(path_from_env USER_DECRYPTED_DIR)
 
   while getopts ":e:d:h" opt; do
     case "$opt" in

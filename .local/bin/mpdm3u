@@ -24,8 +24,8 @@ help() {
 		  -h        Print this help.
 
 		Environment vars:
-		  MUSIC_DIR      Default path to MPD music directory.
-		  PLAYLISTS_DIR  Default path to output directory.
+		  USER_MUSIC_DIR      Default path to MPD music directory.
+		  USER_PLAYLISTS_DIR  Default path to output directory.
 
 		Playlists are organized by year using the following pattern.
 		  "{year}/{artist} - {album}.m3u"
@@ -39,8 +39,8 @@ main() {
   local verbose=false
   local opt
 
-  music_dir=$(path_from_env MUSIC_DIR)
-  output_dir=$(path_from_env PLAYLISTS_DIR)
+  music_dir=$(path_from_env USER_MUSIC_DIR)
+  output_dir=$(path_from_env USER_PLAYLISTS_DIR)
 
   while getopts ":m:o:avh" opt; do
     case "$opt" in

@@ -5,42 +5,42 @@ alias cdbarc='cd ~/.bashrc.d'
 ## Change directory to ~/.profile.d
 alias cdprof='cd ~/.profile.d'
 
-## Change directory to $BACKUP_DIR
-alias cdbak='cd "$BACKUP_DIR"'
-## Change directory to $LOCAL_BIN_DIR
-alias cdbin='cd "$LOCAL_BIN_DIR"'
-## Change directory to $CACHE_DIR
-alias cdcach='cd "$CACHE_DIR"'
-## Change directory to $CONF_DIR
-alias cdconf='cd "$CONF_DIR"'
-## Change directory to $LOCAL_SHARE_DIR
-alias cddat='cd "$LOCAL_SHARE_DIR"'
-## Change directory to $DESKTOP_DIR
-alias cddesk='cd "$DESKTOP_DIR"'
-## Change directory to $DOCUMENTS_DIR
-alias cddoc='cd "$DOCUMENTS_DIR"'
-## Change directory to $DOWNLOAD_DIR
-alias cddown='cd "$DOWNLOAD_DIR"'
-## Change directory to $LOCAL_LIB_DIR
-alias cdlib='cd "$LOCAL_LIB_DIR"'
-## Change directory to $MEDIA_DIR
-alias cdmed='cd "$MEDIA_DIR"'
-## Change directory to $MUSIC_DIR
-alias cdmus='cd "$MUSIC_DIR"'
-## Change directory to $PICTURES_DIR
-alias cdpic='cd "$PICTURES_DIR"'
-## Change directory to $PLAYLISTS_DIR
-alias cdplay='cd "$PLAYLISTS_DIR"'
-## Change directory to $PUBLIC_DIR
-alias cdpub='cd "$PUBLIC_DIR"'
-## Change directory to $TEMP_DIR
-alias cdtmp='cd "$TEMP_DIR"'
-## Change directory to $VIDEOS_DIR
-alias cdvid='cd "$VIDEOS_DIR"'
-## Change directory to $VOLUMES_DIR
-alias cdvol='cd "$VOLUMES_DIR"'
-## Change directory to $WORKSPACE_DIR
-alias cdwork='cd "$WORKSPACE_DIR"'
+## Change directory to $USER_BACKUP_DIR
+alias cdbak='cd "$USER_BACKUP_DIR"'
+## Change directory to $USER_BINARIES_DIR
+alias cdbin='cd "$USER_BINARIES_DIR"'
+## Change directory to $USER_CACHE_DIR
+alias cdcach='cd "$USER_CACHE_DIR"'
+## Change directory to $USER_CONFIG_DIR
+alias cdconf='cd "$USER_CONFIG_DIR"'
+## Change directory to $USER_DATA_DIR
+alias cddat='cd "$USER_DATA_DIR"'
+## Change directory to $USER_DESKTOP_DIR
+alias cddesk='cd "$USER_DESKTOP_DIR"'
+## Change directory to $USER_DOCUMENTS_DIR
+alias cddoc='cd "$USER_DOCUMENTS_DIR"'
+## Change directory to $USER_DOWNLOAD_DIR
+alias cddown='cd "$USER_DOWNLOAD_DIR"'
+## Change directory to $USER_LIBRARIES_DIR
+alias cdlib='cd "$USER_LIBRARIES_DIR"'
+## Change directory to $USER_MEDIA_DIR
+alias cdmed='cd "$USER_MEDIA_DIR"'
+## Change directory to $USER_MUSIC_DIR
+alias cdmus='cd "$USER_MUSIC_DIR"'
+## Change directory to $USER_PICTURES_DIR
+alias cdpic='cd "$USER_PICTURES_DIR"'
+## Change directory to $USER_PLAYLISTS_DIR
+alias cdplay='cd "$USER_PLAYLISTS_DIR"'
+## Change directory to $USER_PUBLIC_DIR
+alias cdpub='cd "$USER_PUBLIC_DIR"'
+## Change directory to $USER_TEMP_DIR
+alias cdtmp='cd "$USER_TEMP_DIR"'
+## Change directory to $USER_VIDEOS_DIR
+alias cdvid='cd "$USER_VIDEOS_DIR"'
+## Change directory to $USER_GVFS_DIR
+alias cdvol='cd "$USER_GVFS_DIR"'
+## Change directory to $USER_WORKSPACE_DIR
+alias cdwork='cd "$USER_WORKSPACE_DIR"'
 
 ## Save current working directory
 alias cdsave='echo "$PWD" > $HOME/.local/share/cd'

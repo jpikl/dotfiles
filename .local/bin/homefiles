@@ -45,24 +45,24 @@ main() {
 }
 
 create_dirs() {
-  create_dir "$BACKUP_DIR"
-  create_dir "$CACHE_DIR"
-  create_dir "$CONF_DIR"
-  create_dir "$DECRYPTED_DIR"
-  create_dir "$DESKTOP_DIR"
-  create_dir "$DOCUMENTS_DIR"
-  create_dir "$DOWNLOAD_DIR"
-  create_dir "$ENCRYPTED_DIR"
-  create_dir "$LOCAL_BIN_DIR"
-  create_dir "$LOCAL_LIB_DIR"
-  create_dir "$LOCAL_SHARE_DIR"
-  create_dir "$MUSIC_DIR"
-  create_dir "$PICTURES_DIR"
-  create_dir "$PLAYLISTS_DIR"
-  create_dir "$PUBLIC_DIR"
-  create_dir "$TEMP_DIR"
-  create_dir "$VIDEOS_DIR"
-  create_dir "$WORKSPACE_DIR"
+  create_dir "$USER_BACKUP_DIR"
+  create_dir "$USER_CACHE_DIR"
+  create_dir "$USER_CONFIG_DIR"
+  create_dir "$USER_DECRYPTED_DIR"
+  create_dir "$USER_DESKTOP_DIR"
+  create_dir "$USER_DOCUMENTS_DIR"
+  create_dir "$USER_DOWNLOAD_DIR"
+  create_dir "$USER_ENCRYPTED_DIR"
+  create_dir "$USER_BINARIES_DIR"
+  create_dir "$USER_LIBRARIES_DIR"
+  create_dir "$USER_DATA_DIR"
+  create_dir "$USER_MUSIC_DIR"
+  create_dir "$USER_PICTURES_DIR"
+  create_dir "$USER_PLAYLISTS_DIR"
+  create_dir "$USER_PUBLIC_DIR"
+  create_dir "$USER_TEMP_DIR"
+  create_dir "$USER_VIDEOS_DIR"
+  create_dir "$USER_WORKSPACE_DIR"
 }
 
 create_dir() {
@@ -73,13 +73,13 @@ create_dir() {
 }
 
 create_sym_links() {
-  create_sym_link "$BINARIES_LINK" "$LOCAL_BIN_DIR"
-  create_sym_link "$CACHE_LINK" "$CACHE_DIR"
-  create_sym_link "$CONF_LINK" "$CONF_DIR"
-  create_sym_link "$DATA_LINK" "$LOCAL_SHARE_DIR"
-  create_sym_link "$LIBRARIES_LINK" "$LOCAL_LIB_DIR"
-  create_sym_link "$MEDIA_LINK" "$MEDIA_DIR"
-  create_sym_link "$VOLUMES_LINK" "$VOLUMES_DIR"
+  create_sym_link "$USER_BINARIES_LINK" "$USER_BINARIES_DIR"
+  create_sym_link "$USER_CACHE_LINK" "$USER_CACHE_DIR"
+  create_sym_link "$USER_CONFIG_LINK" "$USER_CONFIG_DIR"
+  create_sym_link "$USER_DATA_LINK" "$USER_DATA_DIR"
+  create_sym_link "$USER_LIBRARIES_LINK" "$USER_LIBRARIES_DIR"
+  create_sym_link "$USER_MEDIA_LINK" "$USER_MEDIA_DIR"
+  create_sym_link "$USER_GVFS_LINK" "$USER_GVFS_DIR"
 }
 
 create_sym_link() {
@@ -100,7 +100,7 @@ download_font() {
   local font
   font=$(basename "$1")
 
-  local dir=$LOCAL_SHARE_DIR/fonts
+  local dir=$USER_DATA_DIR/fonts
   local file=$dir/$font
 
   if [[ ! -f "$file" ]] || confirm "Re-download $font?"; then
