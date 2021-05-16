@@ -9,6 +9,7 @@ export NPM_BOOT_PACKAGES=(
   markdownlint-cli
   npm-check
   npm-check-updates
+  prettier
   stylelint
   yarn
 )
