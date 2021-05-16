@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$BASH_LIB_DIR/core.sh"
 
-readonly SC_EXCLUDE=SC1090 # Can't follow non-constant source.
+readonly SC_EXCLUDE=SC1090,SC1091 # Problems with sourcing of other files
 
 help() {
   cat <<-EOT
