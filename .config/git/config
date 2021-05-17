@@ -31,6 +31,5 @@
     lsb = ls-branches
     p = pull
     s = status
-    ss = super-status
 [include]
     path = ~/.config/git/config.local
