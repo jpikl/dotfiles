@@ -20,3 +20,12 @@ alias gitffb=' git lsb -b | choose -imp "Fast-forward:" | xargs -r git ff'
 alias gitmb='git lsb -lrC | choose -ip "Merge to \""$(git lsb -c)"\":" | xargs -r git merge'
 ## Select and rease Git branch
 alias gitrb='git lsb -lrC | choose -ip "Rebase \""$(git lsb -c)"\" onto:" | xargs -r git rebase'
+
+# Select files to add to Git
+alias gitadd='git status --porcelain --no-renames -z | grep -zZ "^.[A-Z]" | cut -zc4- | choose -izmp "Add files" | xargs -r git add -v --'
+# Select Git files to restore
+alias gitres='git status --porcelain --no-renames -z | grep -zZ "^.[A-Z]" | cut -zc4- | choose -izmp "Restore files" | xargs -r git restore --'
+# Select staged Git files to restore
+alias gitress='git status --porcelain --no-renames -z | grep -zZ "^[A-Z]." | cut -zc4- | choose -izmp "Restore staged files" | xargs -r git restore -S --'
+# Select untracked files to delete
+alias gitdun='git status --porcelain --no-renames -z | grep -zZ "??" | cut -zc4- | choose -izmp "Delete untracked files" | xargs -r rm -vrf --'
