@@ -33,4 +33,4 @@
     s = status
     ss = super-status
 [include]
-    path = ~/.gitconfig.local
+    path = ~/.config/git/config.local

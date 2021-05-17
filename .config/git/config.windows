@@ -1,10 +1,10 @@
 # Tweaks for Git for Windows.
 #
-# Add the following to ~/.gitconfig.local
+# Add the following to ~/.config/git/config.local
 # to include this configuration file.
 #
 # [include]
-#    path = ~/.gitconfig.windows
+#    path = ~/.config/git/config.windows
 #
 
 [core]
