@@ -2,7 +2,7 @@
 
 # shellcheck disable=SC2139
 ## Install globaly the most essential npm packages
-alias npmboot="npmgi ${NPM_BOOT_PACKAGES[*]}"
+alias npmboot="xargs --arg-file=""$USER_CONFIG_DIR/npm/boot"" npm --global install"
 
 ## Npm in global mode
 alias npmg='npm --global'

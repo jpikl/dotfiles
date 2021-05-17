@@ -15,8 +15,8 @@ fi
 # 6x - Things provided by dotfiles
 # 9x - Cleanup
 
-for file in ~/.bashrc.d/*.sh; do
-  source "$file"
+for rc in ~/.bashrc.d/*.sh; do
+  source "$rc"
 done
 
-unset file
+unset rc

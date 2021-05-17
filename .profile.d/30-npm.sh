@@ -1,26 +1,11 @@
 # shellcheck shell=bash
 
-# The most essential npm packages
-export NPM_BOOT_PACKAGES=(
-  chokidar-cli
-  eslint
-  expo-cli
-  http-server
-  markdownlint-cli
-  npm-check
-  npm-check-updates
-  prettier
-  stylelint
-  yarn
-)
+# Main npm configuration
+export NPM_CONFIG_USERCONFIG=$USER_CONFIG_DIR/npm/npmrc
 
-# Prefix for installing global NPM packages
-# The same value should configured in ~/.npmrc
-export NPM_PREFIX=$HOME/.npm-global
-
-# Update path for npm binaries
+# Global npm binaries should be installed to the $USER_BINARIES_DIR
+# which is already in PATH. On Windows, however, binaries are installed
+# to a different location.
 if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
-  export PATH=$PATH:$NPM_PREFIX # Npm on Windows puts binaries here, not in bin
-else
-  export PATH=$PATH:$NPM_PREFIX/bin
+  export PATH=$PATH:${USER_LOCAL_DIR}
 fi

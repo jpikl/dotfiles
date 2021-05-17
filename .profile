@@ -9,8 +9,8 @@
 # 5x - Startup tasks
 # 9x - Cleanup
 
-for file in ~/.profile.d/*.sh; do
-  source "$file"
+for profile in ~/.profile.d/*.sh; do
+  source "$profile"
 done
 
-unset file
+unset profile
