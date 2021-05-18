@@ -15,12 +15,11 @@ help() {
 
 		Options:
 		  -c  Include current branch (-C to exclude).
-		  -l  Include local branches.
-		  -a  Include local branches that are ahead of remote (-A to exclude).
+      -l  Include local branches (-L to exclude).
+      -a  Include local branches that are ahead of remote (-A to exclude).
 		  -b  Include local branches that are behind remote (-B to exclude).
-		  -g  Include local branches that are gone on remote (-G to exclude).
-		  -r  Include remote branches.
-		  -s  Print short branch names without remote prefix.
+		  -r  Include remote branches (-R to exclude).
+      -s  Print short branch names without remote prefix.
 		  -h  Print this help.
 
 		Local branches are listed by default unless one of -clabgr is passed.
@@ -31,28 +30,28 @@ main() {
   local include_current=false
   local exclude_current=false
   local include_local=false
+  local exclude_local=false
   local include_ahead=false
   local exclude_ahead=false
   local include_behind=false
   local exclude_behind=false
-  local include_gone=false
-  local exclude_gone=false
   local include_remote=false
+  local exclude_remote=false
   local short_names=false
   local opt
 
-  while getopts ":cClaAbBgGrsh" opt; do
+  while getopts ":cClLaAbBrRsh" opt; do
     case "$opt" in
       c) include_current=true ;;
       C) exclude_current=true ;;
       l) include_local=true ;;
+      L) exclude_local=true ;;
       a) include_ahead=true ;;
       A) exclude_ahead=true ;;
       b) include_behind=true ;;
       B) exclude_behind=true ;;
-      g) include_gone=true ;;
-      G) exclude_gone=true ;;
       r) include_remote=true ;;
+      R) exclude_remote=true ;;
       s) short_names=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -61,7 +60,6 @@ main() {
 
   if [[ $include_current == false
      && $include_local == false
-     && $include_gone == false
      && $include_ahead == false
      && $include_behind == false
      && $include_remote == false ]]; then
@@ -72,15 +70,23 @@ main() {
   git status --porcelain >/dev/null
 
   if [[ $short_names = true ]]; then
-    { # We want to print mix of local and remote branches.
-      print_included_local
-      print_included_remote | remove_remote_prefix
-    } | LC_ALL=C sort --unique | filter_excluded_local
+    # We want to print mix of local and remote branches.
+    print_included | LC_ALL=C sort --unique | filter <(print_excluded)
   else
     # We want to print local branches before the remote ones.
-    print_included_local | sort --unique | filter_excluded_local
-    print_included_remote | sort
+    print_included_local | LC_ALL=C sort --unique | filter <(print_excluded_local)
+    print_included_remote | LC_ALL=C sort | filter <(print_excluded_remote)
   fi
+}
+
+print_included() {
+  print_included_local
+  print_included_remote
+}
+
+print_excluded() {
+  print_excluded_local
+  print_excluded_remote
 }
 
 print_included_local() {
@@ -88,20 +94,24 @@ print_included_local() {
   [[ $include_local = true ]] && print_local
   [[ $include_ahead = true ]] && print_ahead
   [[ $include_behind = true ]] && print_behind
-  [[ $include_gone = true ]] && print_gone
   true
 }
 
 print_excluded_local() {
   [[ $exclude_current = true ]] && print_current
+  [[ $exclude_local = true ]] && print_local
   [[ $exclude_ahead = true ]] && print_ahead
   [[ $exclude_behind = true ]] && print_behind
-  [[ $exclude_gone = true ]] && print_gone
   true
 }
 
 print_included_remote() {
   [[ $include_remote = true ]] && print_remote
+  true
+}
+
+print_excluded_remote() {
+  [[ $exclude_remote = true ]] && print_remote
   true
 }
 
@@ -143,10 +153,6 @@ print_local() {
                      || true
 }
 
-print_remote() {
-  git branch --remote $FORMAT | grep --invert-match '/HEAD$' || true
-}
-
 print_ahead() {
   print_local | filter_having_revlist_count --left-only
 }
@@ -155,15 +161,24 @@ print_behind() {
   print_local | filter_having_revlist_count --right-only
 }
 
-print_gone() {
-  print_local | filter_gone
+print_remote() {
+  if [[ $short_names = true ]]; then
+    print_prefixed_remote | remove_remote_prefix
+  else
+    print_prefixed_remote
+  fi
 }
 
-filter_excluded_local() {
-  grep --fixed-strings \
-       --line-regexp \
-       --invert-match \
-       --file=<(print_excluded_local) || true
+print_prefixed_remote() {
+  git branch --remote $FORMAT | grep --invert-match '/HEAD$' || true
+}
+
+remove_remote_prefix() {
+  sed --regexp-extended --expression='s/^[^/]*\///'
+}
+
+filter() {
+  grep --fixed-strings --line-regexp --invert-match --file="$1" || true
 }
 
 filter_having_revlist_count() {
@@ -174,17 +189,6 @@ filter_having_revlist_count() {
       && echo "$branch"
   done
   true
-}
-
-filter_gone() {
-  grep --fixed-strings \
-       --line-regexp \
-       --invert-match \
-       --file=<(print_remote | remove_remote_prefix) || true
-}
-
-remove_remote_prefix() {
-  sed --regexp-extended --expression='s/^[^/]*\///'
 }
 
 main "$@"

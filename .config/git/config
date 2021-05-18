@@ -34,7 +34,7 @@
     lsb = ls-branches
 
     # Checkout
-    cb = !git lsb -lrsC | choose -ip "Checkout branch:" | xargs -r git checkout
+    cb = !git lsb -lrCs | choose -ip "Checkout branch:" | xargs -r git checkout
     ct = !git tag | choose -ip "Checkout tag:" | xargs -r git checkout
 
     # Merge
