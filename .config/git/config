@@ -20,18 +20,19 @@
     s = status
 
     # Commit
-    c = commit
-    cm = commit --message
-    ca = commit --all
+    c   = commit
+    cm  = commit --message
+    ca  = commit --all
     cam = commit --all --message
 
     # Fetch
-    f = fetch
+    f  = fetch
     fb = !git lsb -rs | choose -imp "Fetch branches:" | xargs -r git fetch origin
     fa = fetch --all --tags --prune
 
     # List
     lsb = ls-branches
+    lsa = !{ git lsb -lr ";" git tag ";" }
 
     # Checkout
     cb = !git lsb -lrCs | choose -ip "Checkout branch:" | xargs -r git checkout
@@ -48,17 +49,19 @@
     dt = !git tag | choose -imp "Delete tags:" | xargs -r git branch -d
 
     # Delete remote
-    drb= !git lsb -rs | choose -imp "Delete remote branches:" | xargs -r push origin --delete
-    drt= !git ls-remote --tags | sed -E -e's|^.*refs/tags/||' -e's|\\^\\{\\}$||' | sort --uniq | choose -imp "Delete remote tags:" | xargs -r push origin --delete
+    drb = !git lsb -rs | choose -imp "Delete remote branches:" | xargs -r push origin --delete
+    drt = !git ls-remote --tags | sed -E -e's|^.*refs/tags/||' -e's|\\^\\{\\}$||' | sort --uniq | choose -imp "Delete remote tags:" | xargs -r push origin --delete
 
     # Compare
-    cmpb = !git lsb -lr | choose -imp "Compare branches:" | xargs -r git cmp-branches
+    cmp  = !git lsa | choose -imp "Compare revisions:" | xargs -r git compare
+    cmpb = !git lsb -lr | choose -imp "Compare branches:" | xargs -r git compare
+    cmpt = !git tag | choose -imp "Compare tags:" | xargs -r git compare
 
     # Gone
     gb = gone-branches
 
     # Fast-forward
-    ff = fast-forward
+    ff  = fast-forward
     ffb = !git lsb -b | choose -imp "Fast-forward:" | xargs -r git ff
     ffa = ff -a
 
@@ -67,14 +70,14 @@
     diffw = diff --word-diff
 
     # Log
-    logm = log --oneline --decorate
+    logm  = log --oneline --decorate
     logmx = logm  --no-merges
-    loga = log --oneline --decorate --graph --all
+    loga  = log --oneline --decorate --graph --all
     logax = loga --no-merges
-    logd =  log --oneline --no-decorate @{upstream} --not HEAD
-    logdx =  logd --no-merges
-    logu =  log --oneline --no-decorate HEAD --not @{upstream}
-    logux =  logu --no-merges
+    logd  = log --oneline --no-decorate @{upstream} --not HEAD
+    logdx = logd --no-merges
+    logu  = log --oneline --no-decorate HEAD --not @{upstream}
+    logux = logu --no-merges
 
     # Other
     chmodx = add --chmod=+x --

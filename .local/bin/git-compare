@@ -7,14 +7,14 @@ source ~/.local/lib/bash/term.sh
 
 help() {
   cat <<-EOT
-		Compare two Git branches.
+		Compare Git revisions.
 
 		Usage:
-		  $(self) [<options>] <branch> <others>...
+		  $(self) [<options>] <revision> <others>...
 
 		Args:
-		  <branch>     Target branch.
-		  <others>...  Branches to compare with target.
+		  <revision>...  Target revision.
+		  <others>...    Revisions to compare with.
 
 		Options:
 		  -l  Print only left side of comparison.
@@ -71,35 +71,35 @@ main() {
     fmt_clear=$(tput sgr0)
   fi
 
-  local branch_1=$1
-  local branch_2
+  local revision_1=$1
+  local revision_2
   shift
 
-  for branch_2; do
+  for revision_2; do
     local commits_1
     local commits_2
 
-    read -r commits_1 commits_2 < <(git rev-list --count --left-right "$branch_1...$branch_2")
+    read -r commits_1 commits_2 < <(git rev-list --count --left-right "$revision_1...$revision_2")
 
-    local branch_1_fmt=$fmt_primary$branch_1$fmt_clear
-    local branch_2_fmt=$fmt_secondary$branch_2$fmt_clear
+    local revision_1_fmt=$fmt_primary$revision_1$fmt_clear
+    local revision_2_fmt=$fmt_secondary$revision_2$fmt_clear
 
     local commits_1_fmt=$fmt_commits$commits_1$fmt_clear
     local commits_2_fmt=$fmt_commits$commits_2$fmt_clear
 
     if [[ $left = true ]]; then
-      echo "$branch_1_fmt has $commits_1_fmt commit(s) that are not in $branch_2_fmt"
+      echo "$revision_1_fmt has $commits_1_fmt commit(s) that are not in $revision_2_fmt"
 
       if [[ $authors == true ]]; then
-        git authors "$branch_1" --not "$branch_2"
+        git authors "$revision_1" --not "$revision_2"
       fi
     fi
 
     if [[ $right = true ]]; then
-      echo "$branch_2_fmt has $commits_2_fmt commit(s) that are not in $branch_1_fmt"
+      echo "$revision_2_fmt has $commits_2_fmt commit(s) that are not in $revision_1_fmt"
 
       if [[ $authors == true ]]; then
-        git authors "$branch_2" --not "$branch_1"
+        git authors "$revision_2" --not "$revision_1"
       fi
     fi
   done
