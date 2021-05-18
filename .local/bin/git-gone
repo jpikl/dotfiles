@@ -6,25 +6,33 @@ source ~/.local/lib/bash/core.sh
 
 help() {
   cat <<-EOT
-		List or delete local Git branches that are gone on remote.
+		List local Git branches/tags that are gone on remote.
 
 		Usage:
 		  $(self) [<options>]
 
 		Options:
-		  -d  Delete gone branches.
-		  -D  Force deletion of gone branches.
+		  -b  Include branches.
+		  -t  Include tags.
+		  -d  Delete gone objects.
+		  -D  Force deletion of gone objects.
 		  -h  Print this help.
+
+		Both branches and tags are included by default unless one of -bt is passed.
 	EOT
 }
 
 main() {
+  local branches=false
+  local tags=false
   local delete=false
   local force=false
   local opt
 
-  while getopts ":dDh" opt; do
+  while getopts ":btdDh" opt; do
     case "$opt" in
+      b) branches=true ;;
+      t) tags=true ;;
       d) delete=true ;;
       D) delete=true
          force=true ;;
@@ -33,6 +41,21 @@ main() {
     esac
   done
 
+  if [[ $branches = false && $tags = false ]]; then
+    branches=true
+    tags=true
+  fi
+
+  if [[ $branches = true ]]; then
+    git ls-branches -lRs | process_branches
+  fi
+
+  if [[ $tags = true ]]; then
+    git ls-tags -lR | process_tags
+  fi
+}
+
+process_branches() {
   local branch
   while IFS= read -r branch; do
     if [[ $delete = true ]]; then
@@ -44,7 +67,18 @@ main() {
     else
       echo "$branch"
     fi
-  done < <(git ls-branches -lRs)
+  done
+}
+
+process_tags() {
+  local tag
+  while IFS= read -r tag; do
+    if [[ $delete = true ]]; then
+      git tag --delete "$tag"
+    else
+      echo "$tag"
+    fi
+  done
 }
 
 main "$@"

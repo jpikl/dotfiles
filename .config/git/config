@@ -61,14 +61,14 @@
     rt = !git lst -lr  | choose -ip "Rebase \""$(git lsb -c)"\" onto tag:"    | xargs -r git rebase
 
     ## Select branches to delete
-    db = !git lsb -lC | choose -imp "Delete branches:" | xargs -r git branch -d
+    db = !git lsb -lC | choose -imp "Delete branches:" | xargs -pr git branch -d
     ## Select tags to delete
-    dt = !git lst -l  | choose -imp "Delete tags:"     | xargs -r git tag -d
+    dt = !git lst -l  | choose -imp "Delete tags:"     | xargs -pr git tag -d
 
     ## Select remote branches to delete
-    drb = !git lsb -rs | choose -imp "Delete remote branches:" | xargs -r push origin --delete
+    drb = !git lsb -rs | choose -imp "Delete remote branches:" | xargs -pr push origin --delete
     ## Select remote tags to delete
-    drt = !git lst -r  | choose -imp "Delete remote tags:"     | xargs -r push origin --delete
+    drt = !git lst -r  | choose -imp "Delete remote tags:"     | xargs -pr push origin --delete
 
     ## Select branches or tags to compare
     cmp  = !git lsa     | choose -imp "Compare revisions:" | xargs -r git compare
@@ -84,9 +84,9 @@
     ## Fast-forward all branches
     ffa = ff -a
 
-    ## Local branches which are gone on remote
+    ## List local branches that are gone on remote
     gb = gone -b
-    ## Local tags which are gone on remote
+    ## List local tags that are gone on remote
     gt = gone -t
 
     ## Diff with word resolution
