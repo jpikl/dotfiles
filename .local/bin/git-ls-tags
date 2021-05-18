@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+help() {
+  cat <<-EOT
+		List Git tags in machine-readable format.
+
+		Usage:
+		  $(self) [<options>]
+
+		Options:
+      -l  Include local tags (-L to exclude).
+		  -r  Include remote tags (-R to exclude).
+		  -h  Print this help.
+
+		Local tags are listed by default unless one of -lr is passed.
+	EOT
+}
+
+main() {
+  local include_local=false
+  local exclude_local=false
+  local include_remote=false
+  local exclude_remote=false
+  local opt
+
+  while getopts ":lLrRh" opt; do
+    case "$opt" in
+      l) include_local=true ;;
+      L) exclude_local=true ;;
+      r) include_remote=true ;;
+      R) exclude_remote=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  if [[ $include_local == false && $include_remote == false ]]; then
+     include_local=true
+  fi
+
+  # Check we are in a git repository.
+  git status --porcelain >/dev/null
+
+  print_included | LC_ALL=C sort --unique | filter_out <(print_excluded)
+}
+
+print_included() {
+  [[ $include_local = true ]] && print_local
+  [[ $include_remote = true ]] && print_remote
+  true
+}
+
+print_excluded() {
+  [[ $exclude_local = true ]] && print_local
+  [[ $exclude_remote = true ]] && print_remote
+  true
+}
+
+print_local() {
+  git tag
+}
+
+print_remote() {
+  # Stderr contains extra info we do not need
+  git ls-remote --tags 2>/dev/null | sed -E -e's|^.*refs/tags/||' -e's|\^\{\}$||'
+}
+
+filter_out() {
+  grep --fixed-strings --line-regexp --invert-match --file="$1" || true
+}
+
+main "$@"

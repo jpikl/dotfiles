@@ -71,11 +71,11 @@ main() {
 
   if [[ $short_names = true ]]; then
     # We want to print mix of local and remote branches.
-    print_included | LC_ALL=C sort --unique | filter <(print_excluded)
+    print_included | LC_ALL=C sort --unique | filter_out <(print_excluded)
   else
     # We want to print local branches before the remote ones.
-    print_included_local | LC_ALL=C sort --unique | filter <(print_excluded_local)
-    print_included_remote | LC_ALL=C sort | filter <(print_excluded_remote)
+    print_included_local | LC_ALL=C sort --unique | filter_out <(print_excluded_local)
+    print_included_remote | LC_ALL=C sort | filter_out <(print_excluded_remote)
   fi
 }
 
@@ -177,7 +177,7 @@ remove_remote_prefix() {
   sed --regexp-extended --expression='s/^[^/]*\///'
 }
 
-filter() {
+filter_out() {
   grep --fixed-strings --line-regexp --invert-match --file="$1" || true
 }
 
