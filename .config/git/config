@@ -41,7 +41,7 @@
     p = pull
 
     ## Select branch to checkout
-    cb = !git lsb -lrCs | choose -ip "Checkout branch:" | xargs -r git push -u origin
+    cb = !git lsb -lrCs | choose -ip "Checkout branch:" | xargs -r git checkout
     ## Select tag to checkout
     ct = !git lst -lr   | choose -ip "Checkout tag:"    | xargs -r git checkout
 
