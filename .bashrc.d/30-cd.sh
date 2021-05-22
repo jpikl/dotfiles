@@ -31,8 +31,6 @@ alias cdmed='cd "$USER_MEDIA_DIR"'
 alias cdmus='cd "$USER_MUSIC_DIR"'
 ## Change directory to $USER_PICTURES_DIR
 alias cdpic='cd "$USER_PICTURES_DIR"'
-## Change directory to $USER_PLAYLISTS_DIR
-alias cdplay='cd "$USER_PLAYLISTS_DIR"'
 ## Change directory to $USER_PUBLIC_DIR
 alias cdpub='cd "$USER_PUBLIC_DIR"'
 ## Change directory to $USER_TEMP_DIR

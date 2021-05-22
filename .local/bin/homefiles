@@ -59,7 +59,6 @@ create_dirs() {
   create_dir "$USER_DATA_DIR"
   create_dir "$USER_MUSIC_DIR"
   create_dir "$USER_PICTURES_DIR"
-  create_dir "$USER_PLAYLISTS_DIR"
   create_dir "$USER_PUBLIC_DIR"
   create_dir "$USER_TEMP_DIR"
   create_dir "$USER_VIDEOS_DIR"
