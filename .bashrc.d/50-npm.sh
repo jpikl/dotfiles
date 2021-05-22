@@ -4,6 +4,9 @@
 ## Install globaly the most essential npm packages
 alias npmboot="xargs --arg-file=""$USER_CONFIG_DIR/npm/boot"" npm --global install"
 
+## Start npm development script
+alias npmd='npmr -1 webpack-dev dev start'
+
 ## Npm in global mode
 alias npmg='npm --global'
 ## Npm install (global mode)
@@ -25,6 +28,3 @@ alias npmup='npm update'
 alias npmun='npm uninstall'
 ## List installed npm packages
 alias npml='npm --depth=0 list'
-
-## Start npm development script
-alias npmd='npmr -1 webpack-dev dev start'

@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Icon support in terminal
-# This is later used by some aliases and by ~/.local/bin/ sripts.
+# This is later used by some ~/.bashrc.d/ and ~/.local/bin/ sripts.
 if [[ ! $TERM_ICONS ]]; then
   if [[ $DISPLAY ]]; then
     export TERM_ICONS=true

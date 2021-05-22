@@ -1,9 +1,8 @@
 # shellcheck shell=bash
 
-
 if [[ -x "$(command -v exa)" ]]; then
   # Use exa with icons when available
-  if [[ ${TERM_ICONS-} == true ]]; then
+  if [[ $TERM_ICONS == true ]]; then
     alias exa='exa --git --icons'
   else
     alias exa='exa --git'
