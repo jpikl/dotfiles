@@ -2,11 +2,12 @@
 
 # Numbering convention of scripts in ~/.profile.d/
 # 0x - Initialization
-# 1x - Common configuration (fixed)
-# 2x - Common configuration (overridable)
-# 3x - App configuration (fixed)
-# 4x - App configuration (overridable)
-# 5x - Startup tasks
+# 1x - Common configuration (local)
+# 2x - Common configuration (shared)
+# šx - App configuration (local)
+# 4x - App configuration (shared)
+# 5x - Startup tasks (local)
+# 6x - Startup tasks (shared)
 # 9x - Cleanup
 
 for profile in ~/.profile.d/*.sh; do
