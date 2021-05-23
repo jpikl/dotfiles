@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+help() {
+  cat <<-EOT
+		List changed Git files.
+
+		Usage:
+		  $(self) [<options>]
+
+		Options:
+		  -i  Include changes staged in index.
+		  -w  Include unstaged changes in work tree.
+		  -x  Include untracked files.
+		  -Z  Print values delimited by NUL, not newline.
+		  -h  Print this help.
+
+		Staged/unstaged changes are listed by default unless one of -swx is passed.
+	EOT
+}
+
+main() {
+  local opt
+  local index=false
+  local wtree=false
+  local untracked=false
+  local format="%s\n"
+
+  while getopts ":iwxZh" opt; do
+    case "$opt" in
+      i) index=true ;;
+      w) wtree=true ;;
+      x) untracked=true ;;
+      Z) format="%s\0" ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  if [[ $index = false && $wtree = false && $untracked = false ]]; then
+    index=true
+    wtree=true
+  fi
+
+  local change
+  while IFS= read -rd $'\0' change; do
+    if is_change_visible "${change:0:1}" "${change:1:1}"; then
+      # shellcheck disable=SC2059
+      printf "$format" "${change:3}"
+    fi
+  done < <(list_changes)
+}
+
+list_changes() {
+  local untracked_mode
+
+  if [[ $untracked = true ]]; then
+    untracked_mode=normal
+  else
+    untracked_mode=no
+  fi
+
+  git status --porcelain=v1 \
+             --no-renames \
+             --untracked-files=$untracked_mode \
+             --null
+}
+
+is_change_visible() {
+  if [[ $1 = '?' && $2 = '?' ]]; then
+    [[ $untracked = true ]]
+  else
+    [[ $1 != ' ' && $index = true || $2 != ' ' && $wtree = true ]]
+  fi
+}
+
+main "$@"

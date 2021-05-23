@@ -21,6 +21,8 @@
     lsb = ls-branches
     ## List tags
     lst = ls-tags
+    ## List changes
+    lsc = ls-changes
 
     ## Commit
     c   = commit
@@ -54,28 +56,28 @@
     ## Diff with character resolution
     diffc = diff --word-diff-regex=.
 
-    ## Commits of current branch
+    ## Commits from the current branch
     logm  = log  --oneline --decorate
-    ## Commits of current branch (without merges)
+    ## Commits from the current branch (without merges)
     logmx = logm --no-merges
-    ## Commits of all branches
+    ## Commits from all branches
     loga  = log  --oneline --decorate --graph --all
-    ## Commits of all branches (without merges)
+    ## Commits from all branches (without merges)
     logax = loga --no-merges
     ## New commits from remote
     logd  = log  --oneline --no-decorate @{upstream} --not HEAD
     ## New commits from remote (without merges)
     logdx = logd --no-merges
-    ## New Commits not on remote
+    ## New Commits to remote
     logu  = log  --oneline --no-decorate HEAD --not @{upstream}
-    ## New Commits not on remote (without merges)
+    ## New Commits to remote (without merges)
     logux = logu --no-merges
 
     ## Set executable modifier on a file
     chmodx = add --chmod=+x --
 
     ## Print property of a Maven project in branches.
-    mvnp   = mvn-prop
+    mvnp = mvn-prop
 
 [include]
     path = ~/.config/git/config.local
