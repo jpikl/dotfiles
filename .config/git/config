@@ -11,6 +11,9 @@
     postBuffer = 134217728 # 128 MiB
 
 [alias]
+    ## Interactive
+    i = interactive
+
     ## Status
     s = status
 
@@ -18,8 +21,6 @@
     lsb = ls-branches
     ## List tags
     lst = ls-tags
-    ## List all branches and tags
-    lsa = !{ git lsb -lr ";" git lst -lr ";" }
 
     ## Commit
     c   = commit
@@ -32,57 +33,16 @@
 
     ## Fetch
     f  = fetch
-    ## Select remote branch to fetch
-    fb = !git lsb -rs | choose -imp "Fetch branches:" | xargs -r git fetch origin
     ## Fetch all branches and tags, prune invalid remote-tracking references
     fa = fetch --all --tags --prune
 
-    ## Pull
-    p = pull
-
-    ## Select branch to checkout
-    cb = !git lsb -lrCs | choose -ip "Checkout branch:" | xargs -r git checkout
-    ## Select tag to checkout
-    ct = !git lst -lr   | choose -ip "Checkout tag:"    | xargs -r git checkout
-
-    ## Select branch to push
-    pb = !git lsb -lRs | choose -ip "Push branch:" | xargs -r git push -u origin
-    ## Select tag to push
-    pt = !git lst -lR  | choose -ip "Push tag:"    | xargs -r git push origin
-
-    ## Select branch to merge
-    mb = !git lsb -lrC | choose -ip "Merge branch to \""$(git lsb -c)"\":" | xargs -r git merge
-    ## Select tag to merge
-    mt = !git lst -lr  | choose -ip "Merge tag to \""$(git lsb -c)"\":"    | xargs -r git merge
-
-    ## Select branch to rebase onto
-    rb = !git lsb -lrC | choose -ip "Rebase \""$(git lsb -c)"\" onto branch:" | xargs -r git rebase
-    ## Select tag to rebase onto
-    rt = !git lst -lr  | choose -ip "Rebase \""$(git lsb -c)"\" onto tag:"    | xargs -r git rebase
-
-    ## Select branches to delete
-    db = !git lsb -lC | choose -imp "Delete branches:" | xargs -pr git branch -d
-    ## Select tags to delete
-    dt = !git lst -l  | choose -imp "Delete tags:"     | xargs -pr git tag -d
-
-    ## Select remote branches to delete
-    drb = !git lsb -rs | choose -imp "Delete remote branches:" | xargs -pr push origin --delete
-    ## Select remote tags to delete
-    drt = !git lst -r  | choose -imp "Delete remote tags:"     | xargs -pr push origin --delete
-
-    ## Select branches or tags to compare
-    cmp  = !git lsa     | choose -imp "Compare revisions:" | xargs -r git compare
-    ## Select branches to compare
-    cmpb = !git lsb -lr | choose -imp "Compare branches:"  | xargs -r git compare
-    ## Select tags to compare
-    cmpt = !git lst -lr | choose -imp "Compare tags:"      | xargs -r git compare
-
     ## Fast-forward
     ff  = fast-forward
-    ## Select branches to fast-forward
-    ffb = !git lsb -b | choose -imp "Fast-forward branches:" | xargs -r git ff
     ## Fast-forward all branches
-    ffa = ff -a
+    ffa = fast-forward -a
+
+    ## Pull
+    p = pull
 
     ## List local branches that are gone on remote
     gb = gone -b
@@ -113,6 +73,7 @@
 
     ## Set executable modifier on a file
     chmodx = add --chmod=+x --
+
     ## Print property of a Maven project in branches.
     mvnp   = mvn-prop
 

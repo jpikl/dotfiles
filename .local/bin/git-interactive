@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+readonly COMMANDS=(
+  fb
+  ffb
+  cb
+  ct
+  mb
+  mt
+  rb
+  rt
+  pb
+  pt
+  db
+  dt
+  drb
+  drt
+  cmr
+  cmb
+  cmt
+)
+
+readonly -A COMMAND_NAMES=(
+  [fb]="Fetch branches"
+  [ffb]="Fast-forward branches"
+  [cb]="Checkout branch"
+  [ct]="Checkout tag"
+  [mb]="Merge branch"
+  [mt]="Merge tag"
+  [rb]="Rebase onto branch"
+  [rt]="Rebase onto tag"
+  [pb]="Push branch"
+  [pt]="Push tag"
+  [db]="Delete branches"
+  [dt]="Delete tags"
+  [drb]="Delete remote branches"
+  [drt]="Delete remote tags"
+  [cmr]="Compare revisions"
+  [cmb]="Compare branches"
+  [cmt]="Compare tags"
+)
+
+readonly -A COMMAND_FUNCTIONS=(
+  [fb]=fetch_branches
+  [ffb]=fast_forward_branches
+  [cb]=checkout_branch
+  [ct]=checkout_tag
+  [mb]=merge_branch
+  [mt]=merge_tag
+  [rb]=rebase_branch
+  [rt]=rebase_tag
+  [pb]=push_branch
+  [pt]=push_tag
+  [db]=delete_branches
+  [dt]=delete_tags
+  [drb]=delete_remote_branches
+  [drt]=delete_remote_tags
+  [cmr]=compare_revision
+  [cmb]=compare_branches
+  [cmt]=compare_tags
+)
+
+help() {
+  cat <<-EOT
+		Execute git commands interactively.
+
+		Usage:
+		  $(self) [<options>] [<command>]
+
+		Command:
+		$(print_commands)
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  # Check we are in a git repository.
+  git status --porcelain >/dev/null
+
+  local command
+  local function
+
+  if [[ $# -gt 0 ]]; then
+    command=$1
+    [[ $command ]] || die_help "invalid command '$command'"
+  else
+    command=$(choose_command)
+    [[ $command ]] || return 0
+  fi
+
+  function=${COMMAND_FUNCTIONS[$command]-}
+
+  if [[ $function ]]; then
+    $function
+  elif [[ $command ]]; then
+    die_help "invalid command '$command'"
+  fi
+}
+
+print_commands() {
+  local command
+  local i
+
+  for command in "${COMMANDS[@]}"; do
+    printf "  %s" "$command"
+
+    for (( i = ${#command}; i < 5; i++ )); do
+      printf " "
+    done
+
+    echo "${COMMAND_NAMES[$command]}"
+  done
+}
+
+print_command_names() {
+  local command
+
+  for command in "${COMMANDS[@]}"; do
+    echo "${COMMAND_NAMES[$command]}"
+  done
+}
+
+choose_command() {
+  local answer
+  answer=$(print_command_names | choose -ip "Command:")
+
+  for command in "${COMMANDS[@]}"; do
+    if [[ ${COMMAND_NAMES[$command]} == "$answer" ]]; then
+      echo "$command"
+      break
+    fi
+  done
+}
+
+fetch_branches() {
+  git ls-branches -rs | choose_multiple "Fetch branches:" | exec_git fetch origin
+}
+
+fast_forward_branches() {
+  git ls-branches -b | choose_multiple "Fast-forward branches:" | exec_git fast-forward
+}
+
+checkout_branch() {
+  git ls-branches -lrCs | choose_one "Checkout branch:" | exec_git checkout
+}
+
+checkout_tag() {
+  git lst -lr | choose_one "Checkout tag:" | exec_git checkout
+}
+
+merge_branch() {
+  git ls-branches -lrC | choose_one "Merge branch to ""$(git ls-branches -c)"":" | exec_git merge
+}
+
+merge_tag() {
+  git lst -lr | choose_one "Merge tag to ""$(git ls-branches -c)"":" | exec_git merge
+}
+
+rebase_branch() {
+  git ls-branches -lrC | choose_one "Rebase ""$(git ls-branches -c)"" onto branch:" | exec_git rebase
+}
+
+rebase_tag() {
+  git lst -lr | choose_one "Rebase ""$(git ls-branches -c)"" onto tag:" | exec_git rebase
+}
+
+push_branch() {
+  git ls-branches -lRs | choose_one "Push branch:" | ask_exec_git push --set-upstream origin
+}
+
+push_tag() {
+  git lst -lR | choose_one "Push tag:" | ask_exec_git push origin
+}
+
+delete_branches() {
+  git ls-branches -lC | choose_multiple "Delete branches:" | ask_exec_git branch --delete
+}
+
+delete_tags() {
+  git lst -l | choose_multiple "Delete tags:" | ask_exec_git tag --delete
+}
+
+delete_remote_branches() {
+  git ls-branches -rs | choose_multiple "Delete remote branches:" | ask_exec_git push origin --delete
+}
+
+delete_remote_tags() {
+  git lst -r | choose_multiple "Delete remote tags:" | ask_exec_git push origin --delete
+}
+
+compare_revision() {
+  { git ls-branches -lr; git ls-tags -lr; } | choose_multiple "Compare revisions:" | exec_git compare
+}
+
+compare_branches() {
+  git ls-branches -lr | choose_multiple "Compare branches:" | exec_git compare
+}
+
+compare_tags() {
+  git ls-branches -b | choose_multiple "Fast-forward branches:" | exec_git fast-forward
+}
+
+choose_one() {
+  choose -ip "$1"
+}
+
+choose_multiple() {
+  choose -imp "$1"
+}
+
+exec_git() {
+  xargs --no-run-if-empty git "$@"
+}
+
+ask_exec_git() {
+  xargs --no-run-if-empty --interactive git "$@"
+}
+
+main "$@"
