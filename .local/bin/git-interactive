@@ -5,63 +5,23 @@ set -euo pipefail
 source ~/.local/lib/bash/core.sh
 
 readonly COMMANDS=(
-  fb
-  ffb
-  cb
-  ct
-  mb
-  mt
-  rb
-  rt
-  pb
-  pt
-  db
-  dt
-  drb
-  drt
-  cmr
-  cmb
-  cmt
-)
-
-readonly -A COMMAND_NAMES=(
-  [fb]="Fetch branches"
-  [ffb]="Fast-forward branches"
-  [cb]="Checkout branch"
-  [ct]="Checkout tag"
-  [mb]="Merge branch"
-  [mt]="Merge tag"
-  [rb]="Rebase onto branch"
-  [rt]="Rebase onto tag"
-  [pb]="Push branch"
-  [pt]="Push tag"
-  [db]="Delete branches"
-  [dt]="Delete tags"
-  [drb]="Delete remote branches"
-  [drt]="Delete remote tags"
-  [cmr]="Compare revisions"
-  [cmb]="Compare branches"
-  [cmt]="Compare tags"
-)
-
-readonly -A COMMAND_FUNCTIONS=(
-  [fb]=fetch_branches
-  [ffb]=fast_forward_branches
-  [cb]=checkout_branch
-  [ct]=checkout_tag
-  [mb]=merge_branch
-  [mt]=merge_tag
-  [rb]=rebase_branch
-  [rt]=rebase_tag
-  [pb]=push_branch
-  [pt]=push_tag
-  [db]=delete_branches
-  [dt]=delete_tags
-  [drb]=delete_remote_branches
-  [drt]=delete_remote_tags
-  [cmr]=compare_revision
-  [cmb]=compare_branches
-  [cmt]=compare_tags
+  "fb   Fetch branches"
+  "ffb  Fast-forward branches"
+  "cb   Checkout branch"
+  "ct   Checkout tag"
+  "mb   Merge branch"
+  "mt   Merge tag"
+  "rb   Rebase onto branch"
+  "rt   Rebase onto tag"
+  "pb   Push branch"
+  "pt   Push tag"
+  "db   Delete branches"
+  "dt   Delete tags"
+  "drb  Delete remote branches"
+  "drt  Delete remote tags"
+  "cmr  Compare revisions"
+  "cmb  Compare branches"
+  "cmt  Compare tags"
 )
 
 help() {
@@ -95,58 +55,61 @@ main() {
   git status --porcelain >/dev/null
 
   local command
-  local function
-
   if [[ $# -gt 0 ]]; then
     command=$1
-    [[ $command ]] || die_help "invalid command '$command'"
   else
     command=$(choose_command)
     [[ $command ]] || return 0
   fi
 
-  function=${COMMAND_FUNCTIONS[$command]-}
-
-  if [[ $function ]]; then
-    $function
-  elif [[ $command ]]; then
-    die_help "invalid command '$command'"
-  fi
+  case "$command" in
+    fb)  fetch_branches ;;
+    ffb) fast_forward_branches ;;
+    cb)  checkout_branch ;;
+    ct)  checkout_tag ;;
+    mb)  merge_branch ;;
+    mt)  merge_tag ;;
+    rb)  rebase_branch ;;
+    rt)  rebase_tag ;;
+    pb)  push_branch ;;
+    pt)  push_tag ;;
+    db)  delete_branches ;;
+    dt)  delete_tags ;;
+    drb) delete_remote_branches ;;
+    drt) delete_remote_tags ;;
+    cmr) compare_revision ;;
+    cmb) compare_branches ;;
+    cmt) compare_tags ;;
+    *)   die_help "invalid command '$command'"
+  esac
 }
 
 print_commands() {
-  local command
-  local i
-
-  for command in "${COMMANDS[@]}"; do
-    printf "  %s" "$command"
-
-    for (( i = ${#command}; i < 5; i++ )); do
-      printf " "
-    done
-
-    echo "${COMMAND_NAMES[$command]}"
-  done
+  printf "  %s\n" "${COMMANDS[@]}"
 }
 
 print_command_names() {
   local command
+  local name
 
-  for command in "${COMMANDS[@]}"; do
-    echo "${COMMAND_NAMES[$command]}"
-  done
+  while read -r command name; do
+    echo "$name"
+  done < <(print_commands)
 }
 
 choose_command() {
-  local answer
-  answer=$(print_command_names | choose -ip "Command:")
+  local command
+  local name
+  local chosen_name
 
-  for command in "${COMMANDS[@]}"; do
-    if [[ ${COMMAND_NAMES[$command]} == "$answer" ]]; then
+  chosen_name=$(print_command_names | choose -ip "Command:")
+
+  while read -r command name; do
+    if [[ $name = "$chosen_name" ]]; then
       echo "$command"
       break
     fi
-  done
+  done < <(print_commands)
 }
 
 fetch_branches() {
