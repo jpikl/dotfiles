@@ -22,6 +22,11 @@ readonly COMMANDS=(
   "cmr  Compare revisions"
   "cmb  Compare branches"
   "cmt  Compare tags"
+  "a    Add changes/files"
+  "aw   Add work tree changes"
+  "au   Add untracked files"
+  "rs   Restore staged changes"
+  "rw   Restore work tree changes"
 )
 
 help() {
@@ -80,6 +85,11 @@ main() {
     cmr) compare_revision ;;
     cmb) compare_branches ;;
     cmt) compare_tags ;;
+    a)   add_changes ;;
+    aw)  add_wtree_changes ;;
+    au)  add_untracked_files ;;
+    rs)  restore_staged_changes ;;
+    rw)  restore_wtree_changes ;;
     *)   die_help "invalid command '$command'"
   esac
 }
@@ -178,6 +188,26 @@ compare_branches() {
 
 compare_tags() {
   git ls-branches -b | choose_multiple "Fast-forward branches:" | exec_git fast-forward
+}
+
+add_changes() {
+  git ls-changes -wx | choose_multiple "Add changes/files:" | exec_git add --
+}
+
+add_wtree_changes() {
+  git ls-changes -w | choose_multiple "Add work tree changes:" | exec_git add --
+}
+
+add_untracked_files() {
+  git ls-changes -x | choose_multiple "Add untracked files:" | exec_git add --
+}
+
+restore_staged_changes() {
+  git ls-changes -s | choose_multiple "Restore staged changes:" | exec_git restore --staged --
+}
+
+restore_wtree_changes() {
+  git ls-changes -w | choose_multiple "Restore work tree changes:" | exec_git restore --
 }
 
 choose_one() {
