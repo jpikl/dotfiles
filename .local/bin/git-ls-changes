@@ -12,7 +12,7 @@ help() {
 		  $(self) [<options>]
 
 		Options:
-		  -i  Include changes staged in index.
+		  -s  Include changes staged in index.
 		  -w  Include unstaged changes in work tree.
 		  -x  Include untracked files.
 		  -Z  Print values delimited by NUL, not newline.
@@ -24,14 +24,14 @@ help() {
 
 main() {
   local opt
-  local index=false
+  local staged=false
   local wtree=false
   local untracked=false
   local format="%s\n"
 
-  while getopts ":iwxZh" opt; do
+  while getopts ":swxZh" opt; do
     case "$opt" in
-      i) index=true ;;
+      s) staged=true ;;
       w) wtree=true ;;
       x) untracked=true ;;
       Z) format="%s\0" ;;
@@ -40,8 +40,8 @@ main() {
     esac
   done
 
-  if [[ $index = false && $wtree = false && $untracked = false ]]; then
-    index=true
+  if [[ $staged = false && $wtree = false && $untracked = false ]]; then
+    staged=true
     wtree=true
   fi
 
@@ -73,7 +73,7 @@ is_change_visible() {
   if [[ $1 = '?' && $2 = '?' ]]; then
     [[ $untracked = true ]]
   else
-    [[ $1 != ' ' && $index = true || $2 != ' ' && $wtree = true ]]
+    [[ $1 != ' ' && $staged = true || $2 != ' ' && $wtree = true ]]
   fi
 }
 
