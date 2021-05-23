@@ -111,6 +111,7 @@ check_files() {
 describe_files() {
   list_bin_files | describe_binaries
   list_bashrc_files | describe_aliases
+  describe_git_aliases ~/.config/git/config
 }
 
 describe_binaries() {
@@ -134,6 +135,16 @@ describe_aliases() {
   done
 }
 
+describe_git_aliases() {
+  if has_aliases_with_comments "$1"; then
+    echo
+    echo "$1"
+    filter_aliases_with_comments <"$1" \
+      | format_git_aliases "  \2|\1" \
+      | format_table
+  fi
+}
+
 markdown_files() {
   echo "# List of available commands"
   echo
@@ -145,6 +156,9 @@ markdown_files() {
   echo
   echo "## [Aliases](../.bashrc.d)"
   list_bashrc_files | markdown_aliases
+  echo
+  echo "## [Git aliases](../.config/git/config)"
+  markdown_git_aliases ~/.config/git/config
 }
 
 markdown_binaries() {
@@ -170,12 +184,25 @@ markdown_aliases() {
   done
 }
 
+markdown_git_aliases() {
+  if has_aliases_with_comments "$1"; then
+    echo
+    filter_aliases_with_comments <"$1" \
+      | format_git_aliases "- \`\2\` - \1" \
+      | format_table
+  fi
+}
+
 format_binary() {
   "$1" -h | head --lines=1
 }
 
 format_aliases() {
   sed --regexp-extended "N;s/^\s*##\s+(.*)\n\s*(alias\s+)?([^=(]+).*\$/$1/"
+}
+
+format_git_aliases() {
+  sed --regexp-extended "N;s/^\s*##\s+(.*)\n\s*(\S+)\s*=.*\$/$1/"
 }
 
 format_table() {

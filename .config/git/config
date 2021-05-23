@@ -11,7 +11,7 @@
     postBuffer = 134217728 # 128 MiB
 
 [alias]
-    ## Interactive
+    ## Interactive mode
     i = interactive
 
     ## Status
