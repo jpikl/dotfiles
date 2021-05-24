@@ -36,7 +36,7 @@ export USER_DATA_DIR=${USER_DATA_DIR:-$XDG_DATA_HOME}  # Check XDG first
 export USER_DATA_DIR=${USER_DATA_DIR:-$USER_LOCAL_DIR/share}
 
 # Runtime user directories
-export USER_RUNTIME_DIR=${USER_RUNTIME_DIR:-XDG_RUNTIME_DIR} # Check XDG first
+export USER_RUNTIME_DIR=${USER_RUNTIME_DIR:-$XDG_RUNTIME_DIR} # Check XDG first
 export USER_RUNTIME_DIR=${USER_RUNTIME_DIR:-/run/user/$UID}
 export USER_GVFS_DIR=$USER_RUNTIME_DIR/gvfs
 export USER_MEDIA_DIR=/run/media/$USER
