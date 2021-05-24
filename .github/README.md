@@ -180,8 +180,7 @@ cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
 
 - [Tilix][tilix] - For Linux. Use the command below to load configuration.
 - [Windows Terminal][win-term] - For Windows. Use
-  [profiles.json](../.config/templates/WindowsTerminal/profiles.json)
-  as configuration.
+  [profiles.json](../.config/WindowsTerminal/profiles.json) as configuration.
 
 ```bash
 # List Tilix profiles
