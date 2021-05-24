@@ -14,4 +14,4 @@
 [includeIf "gitdir:~/Workspace/scope/"]
     # Scoped Git configuration
     # See config.scope.template for an example.
-	path = ~/.config/git/config.scope
+    path = ~/.config/git/config.scope
