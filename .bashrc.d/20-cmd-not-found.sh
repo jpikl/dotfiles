@@ -1,10 +1,5 @@
 # shellcheck shell=bash
 
-# Tools that initialize environment
-[[ -x "$(command -v dircolors)" ]] && eval "$(dircolors --bourne-shell)"
-[[ -x "$(command -v thefuck)" ]] && eval "$(thefuck --alias)"
-[[ -x "$(command -v starship)" ]] && eval "$(starship init bash)"
-
 # Command-not-found handle provided by Arch Linux pgkfile package
 # Requires manual DB update using: pkgfile --update
 if [[ -f /usr/share/doc/pkgfile/command-not-found.bash ]]; then
