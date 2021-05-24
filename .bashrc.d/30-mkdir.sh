@@ -4,6 +4,6 @@
 alias mkdirp='mkdir --parents'
 
 ## Make directory including its parent and change into it
-mkdirpc() {
+mkdirc() {
   mkdirp "$1" && cd "$1" || return 1
 }

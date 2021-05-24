@@ -8,7 +8,7 @@ fi
 # Numbering convention of scripts in ~/.bashrc.d/
 # 0x - Initialization
 # 1x - Bash configuration
-# 2x - Bash environment
+# 2x - Environment setup
 # 3x - Core apps (expected to be always available)
 # 4x - System apps (might not be available in MinGW)
 # 5x - Installed apps
