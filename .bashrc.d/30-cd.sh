@@ -33,6 +33,8 @@ alias cdmus='cd "$USER_MUSIC_DIR"'
 alias cdpic='cd "$USER_PICTURES_DIR"'
 ## Change directory to $USER_PUBLIC_DIR
 alias cdpub='cd "$USER_PUBLIC_DIR"'
+## Change directory to $USER_RUNTIME_DIR
+alias cdrun='cd "$USER_RUNTIME_DIR"'
 ## Change directory to $USER_TEMP_DIR
 alias cdtmp='cd "$USER_TEMP_DIR"'
 ## Change directory to $USER_VIDEOS_DIR
