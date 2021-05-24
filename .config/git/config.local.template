@@ -1,0 +1,17 @@
+# Local Git configuration template
+# Rename this file to config.local to enable it.
+
+[user]
+    # Local credentials
+    name = Jan Pikl
+    email = pikl.jan@gmail.com
+
+[include]
+    # Windows-specific Git configuration
+    # Keep this inclusion only if you are on Windows.
+    path = ~/.config/git/config.windows
+
+[includeIf "gitdir:~/Workspace/scope/"]
+    # Scoped Git configuration
+    # See config.scope.template for an example.
+	path = ~/.config/git/config.scope

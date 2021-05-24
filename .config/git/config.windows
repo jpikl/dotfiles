@@ -1,11 +1,6 @@
-# Tweaks for Git for Windows.
-#
-# Add the following to ~/.config/git/config.local
-# to include this configuration file.
-#
-# [include]
-#    path = ~/.config/git/config.windows
-#
+# Windows-specific Git configuration
+# Inclusion of this file should be enabled in config.local.
+# See config.local.template for more details.
 
 [core]
     autocrlf = true

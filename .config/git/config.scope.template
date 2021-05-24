@@ -1,0 +1,8 @@
+# Scoped Git configuration template
+# Inclusion of this file should be enabled in config.local.
+# See config.local.template for more details.
+
+[user]
+    # Scoped credentials
+    name = Jan Pikl
+    email = pikl.jan@gmail.com

@@ -1,12 +1,14 @@
+[user]
+    # Default credentials
+    name = Jan Pikl
+    email = pikl.jan@gmail.com
+
 [merge]
     tool = vimdiff
-
 [pull]
     rebase = true
-
 [push]
     default = simple
-
 [http]
     postBuffer = 134217728 # 128 MiB
 
@@ -80,4 +82,6 @@
     mvnp = mvn-prop
 
 [include]
+    # Local Git configuration
+    # See config.local.template for an example.
     path = ~/.config/git/config.local
