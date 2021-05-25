@@ -1,0 +1,15 @@
+# shellcheck shell=bash
+
+# Local ~/.profile.d/ script template
+# Rename this file to 10-local.sh to activate it with the highest priority.
+# Rename tihs file to 30-local.sh if you depend on common configuration.
+# Rename tihs file to 50-local.sh if you depend on app configuration.
+
+# Example of an editor override
+export EDITOR=vim
+
+# Example of an user directory override
+export USER_BACKUP_DIR=~/.backup
+
+# Example of a custom path
+export PATH=$PATH:$HOME/Workspace/project/bin

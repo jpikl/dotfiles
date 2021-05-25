@@ -1,5 +1,5 @@
 # Local Git configuration template
-# Rename this file to config.local to enable it.
+# Rename this file to config.local to activate it.
 
 [user]
     # Local credentials
