@@ -19,6 +19,7 @@ readonly COMMANDS=(
   "dt   Delete tags"
   "drb  Delete remote branches"
   "drt  Delete remote tags"
+  "du   Delete untracked files"
   "cmr  Compare revisions"
   "cmb  Compare branches"
   "cmt  Compare tags"
@@ -82,6 +83,7 @@ main() {
     dt)  delete_tags ;;
     drb) delete_remote_branches ;;
     drt) delete_remote_tags ;;
+    du)  delete_untracked_files ;;
     cmr) compare_revision ;;
     cmb) compare_branches ;;
     cmt) compare_tags ;;
@@ -123,91 +125,95 @@ choose_command() {
 }
 
 fetch_branches() {
-  git ls-branches -rs | choose_multiple "Fetch branches:" | exec_git fetch origin
+  git ls-branches -rs | choose_multiple "Fetch branches:" | run git fetch origin
 }
 
 fast_forward_branches() {
-  git ls-branches -b | choose_multiple "Fast-forward branches:" | exec_git fast-forward
+  git ls-branches -b | choose_multiple "Fast-forward branches:" | run git fast-forward
 }
 
 checkout_branch() {
-  git ls-branches -lrCs | choose_one "Checkout branch:" | exec_git checkout
+  git ls-branches -lrCs | choose_one "Checkout branch:" | run git checkout
 }
 
 checkout_tag() {
-  git lst -lr | choose_one "Checkout tag:" | exec_git checkout
+  git lst -lr | choose_one "Checkout tag:" | run git checkout
 }
 
 merge_branch() {
-  git ls-branches -lrC | choose_one "Merge branch to ""$(git ls-branches -c)"":" | exec_git merge
+  git ls-branches -lrC | choose_one "Merge branch to ""$(git ls-branches -c)"":" | run git merge
 }
 
 merge_tag() {
-  git lst -lr | choose_one "Merge tag to ""$(git ls-branches -c)"":" | exec_git merge
+  git lst -lr | choose_one "Merge tag to ""$(git ls-branches -c)"":" | run git merge
 }
 
 rebase_branch() {
-  git ls-branches -lrC | choose_one "Rebase ""$(git ls-branches -c)"" onto branch:" | exec_git rebase
+  git ls-branches -lrC | choose_one "Rebase ""$(git ls-branches -c)"" onto branch:" | run git rebase
 }
 
 rebase_tag() {
-  git lst -lr | choose_one "Rebase ""$(git ls-branches -c)"" onto tag:" | exec_git rebase
+  git lst -lr | choose_one "Rebase ""$(git ls-branches -c)"" onto tag:" | run git rebase
 }
 
 push_branch() {
-  git ls-branches -lRs | choose_one "Push branch:" | ask_exec_git push --set-upstream origin
+  git ls-branches -lRs | choose_one "Push branch:" | confirm_and_run git push --set-upstream origin
 }
 
 push_tag() {
-  git lst -lR | choose_one "Push tag:" | ask_exec_git push origin
+  git lst -lR | choose_one "Push tag:" | confirm_and_run git push origin
 }
 
 delete_branches() {
-  git ls-branches -lC | choose_multiple "Delete branches:" | ask_exec_git branch --delete
+  git ls-branches -lC | choose_multiple "Delete branches:" | confirm_and_run git branch --delete
 }
 
 delete_tags() {
-  git lst -l | choose_multiple "Delete tags:" | ask_exec_git tag --delete
+  git lst -l | choose_multiple "Delete tags:" | confirm_and_run git tag --delete
 }
 
 delete_remote_branches() {
-  git ls-branches -rs | choose_multiple "Delete remote branches:" | ask_exec_git push origin --delete
+  git ls-branches -rs | choose_multiple "Delete remote branches:" | confirm_and_run git push origin --delete
 }
 
 delete_remote_tags() {
-  git lst -r | choose_multiple "Delete remote tags:" | ask_exec_git push origin --delete
+  git lst -r | choose_multiple "Delete remote tags:" | confirm_and_run git push origin --delete
+}
+
+delete_untracked_files() {
+  git ls-changes -x | choose_multiple "Delete untracked files:" | confirm_and_run rm -rf --
 }
 
 compare_revision() {
-  { git ls-branches -lr; git ls-tags -lr; } | choose_multiple "Compare revisions:" | exec_git compare
+  { git ls-branches -lr; git ls-tags -lr; } | choose_multiple "Compare revisions:" | run git compare
 }
 
 compare_branches() {
-  git ls-branches -lr | choose_multiple "Compare branches:" | exec_git compare
+  git ls-branches -lr | choose_multiple "Compare branches:" | run git compare
 }
 
 compare_tags() {
-  git ls-branches -b | choose_multiple "Fast-forward branches:" | exec_git fast-forward
+  git ls-branches -b | choose_multiple "Fast-forward branches:" | run git fast-forward
 }
 
 add_changes() {
-  git ls-changes -wx | choose_multiple "Add changes/files:" | exec_git add --
+  git ls-changes -wx | choose_multiple "Add changes/files:" | run git add --
 }
 
 add_wtree_changes() {
-  git ls-changes -w | choose_multiple "Add work tree changes:" | exec_git add --
+  git ls-changes -w | choose_multiple "Add work tree changes:" | run git add --
 }
 
 add_untracked_files() {
-  git ls-changes -x | choose_multiple "Add untracked files:" | exec_git add --
+  git ls-changes -x | choose_multiple "Add untracked files:" | run git add --
 }
 
 restore_staged_changes() {
-  git ls-changes -s | choose_multiple "Restore staged changes:" | exec_git restore --staged --
+  git ls-changes -s | choose_multiple "Restore staged changes:" | run git restore --staged --
 }
 
 restore_wtree_changes() {
-  git ls-changes -w | choose_multiple "Restore work tree changes:" | exec_git restore --
+  git ls-changes -w | choose_multiple "Restore work tree changes:" | run git restore --
 }
 
 choose_one() {
@@ -218,12 +224,12 @@ choose_multiple() {
   choose -imp "$1"
 }
 
-exec_git() {
-  xargs --no-run-if-empty git "$@"
+run() {
+  xargs --no-run-if-empty "$@"
 }
 
-ask_exec_git() {
-  xargs --no-run-if-empty --interactive git "$@"
+confirm_and_run() {
+  run --interactive "$@"
 }
 
 main "$@"
