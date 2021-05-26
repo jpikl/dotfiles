@@ -1,2 +1,11 @@
 [time]
 disabled = false
+
+[shlvl]
+threshold = 1
+disabled = false
+
+[status]
+disabled = false
+map_symbol = true
+format = "[$symbol $status]($style) " # We added an extra space after the symbol
