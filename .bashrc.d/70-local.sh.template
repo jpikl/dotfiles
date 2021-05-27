@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Local ~/.bashrc.d/ script template
-# Rename this file to 70-local.sh to activate it.
+# Copy this file as ~/.bashrc.d/70-local.sh to activate it.
 
 ## Example of a documented alias
 alias helloworld='hello world'

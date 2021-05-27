@@ -1,8 +1,9 @@
 # Local Git configuration template
-# Rename this file to config.local to activate it.
+# Copy this file as ~/.config/git/config.local to activate it.
 
 [user]
     # Local credentials
+    # Override default credentials from ~/.config/git/config.
     name = Jan Pikl
     email = pikl.jan@gmail.com
 
@@ -11,7 +12,7 @@
     # Keep this inclusion only if you are on Windows.
     path = ~/.config/git/config.windows
 
-[includeIf "gitdir:~/Workspace/scope/"]
+[includeIf "gitdir:~/Workspace/<scope>/"]
     # Scoped Git configuration
-    # See config.scope.template for an example.
-    path = ~/.config/git/config.scope
+    # See ~/.config/git/config.scope.template for an example.
+    path = ~/.config/git/config.<scope>

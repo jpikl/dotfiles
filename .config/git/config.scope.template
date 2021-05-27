@@ -1,6 +1,6 @@
 # Scoped Git configuration template
-# Inclusion of this file should be enabled in config.local.
-# See config.local.template for more details.
+# Inclusion of this file can be enabled in ~/.config/git/config.local.
+# See ~/.config/git/config.local.template for more details.
 
 [user]
     # Scoped credentials
