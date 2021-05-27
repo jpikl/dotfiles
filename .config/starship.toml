@@ -8,4 +8,5 @@ disabled = false
 [status]
 disabled = false
 map_symbol = true
+sigint_symbol = "💀"
 format = "[$symbol $status]($style) " # We added an extra space after the symbol
