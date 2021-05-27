@@ -4,6 +4,5 @@
 
 [core]
     autocrlf = true
-    fileMode = false
     fscache = true
-    trustctime = false
+    preloadIndex = true
