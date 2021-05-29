@@ -1,0 +1,11 @@
+bat
+cargo-tarpaulin
+cargo-update
+fd-find
+grcov
+hexyl
+ripgrep
+rust-covfix
+sd
+starship
+tealdeer
