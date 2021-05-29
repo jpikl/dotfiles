@@ -1,0 +1,13 @@
+[cargo-new]
+name = "Jan Pikl"
+email = "pikl.jan@gmail.com"
+vcs = "git"
+
+[alias]
+i = "install"
+l = "install --list"
+b = "build"
+c = "check"
+t = "test"
+r = "run"
+un = "uninstall"
