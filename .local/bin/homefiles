@@ -39,6 +39,7 @@ main() {
     [[ $dirs = true ]] && create_dirs
     [[ $sym_links = true ]] && create_sym_links
     [[ $fonts = true ]] && download_fonts
+    true
   else
     die_help "nothing to do"
   fi
