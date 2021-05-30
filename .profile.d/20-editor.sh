@@ -8,7 +8,7 @@ if [[ ! $EDITOR ]]; then
 
   # If we want to use Sublime Text or Visual Studio Code as Git commit editor,
   # they need their process to be foreground until they are actually closed.
-  if [[ $EDITOR =~ ^sublime_text|subl3|subl|code|codium$ ]]; then
+  if [[ $EDITOR =~ ^(sublime_text|subl3|subl|code|codium)$ ]]; then
     EDITOR="$EDITOR --wait"
   fi
 fi
