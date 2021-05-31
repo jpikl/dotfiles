@@ -1,2 +1,0 @@
-prefix=${USER_LOCAL_DIR}
-cache=${USER_CACHE_DIR}/npm
