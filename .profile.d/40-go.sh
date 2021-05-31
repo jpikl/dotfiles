@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
-# Go workspace directory
-export GOPATH=${GOPATH:-~/.go}
+# Change the default ~/go path to ~/.local/lib/go
+export GOPATH=${GOPATH:-$USER_LIBRARIES_DIR/go}
 
-# Update path for go binaries
-export PATH=$PATH:$GOPATH/bin
+# Cange the default $GOPATH/bin path to ~/.local/bin
+export GOBIN=${GOBIN:-$USER_BINARIES_DIR}
