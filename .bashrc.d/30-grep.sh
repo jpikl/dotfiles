@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Clear previous alias in case of reload
-unalias grep
+unalias grep &>/dev/null
 
 # Grep with colors
 alias grep='grep --color=auto'

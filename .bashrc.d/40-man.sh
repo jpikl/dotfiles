@@ -18,7 +18,7 @@ elif [[ -x $(command -v less) ]]; then
 fi
 
 # Clear previous alias in case of reload
-unalias man
+unalias man &>/dev/null
 
 # Our own implementation when man is not available (MinGW)
 if [[ ! -x "$(command -v man)" ]]; then

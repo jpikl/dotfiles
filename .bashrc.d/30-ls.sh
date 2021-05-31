@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Clear previous alias in case of reload
-unalias ls
+unalias ls &>/dev/null
 
 # List files with colors
 alias ls='ls --color=auto'

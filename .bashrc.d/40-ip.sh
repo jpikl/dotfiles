@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Clear previous alias in case of reload
-unalias ip
+unalias ip &>/dev/null
 
 # Ip command with colors
 alias ip='ip -color=auto'

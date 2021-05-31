@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 # Clear previous alias in case of reload
-unalias exa
+unalias exa &>/dev/null
 
 if [[ -x "$(command -v exa)" ]]; then
   # Use exa with icons when available
