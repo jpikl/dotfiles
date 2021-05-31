@@ -9,3 +9,6 @@ export HISTCONTROL=ignorespace:erasedups
 
 ## Reload .profile and .bashrc
 alias bashreload='source ~/.bash_profile'
+
+## List PATH env variable entries as lines
+alias lspath='echo $PATH | tr : $"\n"'
