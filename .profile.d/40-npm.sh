@@ -3,7 +3,7 @@
 if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
   # Npm on Windows uses a different directory layout inside %AppData%.
   # Binaries are stored directly in the "prefix" directory.
-  export PATH=$PATH:${NPM_CONFIG_PREFIX:-$APPDATA/npm}
+  export PATH=$PATH:${NPM_CONFIG_PREFIX:-$(normalize_path "$APPDATA/npm")}
 else
   # Change the defaut /usr/local prefix to ~/.local
   export NPM_CONFIG_PREFIX=${NPM_CONFIG_PREFIX:-$USER_LOCAL_DIR}
