@@ -1,5 +1,8 @@
 # shellcheck shell=bash
 
+# Clear previous alias in case of reload
+unalias exa
+
 if [[ -x "$(command -v exa)" ]]; then
   # Use exa with icons when available
   if [[ $TERM_ICONS == true ]]; then
@@ -10,8 +13,8 @@ if [[ -x "$(command -v exa)" ]]; then
 
   # Override 30-ls.sh aliases using exa
   alias ls='exa'
-  alias la='ls --all'
-  alias ll='ls --long'
-  alias lla='ll --all'
-  alias tree='ls --tree'
+  alias la='exa --all'
+  alias ll='exa --long'
+  alias lla='exa --long --all'
+  alias tree='exa --tree'
 fi

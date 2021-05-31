@@ -17,6 +17,9 @@ elif [[ -x $(command -v less) ]]; then
   export MANPAGER
 fi
 
+# Clear previous alias in case of reload
+unalias man
+
 # Our own implementation when man is not available (MinGW)
 if [[ ! -x "$(command -v man)" ]]; then
   alias man=wman
