@@ -225,6 +225,15 @@ Bold colors #8-15 are the same as regular colors #0-7.
 
 ## 🚑 Troubleshooting
 
+See also Git for Windows [Known issues][git-win-issues].
+
+### Git for Windows rewrites `/` to `C:/Program Files/Git`
+
+Workarounds:
+
+1. Run command with `MSYS_NO_PATHCONV=1` or export this environment variable temporarily.
+2. Use double slash `//` instead of `/`
+
 ### Poor Git performance on Windows
 
 1. Assuming `C:\Program Files\Git` is your Git installation directory,
@@ -287,8 +296,9 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [fd]: https://github.com/sharkdp/fd
 [fzf-charset-issue]: https://github.com/junegunn/fzf/issues/963
 [fzf]: https://github.com/junegunn/fzf
-[git-win-perf]: https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues
 [git-win]: https://gitforwindows.org/
+[git-win-issues]: https://github.com/git-for-windows/build-extra/blob/main/ReleaseNotes.md#known-issues
+[git-win-perf]: https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues
 [git]: https://git-scm.com
 [hexyl]: https://github.com/sharkdp/hexyl
 [material-colors]: https://materialshell.carloscuesta.me
