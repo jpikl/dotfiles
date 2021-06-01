@@ -47,7 +47,9 @@ main() {
 
 get_clipboard() {
   if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
-    powershell -command "Get-Clipboard"
+    # For some weird reason we neet to pipe data through`cat`,
+    # otherwise the following commands in pipeline won't receive any data.
+    powershell -command "Get-Clipboard" | cat
   else
     xclip -out -selection clipboard
   fi
@@ -63,7 +65,7 @@ set_clipboard_from_arg() {
 
 set_clipboard_from_stdin() {
   if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
-    cat | clip
+    cat | clip # Similar `cat` workaround as in get_clipboard
   else
     xclip -in -selection clipboard
   fi
@@ -71,7 +73,7 @@ set_clipboard_from_stdin() {
 
 clear_clipboard() {
   if [[ ${MSYSTEM-} =~ ^MINGW(32|64)$ ]]; then
-    printf "" | clip
+    printf "" | clip # Redirection from /dev/null is not working
   else
     xclip -in -selection clipboard </dev/null
   fi
