@@ -176,25 +176,10 @@ cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
 
 > 🔥 The following is highly opinionated.
 
-### Emulators
+### Emulator
 
-- [Tilix][tilix] - For Linux. Use the command below to load configuration.
-- [Windows Terminal][win-term] - For Windows. Use
-  [profiles.json](../.config/WindowsTerminal/profiles.json) as configuration.
-
-```bash
-# List Tilix profiles
-dconf dump /com/gexperts/Tilix/profiles/
-
-# Load values to a Tilix profile
-dconf load /com/gexperts/Tilix/profiles/ <<-EOT
-	[YOUR-TILIX-PROFILE-UUID]
-	font='LiterationMono Nerd Font 11'
-	foreground-color='#A1B0B8'
-	background-color='#263238'
-	palette=['#252525','#FF5252','#C3D82C','#FFC135','#42A5F5','#D81B60','#00ACC1','#F5F5F5','#708284','#FF5252','#C3D82C','#FFC135','#42A5F5','#D81B60','#00ACC1','#F5F5F5']
-EOT
-```
+- [Tilix][tilix] - For Linux.
+- [Windows Terminal][win-term] - For Windows.
 
 ### Font
 
@@ -227,7 +212,7 @@ Bold colors #8-15 are the same as regular colors #0-7.
 
 See also Git for Windows [Known issues][git-win-issues].
 
-### Git for Windows rewrites `/` to `C:/Program Files/Git`
+### Git for Windows Bash rewrites `/` to `C:/Program Files/Git`
 
 Workarounds:
 
