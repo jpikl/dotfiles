@@ -13,9 +13,9 @@ The following instructions ate intended for:
 - 📦 [Installation](#-installation)
 - 🔧 [Configuration](#-configuration)
 - 🚧 [Repository](#-repository)
-- 🗃️ [Bash](#-bash)
+- 🗃️ [Bash](#%EF%B8%8F-bash)
 - ⚡ [Tools](#-tools)
-- 🖥️ [Terminal](#-terminal)
+- 🖥️ [Terminal](#%EF%B8%8F-terminal)
 - 🚑 [Troubleshooting](#-troubleshooting)
 - 📄 [License](#-license)
 
@@ -23,8 +23,9 @@ The following instructions ate intended for:
 
 Linux distro, [WSL][wsl] or [Git for Windows][git-win] with:
 
-- [Bash][bash] >= 4.4.0
-- [Git][git] >= 2.17.0
+- [GNU Bash][bash] >= 4.4
+- [GNU Coreutils][coreutils] >= 8.26
+- [Git][git] >= 2.17
 
 Compatibility with BSD, OS X or others is not guaranteed.
 
@@ -54,11 +55,18 @@ dotfiles checkout
 dotfiles checkout -f # To overwrite possible conflicts.
 ```
 
-Customize your personal [configuration](#wrench-configuration).
-
-Install [starship] as mentioned in [tools](#zap-Tools).
-
 Logout and login to reload Bash environment.
+
+> ℹ️ Any changes in Bash environment can be now easily reloaded
+> using `bashreload` alias.
+
+### Post-installation
+
+Modify your local [configuration](#-configuration).
+
+Customize your [terminal](#%EF%B8%8F-terminal)
+
+Install recommended [tools](#-tools).
 
 Use `homefiles` command to initialize home directory structure.
 Try `-h` option for usage.
@@ -69,27 +77,7 @@ homefiles -h
 
 ## 🔧 Configuration
 
-The following files are not part of the `~/.dotfiles.git` repository and
-are intended for machine specific configuration. By convention, a configuration
-file named `.xyz.local` overwrites values in `.xyz`.
-
-- `~/.profile.local` - Environment variables.
-- `~/.bashrc.local`  - Bash aliases and functions.
-- `~/.gitconfig.local` - Git configuration.
-- `~/.ssh/config.local` - SSH configuration.
-
-### Windows
-
-On Windows, it's more useful to define environment variables through
-**system settings** instead of using `~/.profile.local`. This way, environment
-variables can be also used by programs running outside Bash environment.
-You can even use *Windows-style* paths like `C:\foo\bar` as values. They will
-be automatically converted to *Unix-like* paths `/c/foo/bar` by `~/.profile`.
-
-There are also some files with Windows specific configuration. See instructions
-inside of them for usage.
-
-- `~/.gitconfig.windows` - Tweaks for Git for Windows.
+WIP...
 
 ## 🚧 Repository
 
@@ -114,7 +102,7 @@ and `GIT_WORK_TREE` environment variables:
 
 ```bash
 dotenv git status # Same as 'dotfiles status'
-dotenv vscode     # Run Visual Studio Code with set-up environment
+dotenv code       # Run Visual Studio Code with set-up environment
 ```
 
 ## 🗃️ Bash
@@ -130,7 +118,7 @@ The command only operates on files that are part  of the `~/.dotfiles.git`
 repository.
 
 ```bash
-bashfiles # List files
+bashfiles # List files by default
 ```
 
 These files can be validated using [shellcheck][shellcheck].
@@ -139,19 +127,18 @@ These files can be validated using [shellcheck][shellcheck].
 bashfiles check # Run shellcheck
 ```
 
-You can also get description of each executable Bash script
-from `~/.local/bin/`.
+You can also print list of [available commands](commands.md).
 
 ```bash
-bashfiles describe # Print names and descriptions
-bashfiles markdown # The same but with Markdown output
+bashfiles describe # In plaintext
+bashfiles markdown # In markdown
 ```
 
 ## ⚡ Tools
 
 ### Included in this repository
 
-See generated list of [bianaries and aliases](commands.md).
+See generated list of [available commands](commands.md).
 
 ### Recommended to install
 
@@ -160,16 +147,36 @@ See generated list of [bianaries and aliases](commands.md).
 - [fd][fd] - A simple, fast and user-friendly alternative to 'find'.
 - [fzf][fzf] - A command-line fuzzy finder.
 - [hexyl][hexyl] - A command-line hex viewer.
+- [http-server][http-server] - A simple zero-configuration command-line http server.
+- [httpie][httpie] - Modern, user-friendly command-line HTTP client for the API era.
+- [mkcert][mkcert] - A simple zero-config tool to make locally trusted development certificates.
+- [rew][rew] - A text processing CLI tool that rewrites FS paths according to a pattern (shameless plug 😛).
 - [ripgrep][ripgrep] - ripgrep recursively searches directories for a regex pattern.
 - [sd][sd] - Intuitive find & replace CLI (sed alternative).
 - [starship][starship] - The minimal, blazing-fast, and infinitely customizable prompt for any shell!
 - [tealdeer][tealdeer] - A very fast implementation of tldr in Rust.
 
 ```bash
-pacman -Sy bat exa fd fzf hexyl sd ripgrep # On ArchLinux
-pacaur -Sy starship tealdeer               # On ArchLinux (AUR)
-choco install bat fd fzf ripgrep           # On Windows using chocolatey
-cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
+# Using pacman (ArchLinux)
+pacman -Sy bat exa fd fzf hexyl httpie mkcert sd ripgrep
+
+# Using pacaur (ArchLinux AUR)
+pacaur -Sy starship tealdeer
+
+# Using chocolatey (Windows)
+choco install bat fd fzf httpie mkcert ripgrep starship
+
+# Using cargo
+cargo install bat fd-find hexyl rew ripgrep sd starship tealdeer
+
+# Using go
+go get github.com/junegunn/fzf filippo.io/mkcert
+
+# Using npm
+npm install --global http-server
+
+# Using pip
+pip install --user httpie
 ```
 
 ## 🖥️ Terminal
@@ -185,7 +192,7 @@ cargo install bat fd-find hexyl ripgrep sd starship tealdeer # Using cargo
 
 [LiterationMono Nerd Font][nf-literation] (11pt) or any other [Nerd Font][nf].
 
-- They provide icons which are used by prompt and commands like `git-super-status`.
+- They provide icons required by [starship][starship], [exa][exa] and others.
 - Run `homefiles -f` to download the latest version to `~/.local/share/fonts`.
 
 ### Colors
@@ -277,6 +284,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [color-7]: https://via.placeholder.com/16/F5F5F5/000000?text=+
 [color-b]: https://via.placeholder.com/16/263238/000000?text=+
 [color-f]: https://via.placeholder.com/16/A1B0B8/000000?text=+
+[coreutils]: https://www.gnu.org/software/coreutils
 [exa]: https://github.com/ogham/exa
 [fd]: https://github.com/sharkdp/fd
 [fzf-charset-issue]: https://github.com/junegunn/fzf/issues/963
@@ -286,11 +294,15 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [git-win-perf]: https://github.com/git-for-windows/git/wiki/Diagnosing-performance-issues
 [git]: https://git-scm.com
 [hexyl]: https://github.com/sharkdp/hexyl
+[httpie]: https://httpie.io
+[http-server]: https://github.com/http-party/http-server
 [material-colors]: https://materialshell.carloscuesta.me
+[mkcert]: https://github.com/FiloSottile/mkcert
 [mvn]: https://maven.apache.org
 [nf-literation]: https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/LiberationMono
 [nf]: https://www.nerdfonts.com
 [ripgrep]: https://github.com/BurntSushi/ripgrep
+[rew]: https://github.com/jpikl/rew
 [sd]: https://github.com/chmln/sd
 [starship]: https://github.com/starship/starship
 [shellcheck]: https://shellcheck.net
