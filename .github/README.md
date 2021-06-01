@@ -255,7 +255,7 @@ Some commands does not work well with ConEmu/Bash on Windows.
 - [fzf][fzf] - Fails with [character set not supported][fzf-charset-issue].
 - [mvn][mvn] - Does not output colors.
 
-There are two workarounds using [winpty][winpty]:
+Workarounds using [winpty][winpty]:
 
 1. Wrap command execution using `winpty`.
 
