@@ -63,7 +63,7 @@ Logout and login to reload Bash environment.
 
 ### Post-installation
 
-Configure your local [environment](#login-shell).
+Configure your local [environment](#login-shell)
 and [aliases](#interactive-shell).
 
 Customize your local [Git](#-git) or [SSH](#-ssh) configuration.
