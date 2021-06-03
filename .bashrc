@@ -5,7 +5,7 @@ if [[ ! $- == *i* ]]; then
   return
 fi
 
-# Numbering convention of scripts in ~/.bashrc.d/
+# Numbering convention for ~/.bashrc.d/ scripts
 # 0x - Initialization
 # 1x - Bash configuration
 # 2x - Environment setup

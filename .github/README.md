@@ -11,9 +11,10 @@ The following instructions ate intended for:
 
 - 📌 [Prerequisites](#-prerequisites)
 - 📦 [Installation](#-installation)
-- 🔧 [Configuration](#-configuration)
 - 🚧 [Repository](#-repository)
 - 🗃️ [Bash](#%EF%B8%8F-bash)
+- 🔶 [Git](#-git)
+- 🔑 [SSH](#-ssh)
 - ⚡ [Tools](#-tools)
 - 🖥️ [Terminal](#%EF%B8%8F-terminal)
 - 🚑 [Troubleshooting](#-troubleshooting)
@@ -62,7 +63,10 @@ Logout and login to reload Bash environment.
 
 ### Post-installation
 
-Modify your local [configuration](#-configuration).
+Configure your local [environment](#login-shell).
+and [aliases](#interactive-shell).
+
+Customize your local [Git](#-git) or [SSH](#-ssh) configuration.
 
 Customize your [terminal](#%EF%B8%8F-terminal)
 
@@ -75,13 +79,9 @@ Try `-h` option for usage.
 homefiles -h
 ```
 
-## 🔧 Configuration
-
-WIP...
-
 ## 🚧 Repository
 
-Git commands for the `~/.dotfiles.git` repository have to be executed
+Git operations for the `~/.dotfiles.git` repository have to be executed
 using `dotfiles` command.
 
 ```bash
@@ -107,7 +107,7 @@ dotenv code       # Run Visual Studio Code with set-up environment
 
 ## 🗃️ Bash
 
-Bash files are managed using the `bashfiles` command.
+Bash scripts are managed using the `bashfiles` command.
 Try `-h` option for usage.
 
 ```bash
@@ -133,6 +133,59 @@ You can also print list of [available commands](commands.md).
 bashfiles describe # In plaintext
 bashfiles markdown # In markdown
 ```
+
+### Login shell
+
+Directory `~/.profile.d/` contains several scripts which are loaded when
+starting Bash as a login shell.
+
+All of these scripts follow `<order>-<target>.sh` naming convention.
+
+- `order` - Double digit number. Scripts with lower `order` are loaded first.
+- `target` - Describes what the script relates to. For example, a name
+             of an application which is configured by it.
+
+See comment inside [~/.profile](../.profile) for more detailed description.
+
+Your custom local configuration belongs to `10-local.sh`.
+Use `10-local.sh.template` as a template.
+
+### Interactive shell
+
+Directory `~/.bashrc.d/` contains several scripts which are loaded when
+starting Bash in interactive mode.
+
+All of these scripts follow the same naming convention as `~/.profile.d/`.
+See comment inside [~/.bashrc](../.bashrc) for more detailed description.
+
+Your custom local configuration belongs to `70-local.sh`.
+Use `70-local.sh.template` as a template.
+
+## 🔶 Git
+
+Git configuration is located in the `~/.config/git` directory.
+
+- `config` - Main configuration and [aliases](commands.md#git-aliases).
+- `config.local` - Your custom local configuration, included by `config`.
+- `config.local.template` - Template for creating `config.local` .
+- `config.scope.template` - Template for creating a scoped local configuration.
+- `config.windows` - Additional Git tweaks for Windows.
+
+## 🔑 SSH
+
+SSH configuration is located in the `~/.ssh` directory.
+
+- `config` - Main configuration file.
+- `config.local` - Your custom local configuration, included by `config`.
+- `config.local.template` - Template for creating `config.local`.
+
+Use `sshgen` command to generate your SSH keys. They will be automatically
+configured by `~/.ssh/config` when accessing related hostname.
+
+The `~/.profile.d/60-ssh-agent.sh` script automatically starts `ssh-agent`
+process after login. Internally, it uses `sshctl` command to control
+the `ssh-agent`. As an user, do not call `sshctl` directly but use one
+of the [following aliases](commands.md#60-sshsh).
 
 ## ⚡ Tools
 

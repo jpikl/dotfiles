@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-# Numbering convention of scripts in ~/.profile.d/
+# Numbering convention for ~/.profile.d/ scripts
 # 0x - Initialization
 # 1x - Common configuration (local)
 # 2x - Common configuration (shared)

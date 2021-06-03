@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-## Start SSH agent
+## Start SSH agent if needed
 alias sshi='eval "$(sshctl start)"'
 ## Kill SSH agent
 alias sshk='eval "$(sshctl stop)"'
