@@ -63,26 +63,23 @@ Logout and login to reload Bash environment.
 
 ### Post-installation
 
-Configure your local [environment](#login-shell)
-and [aliases](#interactive-shell).
+Set-up your local [environment](#login-shell) and [aliases](#interactive-shell).
 
-Customize your local [Git](#-git) or [SSH](#-ssh) configuration.
-
-Customize your [terminal](#%EF%B8%8F-terminal)
+Add your local [Git](#-git) or [SSH](#-ssh) configuration.
 
 Install recommended [tools](#-tools).
 
+Personalize your [terminal](#%EF%B8%8F-terminal).
+
 Use `homefiles` command to initialize home directory structure.
-Try `-h` option for usage.
 
 ```bash
-homefiles -h
+homefiles -h # Print usage
 ```
 
 ## 🚧 Repository
 
-Git operations for the `~/.dotfiles.git` repository have to be executed
-using `dotfiles` command.
+Git operations for this repository have to be executed using `dotfiles` command.
 
 ```bash
 dotfiles status # Instead of 'git status'
@@ -107,15 +104,14 @@ dotenv code       # Run Visual Studio Code with set-up environment
 
 ## 🗃️ Bash
 
-Bash scripts are managed using the `bashfiles` command.
-Try `-h` option for usage.
+Bash scripts of this repository are managed using the `bashfiles` command.
+
 
 ```bash
-bashfiles -h
+bashfiles -h # Print usage
 ```
 
-The command only operates on files that are part  of the `~/.dotfiles.git`
-repository.
+The command only operates on scripts that were added to this repository.
 
 ```bash
 bashfiles # List files by default
@@ -141,13 +137,12 @@ starting Bash as a login shell.
 
 All of these scripts follow `<order>-<target>.sh` naming convention.
 
-- `order` - Double digit number. Scripts with lower `order` are loaded first.
-- `target` - Describes what the script relates to. For example, a name
-             of an application which is configured by it.
+- `order` - Double digit number. Scripts with lower value are loaded first.
+- `target` - What the script relates to. For example, a name of an application.
 
 See comment inside [~/.profile](../.profile) for more detailed description.
 
-Your custom local configuration belongs to `10-local.sh`.
+Custom local configuration belongs to `10-local.sh`.
 Use `10-local.sh.template` as a template.
 
 ### Interactive shell
@@ -158,7 +153,7 @@ starting Bash in interactive mode.
 All of these scripts follow the same naming convention as `~/.profile.d/`.
 See comment inside [~/.bashrc](../.bashrc) for more detailed description.
 
-Your custom local configuration belongs to `70-local.sh`.
+Custom local configuration belongs to `70-local.sh`.
 Use `70-local.sh.template` as a template.
 
 ## 🔶 Git
@@ -166,7 +161,7 @@ Use `70-local.sh.template` as a template.
 Git configuration is located in the `~/.config/git` directory.
 
 - `config` - Main configuration and [aliases](commands.md#git-aliases).
-- `config.local` - Your custom local configuration, included by `config`.
+- `config.local` - Custom local configuration included by `config`.
 - `config.local.template` - Template for creating `config.local` .
 - `config.scope.template` - Template for creating a scoped local configuration.
 - `config.windows` - Additional Git tweaks for Windows.
@@ -175,12 +170,12 @@ Git configuration is located in the `~/.config/git` directory.
 
 SSH configuration is located in the `~/.ssh` directory.
 
-- `config` - Main configuration file.
-- `config.local` - Your custom local configuration, included by `config`.
+- `config` - Main configuration.
+- `config.local` - Custom local configuration included by `config`.
 - `config.local.template` - Template for creating `config.local`.
 
-Use `sshgen` command to generate your SSH keys. They will be automatically
-configured by `~/.ssh/config` when accessing related hostname.
+Use `sshgen` command to generate SSH keys. They will be automatically
+used by `~/.ssh/config` when accessing related hostname.
 
 The `~/.profile.d/60-ssh-agent.sh` script automatically starts `ssh-agent`
 process after login. Internally, it uses `sshctl` command to control
