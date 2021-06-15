@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+help() {
+  cat <<-EOT
+		Execte command for each input line, format results as a table.
+
+		Usage:
+		  $(self) [<options>] <command> [<param>...]
+
+		Args:
+		  <command>   Command to execute.
+		  <param>...  Parameters passed to command.
+
+		Options:
+		  -I  Use {} as input value placeholder
+		  -z  Line delimiter is NUL, not newline.
+		  -s  Execute <command> inside shell (Bash).
+		  -h  Print this help.
+
+		Input value will be passed as the last command parameter,
+		unless -I option is used.
+
+	EOT
+}
+
+main() {
+  local placeholder=
+  local delimiter=$'\n'
+  local shell=false
+  local opt
+
+  while getopts ":Izsh" opt; do
+    case "$opt" in
+      I) placeholder={} ;;
+      z) delimiter=$'\0' ;;
+      s) shell=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  generate_table "$@" | format_table
+}
+
+transform_input() {
+  local input=$1
+  local placeholder_used=false
+  local command=()
+  local arg
+  shift
+
+  for arg; do
+    if [[ $placeholder && $arg == *$placeholder* ]]; then
+      arg=${arg//$placeholder/$input}
+      placeholder_used=true
+    fi
+
+    if [[ $shell = true && ${#command[@]} -eq 0 ]]; then
+      command+=(bash -c "$arg" --)
+    else
+      command+=("$arg")
+    fi
+  done
+
+  if [[ $placeholder_used = false ]]; then
+    command+=("$input")
+  fi
+
+  "${command[@]}"
+}
+
+sanitize_value() {
+  local value=$1
+  value=${value//$'\n'/ }
+  value=${value//$'\t'/ }
+  echo "$value"
+}
+
+generate_table() {
+  local input
+  local output
+
+  while IFS= read -rd "$delimiter" input; do
+    output=$(transform_input "$input" "$@") || output="<err:$?>"
+    printf "%s\t%s\n" "$(sanitize_value "$input")" "$(sanitize_value "$output")"
+  done
+}
+
+format_table() {
+  column --table --separator $'\t'
+}
+
+main "$@"
