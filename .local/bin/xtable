@@ -6,7 +6,7 @@ source ~/.local/lib/bash/core.sh
 
 help() {
   cat <<-EOT
-		Execte command for each input line, format results as a table.
+		Execute command for each input line, format results as a table.
 
 		Usage:
 		  $(self) [<options>] <command> [<param>...]
