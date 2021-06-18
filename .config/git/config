@@ -78,8 +78,8 @@
     ## Set executable modifier on a file
     chmodx = add --chmod=+x --
 
-    ## Print property of a Maven project in branches.
-    mvnp = mvn-prop
+    ## Fix broken HEAD
+    fixhead = !git remote set-head origin "$(git ls-branches -c)"
 
 [include]
     # Local Git configuration
