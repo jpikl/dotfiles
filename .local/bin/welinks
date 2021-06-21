@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+readonly SYMLINKS_LOG=.symlinks
+
+help() {
+  cat <<-EOT
+		Create or remove lowercase symlinks for weidu.
+
+		Usage:
+		  $(self) [<options>] <command>
+
+		Commands:
+		  c, create  Create symbolic links.
+		  r, remove  Remove symbolic links.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  case $1 in
+    c|create) create_symlinks ;;
+    r|remove) remove_symlinks ;;
+    *) die_help "invalid command '$1'" ;;
+  esac
+}
+
+create_symlinks() {
+  local input
+  local output
+
+  while IFS= read -r input; do
+    output=${input,,}
+
+    if [[ ! -e $output ]]; then
+      echo "Creating $output"
+      ln -s "$PWD/$input" "$output"
+      echo "$output" >> $SYMLINKS_LOG
+    fi
+  done < <(find_inputs)
+}
+
+remove_symlinks() {
+  local input
+
+  while IFS= read -r input; do
+    if [[ -e $input ]]; then
+      echo "Deleting $input"
+      rm -f "$input"
+    fi
+  done < <(find_symlinks)
+
+  rm -f $SYMLINKS_LOG
+}
+
+find_symlinks() {
+  [[ -f $SYMLINKS_LOG ]] || die "No symlinks found"
+  tac $SYMLINKS_LOG
+}
+
+find_inputs() {
+  find_inputs_of_type d
+  find_inputs_of_type f
+}
+
+find_inputs_of_type() {
+  find . -type "$1" '(' \
+    -path './data/*' -or \
+    -path './lang/*' -or \
+    -path './movies/*' -or \
+    -path './movies/*' -or \
+    -path './scripts/*' \
+  ')' | grep '[A-Z]'
+}
+
+main "$@"
