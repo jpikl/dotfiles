@@ -75,6 +75,9 @@
     ## New Commits to remote (without merges)
     logux = logu --no-merges
 
+    ## Tag version
+    tagv = !"f() { [ $1 ] && git tag -am \"Version $1\" \"v$1\"; }; f"
+
     ## Set executable modifier on a file
     chmodx = add --chmod=+x --
 
