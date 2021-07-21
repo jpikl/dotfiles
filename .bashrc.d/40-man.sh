@@ -2,7 +2,7 @@
 
 # Colored pager for man
 if [[ -x $(command -v bat) ]]; then
-  export MANPAGER="$SHELL -c 'col --no-backspaces --spaces | bat --plain --language man'"
+  export MANPAGER="$SHELL -c 'col --no-backspaces --spaces | bat --plain --language man --paging=always'"
 elif [[ -x $(command -v most) ]]; then
   export MANPAGER=most
 elif [[ -x $(command -v less) ]]; then
