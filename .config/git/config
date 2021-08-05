@@ -77,12 +77,12 @@
 
     ## Tag version
     tagv = !"f() { [ $1 ] && git tag -am \"Version $1\" \"v$1\"; }; f"
-
     ## Set executable modifier on a file
     chmodx = add --chmod=+x --
-
     ## Fix broken HEAD
     fixhead = !git remote set-head origin "$(git ls-branches -c)"
+    ## Last change in a file
+    lastchange = rev-list -n 1 HEAD --
 
 [include]
     # Local Git configuration
