@@ -6,7 +6,7 @@ source ~/.local/lib/bash/core.sh
 
 help() {
   cat <<-EOT
-		List or (silently) run scripts of a npm package.
+		Choose script(s) of a npm package to run.
 
 		Usage:
 		  $(self) [<options>] [<script>...]
@@ -19,7 +19,7 @@ help() {
 		  -S  Do not silence npm run output.
 		  -h  Print this help.
 
-		Runnable scripts are listed when no script to run is passed.
+		User is promted to select script if none is provided.
 	EOT
 }
 
@@ -48,7 +48,17 @@ main() {
   mapfile -t scripts < <(npm run | grep '^  \S' | cut --characters=3-)
 
   if [[ $# -eq 0 ]]; then
-    printf "%s\n" "${scripts[@]}"
+    if [[ ${#scripts[@]} -eq 0 ]]; then
+      die "package.json does not have any scripts to choose from"
+    fi
+
+    local selected_script
+    selected_script=$(choose -p "Script to run:" "${scripts[@]}")
+
+    if [[ $selected_script ]]; then
+      run_script "$selected_script"
+    fi
+
     exit
   fi
 
@@ -66,11 +76,8 @@ main() {
     done
 
     if [[ $matched_script ]]; then
-      if [[ $silent == true ]]; then
-        npm run --silent "$matched_script"
-      else
-        npm run "$matched_script"
-      fi
+      run_script "$matched_script"
+
       if [[ $single == true ]]; then
         exit
       fi
@@ -81,6 +88,14 @@ main() {
 
   if [[ $single == true ]]; then
     die "no runnable scripts: $*"
+  fi
+}
+
+run_script() {
+  if [[ $silent == true ]]; then
+    npm run --silent "$1"
+  else
+    npm run "$1"
   fi
 }
 
