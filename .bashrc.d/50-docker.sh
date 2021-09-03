@@ -12,10 +12,10 @@ alias dovo='docker volume'
 ## Execute command in a docker container
 alias doex='docker exec -it'
 
-## Start Bash in a docker container
-doba() {
+## Start shell in a docker container
+dosh() {
   if [[ $1 ]]; then
-    docker exec -it "$1" bash -li
+    docker exec -it "$1" sh -li
   else
     echo "Usage: doba <container>"
   fi
