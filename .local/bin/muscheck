@@ -44,14 +44,14 @@ main() {
   fi
 
   local path
-  local prev_err_path
-  local success
+  local last_error_path
+  local error_count
 
   check_roots && check_bands && check_albums
 }
 
 list_at_depth() {
-  find "$music_dir" -mindepth "$1" -maxdepth "$1"
+  find "$music_dir" -mindepth "$1" -maxdepth "$1" | sort
 }
 
 check_roots() {
@@ -149,41 +149,36 @@ check_name() {
   local word
   local cap_word
 
-  for word in "a" "and" "from" "in" "of" "or" "the"; do
+  for word in "a" "and" "at" "by" "for" "from" "in" "into" "of" "or" "over" "the" "to" "with"; do
     cap_word=${word^}
-    if [[ $name =~ [[:space:]]${cap_word}[[:space:]] || $name =~ [[:space:]]${cap_word}$ ]]; then
+    if [[ $name =~ [[:space:]]${cap_word}[[:space:]] ]]; then
       path_error "'$cap_word' should be '$word'"
     fi
   done
 }
 
 begin_check() {
-  [[ ${prev_err_path-} ]] && echo
-
   echo "=== ${1^} ==="
 
   path=
-  prev_err_path=
-  success=true
+  last_error_path=
+  error_count=0
 }
 
 end_check() {
-  if [[ $success == true ]]; then
-    echo
-    echo "OK"
-    echo
-  else
-    return 1
-  fi
+  echo
+  echo "Errors: $error_count"
+  echo
+  [[ $error_count -eq 0 ]]
 }
 
 path_error() {
-  if [[ $path != "$prev_err_path" ]]; then
-    prev_err_path=$path
+  if [[ $path != "$last_error_path" ]]; then
+    last_error_path=$path
     echo
     echo "$path"
   fi
-  success=false
+  ((++error_count))
   echo "  $1"
 }
 
