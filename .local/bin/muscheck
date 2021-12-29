@@ -5,6 +5,8 @@ set -euo pipefail
 source ~/.local/lib/bash/core.sh
 source ~/.local/lib/bash/path.sh
 
+readonly COVER_IMAGE=cover.jpg
+
 help() {
   cat <<-EOT
 		Check structure of music directory.
@@ -47,7 +49,7 @@ main() {
   local last_error_path
   local error_count
 
-  check_roots && check_bands && check_albums
+  check_roots && check_bands && check_albums && check_tracks
 }
 
 list_at_depth() {
@@ -128,6 +130,57 @@ check_albums() {
   done < <(list_at_depth 3)
 
   end_check
+}
+
+check_tracks() {
+  begin_check "tracks"
+
+  local album_paths=()
+  local prev_dir=
+
+  while IFS= read -r path; do
+    local dir=${path%/*}
+
+    if [[ $prev_dir != "$dir" ]]; then
+      if [[ $prev_dir ]]; then
+        check_tracks_of_album "$prev_dir" "${album_paths[@]}"
+      fi
+      album_paths=()
+      prev_dir=$dir
+    fi
+
+    album_paths+=("$path")
+  done < <(list_at_depth 4)
+
+  if [[ $prev_dir ]]; then
+    check_tracks_of_album "$prev_dir" "${album_paths[@]}"
+  fi
+
+  end_check
+}
+
+check_tracks_of_album() {
+  local dir=$1
+  shift
+
+  local path=$dir
+  if [[ ! -f $dir/$COVER_IMAGE ]]; then
+    path_error "Missing $COVER_IMAGE"
+  fi
+
+  for path; do
+    local file=${path##*/}
+
+    if [[ $file == "$COVER_IMAGE" ]]; then
+      continue
+    fi
+
+    if [[ $file == *.mp3 || $file == *.ogg || $file == *.m4a ]]; then
+      : # TODO count audio files + check pattern '<num> - <name>'
+    else
+      path_error "Unexpected file"
+    fi
+  done
 }
 
 check_name() {
