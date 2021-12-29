@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+source ~/.local/lib/bash/path.sh
+
+help() {
+  cat <<-EOT
+		Check structure of music directory.
+
+		Usage:
+		  $(self) [<options>] [<directory>]
+
+		Args:
+		  <directory> Music directory to scan.
+		              Defaults to the USER_MUSIC_DIR environment variable.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  local music_dir
+
+  if [[ $# -gt 0 ]]; then
+    music_dir=$(path_make_absolute "$1")
+  else
+    music_dir=$(path_from_env USER_MUSIC_DIR)
+  fi
+
+  if [[ ! -d $music_dir ]]; then
+    die "'$music_dir' is not a directory"
+  fi
+
+  local path
+  local prev_err_path
+  local success
+
+  check_roots && check_bands && check_albums
+}
+
+list_at_depth() {
+  find "$music_dir" -mindepth "$1" -maxdepth "$1"
+}
+
+check_roots() {
+  begin_check "roots"
+
+  while IFS= read -r path; do
+    if [[ ! -d $path ]]; then
+      path_error "Not a directory"
+    elif [[ ! ${path##*/} =~ ^[A-Z]$ ]]; then
+      path_error "Name is not a single uppercase letter"
+    fi
+  done < <(list_at_depth 1)
+
+  end_check
+}
+
+check_bands() {
+  begin_check "bands"
+
+  while IFS= read -r path; do
+    if [[ ! -d $path ]]; then
+      path_error "Not a directory"
+      continue
+    fi
+
+    local file=${path##*/}
+    local dir=${path%/*}
+    local parent=${dir##*/}
+    local expected_parent=${file:0:1}
+
+    if [[ $parent != "$expected_parent" ]]; then
+      path_error "Wrong parent '$parent', expected '$expected_parent'"
+    fi
+
+    check_name "$file"
+  done < <(list_at_depth 2)
+
+  end_check
+}
+
+check_albums() {
+  begin_check "albums"
+
+  local this_year
+  this_year=$(date +"%Y")
+
+  while IFS= read -r path; do
+    if [[ ! -d $path ]]; then
+      path_error "Not a directory"
+      continue
+    fi
+
+    local file=${path##*/}
+    local dir=${path%/*}
+    local parent=${dir##*/}
+
+    if [[ $parent == Soundtrack ]]; then
+      check_name "$file"
+    else
+      if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
+        path_error "Does not match pattern '<YEAR> - <ALBUM>'"
+        continue
+      fi
+
+      local year=${file:0:4}
+      local album=${file:7}
+
+      if [[ $year -lt 1900 || $year -gt "$this_year" ]]; then
+        path_error "Suspicious year $year"
+      fi
+
+      check_name "$album"
+    fi
+  done < <(list_at_depth 3)
+
+  end_check
+}
+
+check_name() {
+  local name=$1
+
+  if [[ $name =~ ^[[:space:]] || $name =~ [[:space:]]$ ]]; then
+    path_error "Not trimmed"
+  fi
+  if [[ $name =~ [[:space:]]{2,} ]]; then
+    path_error "Consecutive whitespaces"
+  fi
+  if [[ $name =~ [^[:space:]]-[[:space:]] || $name =~ [[:space:]]-[^[:space:]] ]]; then
+    path_error "'-' has uneven spaces on sides"
+  fi
+
+  # Skip capitalization checks after '- ' where uppercase letter is always OK
+  name=${name//- /-}
+
+  local word
+  local cap_word
+
+  for word in "a" "and" "from" "in" "of" "or" "the"; do
+    cap_word=${word^}
+    if [[ $name =~ [[:space:]]${cap_word}[[:space:]] || $name =~ [[:space:]]${cap_word}$ ]]; then
+      path_error "'$cap_word' should be '$word'"
+    fi
+  done
+}
+
+begin_check() {
+  [[ ${prev_err_path-} ]] && echo
+
+  echo "=== ${1^} ==="
+
+  path=
+  prev_err_path=
+  success=true
+}
+
+end_check() {
+  if [[ $success == true ]]; then
+    echo
+    echo "OK"
+    echo
+  else
+    return 1
+  fi
+}
+
+path_error() {
+  if [[ $path != "$prev_err_path" ]]; then
+    prev_err_path=$path
+    echo
+    echo "$path"
+  fi
+  success=false
+  echo "  $1"
+}
+
+main "$@"
