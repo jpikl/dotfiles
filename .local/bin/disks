@@ -106,18 +106,24 @@ format_vendor_model() {
 
 mount_disk() {
   [[ $# -gt 0 ]] || die_help "mount requires an argument"
-  udisksctl mount --block-device "$(get_block_device "$1")"
+  local device
+  device=$(get_block_device "$1")
+  udisksctl mount --block-device "$device"
 }
 
 unmount_disk() {
   [[ $# -gt 0 ]] || die_help "unmount requires an argument"
-  udisksctl unmount --block-device "$(get_block_device "$1")"
+  local device
+  device=$(get_block_device "$1")
+  udisksctl unmount --block-device "$device"
 }
 
 eject_disk() {
   [[ $# -gt 0 ]] || die_help "eject requires an argument"
   get_mountpoint "$1" >/dev/null && unmount_disk "$1"
-  udisksctl power-off --block-device "$(get_block_device "$1")"
+  local device
+  device=$(get_block_device "$1")
+  udisksctl power-off --block-device "$device"
 }
 
 open_mountpoint() {
@@ -128,7 +134,9 @@ open_mountpoint() {
 }
 
 get_mountpoint() {
-  lsblk --raw --noheadings --output MOUNTPOINT "$(get_block_device "$1")" \
+  local device
+  device=$(get_block_device "$1")
+  lsblk --raw --noheadings --output MOUNTPOINT "$device" \
     | grep --extended-regexp '.+' # Fail on empty output
 }
 
