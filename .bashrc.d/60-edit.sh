@@ -8,4 +8,10 @@
 alias edit='${EDITOR/ *}'
 
 ## Read pipe with $EDITOR
-alias editpipe='xpipe ${EDITOR/ *}'
+editpipe() {
+  if [[ $# -gt 0 ]]; then
+    xpipe -e "$1" "${EDITOR/ *}"
+  else
+    xpipe "${EDITOR/ *}"
+  fi
+}
