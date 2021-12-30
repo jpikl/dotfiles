@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+shopt -s extglob
 
 source ~/.local/lib/bash/core.sh
 source ~/.local/lib/bash/path.sh
@@ -163,24 +164,72 @@ check_tracks_of_album() {
   local dir=$1
   shift
 
-  local path=$dir
-  if [[ ! -f $dir/$COVER_IMAGE ]]; then
-    path_error "Missing $COVER_IMAGE"
-  fi
+  local path
+  local track_count=0
 
   for path; do
     local file=${path##*/}
 
-    if [[ $file == "$COVER_IMAGE" ]]; then
+    if is_audio_file "$file"; then
+      ((++track_count))
+    elif [[ $file == "$COVER_IMAGE" ]]; then
       continue
-    fi
-
-    if [[ $file == *.mp3 || $file == *.ogg || $file == *.m4a ]]; then
-      : # TODO count audio files + check pattern '<num> - <name>'
     else
       path_error "Unexpected file"
     fi
   done
+
+  local digits=${#track_count}
+  if [[ $digits -lt 2 ]]; then
+    digits=2
+  fi
+
+  local used_numbers=(false)
+  local number
+
+  for ((number = 1; number < track_count; number++)); do
+    used_numbers[$number]=false
+  done
+
+  for path; do
+    local file=${path##*/}
+
+    if is_audio_file "$file"; then
+      if [[ ! $file =~ ^[0-9]{${digits}}' '-' '.+$ ]]; then
+        path_error "Does not match pattern '<NUMBER($digits digits)> - <TITLE>'"
+      fi
+
+      local number=${file:0:$digits}
+      number=${number##+(0)} # Remove leading zeros (uses bash extglob)
+      used_numbers[$number]=true
+
+      local title=${file:((digits + 3))}
+      check_name "$title"
+    fi
+  done
+
+  path=$dir
+
+  if [[ ! -f $dir/$COVER_IMAGE ]]; then
+    path_error "Missing $COVER_IMAGE"
+  fi
+
+  local all_numbers_used=true
+
+  for ((number = 1; number < track_count; number++)); do
+    if [[ ${used_numbers[$number]} == false ]]; then
+      all_numbers_used=false
+      break;
+    fi
+  done
+
+  if [[ $all_numbers_used == false ]]; then
+    for ((number = 1; number < track_count; number++)); do
+      if [[ ${used_numbers[$number]} == false ]]; then
+        path_error "Missing track #$number"
+      fi
+    done
+  fi
 }
 
 check_name() {
@@ -233,6 +282,10 @@ path_error() {
   fi
   ((++error_count))
   echo "  $1"
+}
+
+is_audio_file() {
+  [[ $1 == *.mp3 || $1 == *.ogg || $1 == *.m4a ]]
 }
 
 main "$@"
