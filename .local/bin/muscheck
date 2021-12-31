@@ -111,23 +111,19 @@ check_albums() {
     local dir=${path%/*}
     local parent=${dir##*/}
 
-    if [[ $parent == Soundtrack ]]; then
-      check_name "$file"
-    else
-      if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
-        path_error "Does not match pattern '<YEAR> - <ALBUM>'"
-        continue
-      fi
-
-      local year=${file:0:4}
-      local album=${file:7}
-
-      if [[ $year -lt 1900 || $year -gt "$this_year" ]]; then
-        path_error "Suspicious year $year"
-      fi
-
-      check_name "$album"
+    if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
+      path_error "Does not match pattern '<YEAR> - <ALBUM>'"
+      continue
     fi
+
+    local year=${file:0:4}
+    local album=${file:7}
+
+    if [[ $year -lt 1900 || $year -gt "$this_year" ]]; then
+      path_error "Suspicious year $year"
+    fi
+
+    check_name "$album"
   done < <(list_at_depth 3)
 
   end_check
@@ -204,6 +200,7 @@ check_tracks_of_album() {
       used_numbers[$number]=true
 
       local title=${file:((digits + 3))}
+      title=${title%.*} # Remove extension
       check_name "$title"
     fi
   done
@@ -235,14 +232,24 @@ check_tracks_of_album() {
 check_name() {
   local name=$1
 
+  if [[ $name =~ ^[[:lower:]] ]]; then
+    path_error "Should start with an uppercase character"
+  fi
+
   if [[ $name =~ ^[[:space:]] || $name =~ [[:space:]]$ ]]; then
     path_error "Not trimmed"
   fi
+
   if [[ $name =~ [[:space:]]{2,} ]]; then
     path_error "Consecutive whitespaces"
   fi
+
   if [[ $name =~ [^[:space:]]-[[:space:]] || $name =~ [[:space:]]-[^[:space:]] ]]; then
     path_error "'-' has uneven spaces on sides"
+  fi
+
+  if [[ $name =~ [\\/\<\>:\"|?*] ]]; then
+    path_error "Contains one of forbidden characters /, \, <, >, :, \", |, ?, *"
   fi
 
   # Skip capitalization checks after '- ' where uppercase letter is always OK
@@ -251,7 +258,7 @@ check_name() {
   local word
   local cap_word
 
-  for word in "a" "and" "at" "by" "for" "from" "in" "into" "of" "or" "over" "the" "to" "with"; do
+  for word in "a" "and" "at" "by" "for" "from" "in" "into" "of" "on" "or" "over" "the" "to" "with"; do
     cap_word=${word^}
     if [[ $name =~ [[:space:]]${cap_word}[[:space:]] ]]; then
       path_error "'$cap_word' should be '$word'"
