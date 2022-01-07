@@ -193,15 +193,15 @@ check_tracks_of_album() {
     if is_audio_file "$file"; then
       if [[ ! $file =~ ^[0-9]{${digits}}' '-' '.+$ ]]; then
         path_error "Does not match pattern '<NUMBER($digits digits)> - <TITLE>'"
+      else
+        local number=${file:0:$digits}
+        number=${number##+(0)} # Remove leading zeros (uses bash extglob)
+        used_numbers[$number]=true
+
+        local title=${file:((digits + 3))}
+        title=${title%.*} # Remove extension
+        check_name "$title"
       fi
-
-      local number=${file:0:$digits}
-      number=${number##+(0)} # Remove leading zeros (uses bash extglob)
-      used_numbers[$number]=true
-
-      local title=${file:((digits + 3))}
-      title=${title%.*} # Remove extension
-      check_name "$title"
     fi
   done
 
