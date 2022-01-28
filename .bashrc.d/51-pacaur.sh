@@ -5,5 +5,5 @@ if [[ -x "$(command -v pacaur)" ]]; then
   alias paci='pacfind -c | fzfpacaur | xargs -ro pacaur -S'
   alias pacii='pacaur -Sy && paci'
   alias pacun='pacfind -lc | fzfpacaur | xargs -ro pacaur -Rsc'
-  alias pacup='pacaur -Syu'
+  alias pacup='pacupkeys && pacaur -Su'
 fi
