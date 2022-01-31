@@ -20,20 +20,24 @@ help() {
 		              Defaults to the USER_MUSIC_DIR environment variable.
 
 		Options:
+		  -v  Verbose errors.
 		  -h  Print this help.
 	EOT
 }
 
 main() {
+  local verbose=false
   local opt
 
-  while getopts ":h" opt; do
+  while getopts ":vh" opt; do
     case "$opt" in
+      v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
     esac
   done
 
+  shift $((OPTIND - 1))
   local music_dir
 
   if [[ $# -gt 0 ]]; then
@@ -283,12 +287,16 @@ end_check() {
 
 path_error() {
   if [[ $path != "$last_error_path" ]]; then
+    if [[ $verbose == true || ! $last_error_path ]]; then
+      echo
+    fi
     last_error_path=$path
-    echo
     echo "$path"
   fi
   ((++error_count))
-  echo "  $1"
+  if [[ $verbose == true ]]; then
+    echo "  $1"
+  fi
 }
 
 is_audio_file() {
