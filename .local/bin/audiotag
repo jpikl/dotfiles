@@ -189,9 +189,4 @@ read_tags() {
   done < <(id3 -v "$path")
 }
 
-is_audio_file() {
-  [[ $1 == *.mp3 || $1 == *.ogg || $1 == *.m4a ]]
-}
-
-
 main "$@"
