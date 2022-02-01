@@ -18,7 +18,9 @@ help() {
 
 		Options:
 		  -c  Only check if tags have valid values (do not modify any files).
-		  -v  Verbose mode.
+		      Exit with non-zero status on error.
+		  -e  Continue after an error, fail at end.
+		  -v  Verbose mode with additional output.
 		  -h  Print this help.
 
 		ID3 tags are filled from file name and parent directory names.
@@ -30,12 +32,14 @@ help() {
 
 main() {
   local check=false
+  local die_on_error=true
   local verbose=false
   local opt
 
-  while getopts ":cvh" opt; do
+  while getopts ":cevh" opt; do
     case "$opt" in
       c) check=true ;;
+      e) die_on_error=false ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -46,16 +50,15 @@ main() {
   [[ $# -gt 0 ]] || die_missing_arg
 
   local path
-  local error=false
+  local die_at_end=false
 
   for path; do
     if ! process_path "$path"; then
-      error=true
-      [[ $verbose == true ]] || break
+      [[ $die_on_error == true ]] && die || die_at_end=true
     fi
   done
 
-  [[ $error == false ]]
+  [[ $die_at_end == false ]]
 }
 
 process_path() {
@@ -137,29 +140,33 @@ check_tags() {
       [[ $v1_title_err ]]  && echo "  Title is '$v1_title_err' but should be '$title'"
       [[ $v2_title_err ]]  && echo "  TIT2 is '$v2_title_err' but should be '$title'"
       [[ ${#unexpected_tags[@]} -gt 0 ]] && echo "  Unexpected tags: ${unexpected_tags[*]}"
-    fi
+    else
+      echo "Invalid tag: $path"
+    fi >&2
     return 1
   fi
 }
 
 rewrite_tags() {
   id3 -d \
-    -a "$artist" \
-    -y "$year" \
-    -l "$album" \
-    -n "$number" \
-    -t "$title" \
-    "$path"
+      -a "$artist" \
+      -y "$year" \
+      -l "$album" \
+      -n "$number" \
+      -t "$title" \
+      "$path"
 
-   if [[ $verbose == true ]]; then
-      echo
-      echo "$path"
-      echo "  Artist / TPE1: $artist"
-      echo "  Year   / TYER: $year"
-      echo "  Album  / TALB: $album"
-      echo "  Track  / TRCK: $number"
-      echo "  Title  / TIT2: $title"
-   fi
+  if [[ $verbose == true ]]; then
+    echo
+    echo "$path"
+    echo "  Artist / TPE1: $artist"
+    echo "  Year   / TYER: $year"
+    echo "  Album  / TALB: $album"
+    echo "  Track  / TRCK: $number"
+    echo "  Title  / TIT2: $title"
+  else
+    echo "Updated tag: $path"
+  fi
 }
 
 read_tags() {
