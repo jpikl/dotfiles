@@ -1,0 +1,190 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+shopt -s extglob
+
+source ~/.local/lib/bash/core.sh
+source ~/.local/lib/bash/path.sh
+
+help() {
+  cat <<-EOT
+		Automatically fill ID3 tags of audio files from their names.
+
+		Usage:
+		  $(self) [<options>] <file>...
+
+		Args:
+		  <file>... Audio files to process.
+
+		Options:
+		  -c  Only check if tags have valid values (do not modify any files).
+		  -v  Verbose mode.
+		  -h  Print this help.
+
+		ID3 tags are filled from file name and parent directory names.
+		The following directory structure is expected:
+
+		  "<artist>/<year> - <album>/<number> - <title>.<extension>"
+	EOT
+}
+
+main() {
+  local check=false
+  local verbose=false
+  local opt
+
+  while getopts ":cvh" opt; do
+    case "$opt" in
+      c) check=true ;;
+      v) verbose=true ;;
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -gt 0 ]] || die_missing_arg
+
+  local path
+  local error=false
+
+  for path; do
+    if ! process_path "$path"; then
+      error=true
+      [[ $verbose == true ]] || break
+    fi
+  done
+
+  [[ $error == false ]]
+}
+
+process_path() {
+  local path=$1
+  local number_title_ext=${path##*/}
+  local number_title=${number_title_ext%.*}
+  local title=${number_title#* - }
+  local number=${number_title%% - *}
+  number=${number##+(0)} # Remove leading zeros (uses bash extglob)
+
+  local parent_path=${path%/*}
+  local year_album=${parent_path##*/}
+  local year=${year_album:0:4}
+  local album=${year_album:7}
+
+  local grand_parent_path=${parent_path%/*}
+  local artist=${grand_parent_path##*/}
+
+  if [[ $check == true ]]; then
+    check_tags
+  else
+    rewrite_tags
+  fi
+}
+
+check_tags() {
+  local tag_name
+  local tag_value
+
+  local v1_artist_err=
+  local v1_year_err=
+  local v1_album_err=
+  local v1_number_err=
+  local v1_title_err=
+
+  local v2_artist_err=
+  local v2_year_err=
+  local v2_album_err=
+  local v2_number_err=
+  local v2_title_err=
+
+  local unexpected_tags=()
+
+  while read -r tag_name tag_value; do
+    case "$tag_name" in
+      Artist) [[ $tag_value != "$artist" ]] && v1_artist_err=$tag_value ;;
+      TPE1)   [[ $tag_value != "$artist" ]] && v2_artist_err=$tag_value ;;
+      Year)   [[ $tag_value != "$year"   ]] && v1_year_err=$tag_value ;;
+      TYER)   [[ $tag_value != "$year"   ]] && v2_year_err=$tag_value ;;
+      Album)  [[ $tag_value != "$album"  ]] && v1_album_err=$tag_value ;;
+      TALB)   [[ $tag_value != "$album"  ]] && v2_album_err=$tag_value ;;
+      Track)  [[ $tag_value != "$number" ]] && v1_number_err=$tag_value ;;
+      TRCK)   [[ $tag_value != "$number" ]] && v2_number_err=$tag_value ;;
+      Title)  [[ $tag_value != "$title"  ]] && v1_title_err=$tag_value ;;
+      TIT2)   [[ $tag_value != "$title"  ]] && v2_title_err=$tag_value ;;
+      *)      unexpected_tags+=("$tag_name") ;;
+    esac
+  done < <(read_tags "$path")
+
+  if [[
+    $v1_artist_err || $v2_artist_err ||
+    $v1_year_err   || $v2_year_err   ||
+    $v1_album_err  || $v2_album_err  ||
+    $v1_number_err || $v2_number_err ||
+    $v1_title_err  || $v2_title_err  ||
+    ${#unexpected_tags[@]} -gt 0
+  ]]; then
+    if [[ $verbose == true ]]; then
+      echo
+      echo "$path"
+      [[ $v1_artist_err ]] && echo "  Artist is '$v1_artist_err' but should be '$artist'"
+      [[ $v2_artist_err ]] && echo "  TPE1 is '$v2_artist_err' but should be '$artist'"
+      [[ $v1_year_err ]]   && echo "  Year is '$v1_year_err' but should be '$year'"
+      [[ $v2_year_err ]]   && echo "  TYER is '$v2_year_err' but should be '$year'"
+      [[ $v1_album_err ]]  && echo "  Album is '$v1_album_err' but should be '$album'"
+      [[ $v2_album_err ]]  && echo "  TYER is '$v2_album_err' but should be '$album'"
+      [[ $v1_number_err ]] && echo "  Track is '$v1_number_err' but should be '$number'"
+      [[ $v2_number_err ]] && echo "  TRCK is '$v2_number_err' but should be '$number'"
+      [[ $v1_title_err ]]  && echo "  Title is '$v1_title_err' but should be '$title'"
+      [[ $v2_title_err ]]  && echo "  TIT2 is '$v2_title_err' but should be '$title'"
+      [[ ${#unexpected_tags[@]} -gt 0 ]] && echo "  Unexpected tags: ${unexpected_tags[*]}"
+    fi
+    return 1
+  fi
+}
+
+rewrite_tags() {
+  id3 -d \
+    -a "$artist" \
+    -y "$year" \
+    -l "$album" \
+    -n "$number" \
+    -t "$title" \
+    "$path"
+
+   if [[ $verbose == true ]]; then
+      echo
+      echo "$path"
+      echo "  Artist / TPE1: $artist"
+      echo "  Year   / TYER: $year"
+      echo "  Album  / TALB: $album"
+      echo "  Track  / TRCK: $number"
+      echo "  Title  / TIT2: $title"
+   fi
+}
+
+read_tags() {
+  local line
+  local name=
+  local value=
+
+  while IFS=$'\t' read -r line; do
+    if [[ $line =~ ^\{[a-zA-Z0-9]+\}$ ]]; then
+      name=${line:1:-1}
+    elif [[ $line != '#'* ]]; then
+      value=$line
+    fi
+
+    if [[ $name && $value ]]; then
+      echo "$name $value"
+      name=
+      value=
+    fi
+  done < <(id3 -v "$path")
+}
+
+is_audio_file() {
+  [[ $1 == *.mp3 || $1 == *.ogg || $1 == *.m4a ]]
+}
+
+
+main "$@"
