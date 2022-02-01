@@ -8,7 +8,7 @@ source ~/.local/lib/bash/path.sh
 
 help() {
   cat <<-EOT
-		Automatically fill ID3 tags of audio files from their names.
+		Automatically fill ID3 tags of audio files from their filenames.
 
 		Usage:
 		  $(self) [<options>] <file>...
@@ -23,7 +23,7 @@ help() {
 		  -v  Verbose mode with additional output.
 		  -h  Print this help.
 
-		ID3 tags are filled from file name and parent directory names.
+		ID3 tags are filled from file and parent directory names.
 		The following directory structure is expected:
 
 		  "<artist>/<year> - <album>/<number> - <title>.<extension>"
