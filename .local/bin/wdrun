@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+help() {
+  cat <<-EOT
+		Run command in a specific working directory.
+
+		Usage:
+		  $(self) [<options>] <directory> <command> <args>
+
+		Args:
+		  <directory>  Working directory to run command in.
+		  <command>    Command to run.
+		  <args>       Command arguments.
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  cd "$1"
+  shift
+
+  if [[ $# -gt 0 ]]; then
+    exec "$@"
+  fi
+}
+
+main "$@"
