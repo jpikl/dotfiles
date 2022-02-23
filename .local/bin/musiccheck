@@ -16,12 +16,22 @@ help() {
 		  $(self) [<options>] [<directory>]
 
 		Args:
-		  <directory> Music directory to scan.
+		  <directory> Music directory to process.
 		              Defaults to the USER_MUSIC_DIR environment variable.
 
 		Options:
-		  -v  Verbose errors.
+		  -v  Verbose error reporting.
 		  -h  Print this help.
+
+		The following directory structure is expected:
+
+		  <letter>/<artist>/<year> - <album>/<number> - <title>.<extension>
+
+		For example:
+
+		  I/Iron Maiden/1984 - Powerslave/01 - Aces High.mp3
+		  I/Iron Maiden/1984 - Powerslave/02 - 2 Minutes to Midnight.mp3
+		  ...
 	EOT
 }
 
