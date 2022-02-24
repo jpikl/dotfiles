@@ -262,8 +262,9 @@ check_name() {
     path_error "'-' has uneven spaces on sides"
   fi
 
-  if [[ $name =~ [\\/\<\>:\"|?*] ]]; then
-    path_error "Contains one of forbidden characters /, \, <, >, :, \", |, ?, *"
+  # audiotag/id3 cannot handle square brackets [] in filename
+  if [[ $name =~ [\\/\<\>\:\"|?*] || $name == *[* || $name == *]* ]]; then
+    path_error "Contains one of forbidden characters /, \, <, >, [, ], :, \", |, ?, *"
   fi
 
   # Skip capitalization checks after '- ' where uppercase letter is always OK
@@ -310,7 +311,7 @@ path_error() {
 }
 
 is_audio_file() {
-  [[ $1 == *.mp3 || $1 == *.ogg || $1 == *.m4a ]]
+  [[ $1 == *.mp3 || $1 == *.ogg ]]
 }
 
 main "$@"

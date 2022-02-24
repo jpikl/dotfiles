@@ -81,7 +81,8 @@ list_at_depth() {
 }
 
 is_audio_file() {
-  [[ $1 == *.mp3 || $1 == *.ogg || $1 == *.m4a ]]
+  # Ignore m4a for now because audiotag/id3 cannot work with it
+  [[ $1 == *.mp3 || $1 == *.ogg ]]
 }
 
 main "$@"
