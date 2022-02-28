@@ -20,7 +20,7 @@ help() {
 		              Defaults to the USER_MUSIC_DIR environment variable.
 
 		Options:
-		  -s  Simplified structrure (implies -R and -Y).
+		  -s  Simplified structrure (implies -RY).
 		  -R  Do not use root directories.
 		  -Y  Do not use album years.
 		  -v  Verbose error reporting.
@@ -36,7 +36,7 @@ help() {
 		  I/Iron Maiden/1984 - Powerslave/02 - 2 Minutes to Midnight.mp3
 		  ...
 
-		When -R option is used, the <letter> root directory is ommited:
+		When -R option is used, the root <letter> is ommited:
 
 		  <artist>/<year> - <album>/<number> - <title>.<extension>
 
@@ -251,14 +251,19 @@ check_tracks_of_album() {
     local file=${path##*/}
 
     if is_audio_file "$file"; then
-      if [[ ! $file =~ ^[0-9]{${digits}}' '-' '.+$ ]]; then
-        path_error "Does not match pattern '<NUMBER($digits digits)> - <TITLE>'"
+      if [[ ! $file =~ ^[0-9]+' '-' '.+$ ]]; then
+        path_error "Does not match pattern '<NUMBER> - <TITLE>'"
       else
-        local number=${file:0:$digits}
+        local number=${file%% - *}
+
+        if [[ ${#number} -ne $digits ]]; then
+          path_error "Number should have $digits digits"
+        fi
+
         number=${number##+(0)} # Remove leading zeros (uses bash extglob)
         used_numbers[$number]=true
 
-        local title=${file:((digits + 3))}
+        local title=${file#* - }
         title=${title%.*} # Remove extension
         check_name "$title"
       fi
@@ -369,7 +374,7 @@ path_error() {
 }
 
 is_audio_file() {
-  [[ $1 == *.mp3 || $1 == *.ogg ]]
+  [[ $1 == *.mp3 || $1 == *.ogg || $1 == *.m4a ]]
 }
 
 main "$@"
