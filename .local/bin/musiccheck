@@ -20,6 +20,9 @@ help() {
 		              Defaults to the USER_MUSIC_DIR environment variable.
 
 		Options:
+		  -s  Simplified structrure (implies -R and -Y).
+		  -R  Do not use root directories.
+		  -Y  Do not use album years.
 		  -v  Verbose error reporting.
 		  -h  Print this help.
 
@@ -32,15 +35,29 @@ help() {
 		  I/Iron Maiden/1984 - Powerslave/01 - Aces High.mp3
 		  I/Iron Maiden/1984 - Powerslave/02 - 2 Minutes to Midnight.mp3
 		  ...
+
+		When -R option is used, the <letter> root directory is ommited:
+
+		  <artist>/<year> - <album>/<number> - <title>.<extension>
+
+		When -Y option is used, the album <year> is ommited:
+
+		  <letter/><artist>/<album>/<number> - <title>.<extension>
 	EOT
 }
 
 main() {
+  local roots_enabled=true
+  local years_enabled=true
   local verbose=false
   local opt
 
-  while getopts ":vh" opt; do
+  while getopts ":sRYvh" opt; do
     case "$opt" in
+      s) roots_enabled=false
+         years_enabled=false ;;
+      R) roots_enabled=false ;;
+      Y) years_enabled=false ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -68,10 +85,18 @@ main() {
 }
 
 list_at_depth() {
-  find "$music_dir" -mindepth "$1" -maxdepth "$1" | sort
+  local depth=$1
+  if [[ $roots_enabled == false ]]; then
+    ((depth--))
+  fi
+  find "$music_dir" -mindepth "$depth" -maxdepth "$depth" | sort
 }
 
 check_roots() {
+  if [[ $roots_enabled == false ]]; then
+    return 0
+  fi
+
   begin_check "roots"
 
   while IFS= read -r path; do
@@ -97,13 +122,16 @@ check_bands() {
     fi
 
     local file=${path##*/}
-    local dir=${path%/*}
-    local parent=${dir##*/}
-    local expected_parent=${file:0:1}
-    expected_parent=${expected_parent^} # Uppercase
 
-    if [[ $parent != "$expected_parent" ]]; then
-      path_error "Wrong parent '$parent', expected '$expected_parent'"
+    if [[ $roots_enabled == true ]]; then
+      local dir=${path%/*}
+      local parent=${dir##*/}
+      local expected_parent=${file:0:1}
+      expected_parent=${expected_parent^} # Uppercase
+
+      if [[ $parent != "$expected_parent" ]]; then
+        path_error "Wrong parent '$parent', expected '$expected_parent'"
+      fi
     fi
 
     check_name "$file"
@@ -116,8 +144,10 @@ check_bands() {
 check_albums() {
   begin_check "albums"
 
-  local this_year
-  this_year=$(date +"%Y")
+  if [[ $years_enabled == true ]]; then
+    local this_year
+    this_year=$(date +"%Y")
+  fi
 
   local -A uniq_names
   local prev_dir=
@@ -136,16 +166,20 @@ check_albums() {
       prev_dir=$dir
     fi
 
-    if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
-      path_error "Does not match pattern '<YEAR> - <ALBUM>'"
-      continue
-    fi
+    if [[ $years_enabled == true ]]; then
+      if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
+        path_error "Does not match pattern '<YEAR> - <ALBUM>'"
+        continue
+      fi
 
-    local year=${file:0:4}
-    local album=${file:7}
+      local year=${file:0:4}
+      local album=${file:7}
 
-    if [[ $year -lt 1900 || $year -gt "$this_year" ]]; then
-      path_error "Suspicious year $year"
+      if [[ $year -lt 1900 || $year -gt "$this_year" ]]; then
+        path_error "Suspicious year $year"
+      fi
+    else
+      local album=$file
     fi
 
     check_name "$album"
