@@ -88,6 +88,8 @@ check_roots() {
 check_bands() {
   begin_check "bands"
 
+  local -A uniq_names=()
+
   while IFS= read -r path; do
     if [[ ! -d $path ]]; then
       path_error "Not a directory"
@@ -98,12 +100,14 @@ check_bands() {
     local dir=${path%/*}
     local parent=${dir##*/}
     local expected_parent=${file:0:1}
+    expected_parent=${expected_parent^} # Uppercase
 
     if [[ $parent != "$expected_parent" ]]; then
       path_error "Wrong parent '$parent', expected '$expected_parent'"
     fi
 
     check_name "$file"
+    check_uniq_name "$file"
   done < <(list_at_depth 2)
 
   end_check
@@ -115,6 +119,9 @@ check_albums() {
   local this_year
   this_year=$(date +"%Y")
 
+  local -A uniq_names
+  local prev_dir=
+
   while IFS= read -r path; do
     if [[ ! -d $path ]]; then
       path_error "Not a directory"
@@ -123,7 +130,11 @@ check_albums() {
 
     local file=${path##*/}
     local dir=${path%/*}
-    local parent=${dir##*/}
+
+    if [[ $dir != "$prev_dir" ]]; then
+      uniq_names=()
+      prev_dir=$dir
+    fi
 
     if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
       path_error "Does not match pattern '<YEAR> - <ALBUM>'"
@@ -138,6 +149,7 @@ check_albums() {
     fi
 
     check_name "$album"
+    check_uniq_name "$album"
   done < <(list_at_depth 3)
 
   end_check
@@ -279,6 +291,18 @@ check_name() {
       path_error "'$cap_word' should be '$word'"
     fi
   done
+}
+
+check_uniq_name() {
+  local key=$1
+  key=${key,,} # Lowercase
+  key=${key//[[:space:]]} # Remove white-spaces
+
+  if [[ ${uniq_names[$key]-} ]]; then
+    path_error "Duplicate name '${uniq_names[$key]}'"
+  else
+    uniq_names[$key]=$1
+  fi
 }
 
 begin_check() {
