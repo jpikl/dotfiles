@@ -58,7 +58,7 @@ main() {
 
   echo "Checking structure..."
   echo
-  musiccheck "${options[@]}"
+  musiccheck "${options[@]}" "$music_dir"
 
   echo "Updating tags..."
   echo
