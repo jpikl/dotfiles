@@ -6,7 +6,7 @@ shopt -s extglob
 source ~/.local/lib/bash/core.sh
 source ~/.local/lib/bash/path.sh
 
-readonly COVER_IMAGE=cover.jpg
+readonly COVER_ART=cover.jpg
 
 help() {
   cat <<-EOT
@@ -20,20 +20,34 @@ help() {
 		              Defaults to the USER_MUSIC_DIR environment variable.
 
 		Options:
-		  -s  Simplified structrure (implies -RY).
+		  -s  Simplified structrure (implies -RYAC).
 		  -R  Do not use root directories.
 		  -Y  Do not use album years.
+		  -A  Allow single-track albums without parent directory.
+		  -C  Allow missing cover arts.
 		  -v  Verbose error reporting.
 		  -h  Print this help.
 
 		The following directory structure is expected:
 
+		  <letter>/
+		  <letter>/<artist>/
+		  <letter>/<artist>/<year> - <album>/
 		  <letter>/<artist>/<year> - <album>/<number> - <title>.<extension>
+		  <letter>/<artist>/<year> - <album>/<number> - <title>.<extension>
+      ...
+		  <letter>/<artist>/<year> - <album>/cover.jpg
+		  ...
 
 		For example:
 
+		  I/
+		  I/Iron Maiden/
+		  I/Iron Maiden/1984 - Powerslave/
 		  I/Iron Maiden/1984 - Powerslave/01 - Aces High.mp3
 		  I/Iron Maiden/1984 - Powerslave/02 - 2 Minutes to Midnight.mp3
+		  ...
+		  I/Iron Maiden/1984 - Powerslave/cover.jpg
 		  ...
 
 		When -R option is used, the root <letter> is ommited:
@@ -43,21 +57,31 @@ help() {
 		When -Y option is used, the album <year> is ommited:
 
 		  <letter/><artist>/<album>/<number> - <title>.<extension>
+
+		When -A option is used, album can be a single track without directory:
+
+		  <letter/><artist>/<year> - <album>.<extension>
 	EOT
 }
 
 main() {
   local roots_enabled=true
   local years_enabled=true
+  local album_dirs_required=true
+  local cover_art_required=true
   local verbose=false
   local opt
 
-  while getopts ":sRYvh" opt; do
+  while getopts ":sRYACvh" opt; do
     case "$opt" in
       s) roots_enabled=false
-         years_enabled=false ;;
+         years_enabled=false
+         album_dirs_required=false
+         cover_art_required=false ;;
       R) roots_enabled=false ;;
       Y) years_enabled=false ;;
+      A) album_dirs_required=false ;;
+      C) cover_art_required=false ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -81,14 +105,12 @@ main() {
   local last_error_path
   local error_count
 
-  check_roots && check_bands && check_albums && check_tracks
+  check_roots && check_artists && check_albums && check_tracks
 }
 
 list_at_depth() {
   local depth=$1
-  if [[ $roots_enabled == false ]]; then
-    ((depth--))
-  fi
+  [[ $roots_enabled == false ]] && ((depth--))
   find "$music_dir" -mindepth "$depth" -maxdepth "$depth" | sort
 }
 
@@ -110,8 +132,8 @@ check_roots() {
   end_check
 }
 
-check_bands() {
-  begin_check "bands"
+check_artists() {
+  begin_check "artists"
 
   local -A uniq_names=()
 
@@ -154,8 +176,13 @@ check_albums() {
 
   while IFS= read -r path; do
     if [[ ! -d $path ]]; then
-      path_error "Not a directory"
-      continue
+      if [[ $album_dirs_required == true ]]; then
+        path_error "Not a directory"
+        continue
+      elif ! is_audio_file "$path"; then
+        path_error "Not an audio file"
+        continue
+      fi
     fi
 
     local file=${path##*/}
@@ -167,19 +194,24 @@ check_albums() {
     fi
 
     if [[ $years_enabled == true ]]; then
+      # Hello from 2022 if you are fixing this for year > 9999 :P
       if [[ ! $file =~ ^[0-9]{4}' '-' '.+$ ]]; then
         path_error "Does not match pattern '<YEAR> - <ALBUM>'"
         continue
       fi
 
-      local year=${file:0:4}
-      local album=${file:7}
+      local year=${file%% - *}
+      local album=${file#* - }
 
       if [[ $year -lt 1900 || $year -gt "$this_year" ]]; then
         path_error "Suspicious year $year"
       fi
     else
       local album=$file
+    fi
+
+    if [[ -f "$path" ]]; then
+      album=${album%.*} # Remove extension
     fi
 
     check_name "$album"
@@ -228,7 +260,7 @@ check_tracks_of_album() {
 
     if is_audio_file "$file"; then
       ((++track_count))
-    elif [[ $file == "$COVER_IMAGE" ]]; then
+    elif [[ $file == "$COVER_ART" ]]; then
       continue
     else
       path_error "Unexpected file"
@@ -272,8 +304,8 @@ check_tracks_of_album() {
 
   path=$dir
 
-  if [[ ! -f $dir/$COVER_IMAGE ]]; then
-    path_error "Missing $COVER_IMAGE"
+  if [[ $cover_art_required == true && ! -f "$dir/$COVER_ART" ]]; then
+    path_error "Missing $COVER_ART"
   fi
 
   local all_numbers_used=true
