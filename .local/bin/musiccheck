@@ -272,10 +272,10 @@ check_tracks_of_album() {
     digits=2
   fi
 
-  local used_numbers=(false)
+  local used_numbers=()
   local number
 
-  for ((number = 1; number < track_count; number++)); do
+  for ((number = 0; number <= track_count; number++)); do
     used_numbers[$number]=false
   done
 
@@ -293,7 +293,14 @@ check_tracks_of_album() {
         fi
 
         number=${number##+(0)} # Remove leading zeros (uses bash extglob)
-        used_numbers[$number]=true
+
+        if [[ ! ${used_numbers[$number]-} ]]; then
+          path_error "Out of range track number $number"
+        elif [[ ${used_numbers[$number]} == true ]]; then
+          path_error "Duplicit track number $number"
+        else
+          used_numbers[$number]=true
+        fi
 
         local title=${file#* - }
         title=${title%.*} # Remove extension
@@ -310,7 +317,7 @@ check_tracks_of_album() {
 
   local all_numbers_used=true
 
-  for ((number = 1; number < track_count; number++)); do
+  for ((number = 1; number <= track_count; number++)); do
     if [[ ${used_numbers[$number]} == false ]]; then
       all_numbers_used=false
       break;
@@ -318,11 +325,13 @@ check_tracks_of_album() {
   done
 
   if [[ $all_numbers_used == false ]]; then
-    for ((number = 1; number < track_count; number++)); do
+    local missing_numbers=
+    for ((number = 1; number <= track_count; number++)); do
       if [[ ${used_numbers[$number]} == false ]]; then
-        path_error "Missing track #$number"
+        missing_numbers+=", $number"
       fi
     done
+    path_error "Missing track numbers: ${missing_numbers:2}"
   fi
 }
 
