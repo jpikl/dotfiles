@@ -20,6 +20,8 @@ help() {
 		  -c  Only check if tags have valid values (do not modify any files).
 		      Exit with non-zero status on error.
 		  -e  Continue after an error, fail at end.
+		  -Y  Do not use album years.
+		  -A  Use single track album without parent directory.
 		  -v  Verbose mode with additional output.
 		  -h  Print this help.
 
@@ -33,19 +35,31 @@ help() {
 		  Iron Maiden/1984 - Powerslave/01 - Aces High.mp3
 		  Iron Maiden/1984 - Powerslave/02 - 2 Minutes to Midnight.mp3
 		  ...
+
+		When -Y option is used, the album <year> is ommited:
+
+		  <artist>/<album>/<number> - <title>.<extension>
+
+		When -A option is used, album is a single track without directory:
+
+		  <artist>/<year> - <album>.<extension>
 	EOT
 }
 
 main() {
   local check=false
+  local years_enabled=true
+  local album_dirs_enabled=true
   local die_on_error=true
   local verbose=false
   local opt
 
-  while getopts ":cevh" opt; do
+  while getopts ":ceYAvh" opt; do
     case "$opt" in
       c) check=true ;;
       e) die_on_error=false ;;
+      Y) years_enabled=false ;;
+      A) album_dirs_enabled=false ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -69,23 +83,53 @@ main() {
 
 process_path() {
   local path=$1
-  local number_title_ext=${path##*/}
-  local number_title=${number_title_ext%.*}
-  local title=${number_title#* - }
-  local number=${number_title%% - *}
-
   local parent_path=${path%/*}
-  local year_album=${parent_path##*/}
-  local year=${year_album:0:4}
-  local album=${year_album:7}
 
-  local grand_parent_path=${parent_path%/*}
-  local artist=${grand_parent_path##*/}
+  if [[ $album_dirs_enabled == true ]]; then
+    local grand_parent_path=${parent_path%/*}
+
+    local number_title_ext=${path##*/}
+    local number_title=${number_title_ext%.*}
+    local number=${number_title%% - *}
+    local title=${number_title#* - }
+
+    local year_album=${parent_path##*/}
+    local artist=${grand_parent_path##*/}
+  else
+    local year_album_ext=${path##*/}
+    local year_album=${year_album_ext%.*}
+    local artist=${parent_path##*/}
+  fi
+
+  if [[ $years_enabled == true ]]; then
+    local year=${year_album:0:4}
+    local album=${year_album:7}
+  else
+    local album=$year_album
+  fi
+
+  if [[ $album_dirs_enabled == false ]]; then
+    local title=$album
+  fi
+
+  if [[ $path == *.m4a ]]; then
+    local artist_tag=artist
+    local year_tag=year
+    local album_tag=album
+    local number_tag=track
+    local title_tag=title
+  else
+    local artist_tag=TPE1
+    local year_tag=TYER
+    local album_tag=TALB
+    local number_tag=TRCK
+    local title_tag=TIT2
+  fi
 
   if [[ $check == true ]]; then
     check_tags
   else
-    rewrite_tags
+    update_tags
   fi
 }
 
@@ -103,12 +147,14 @@ check_tags() {
 
   while read -r tag_name tag_value; do
     case "$tag_name" in
-      TPE1)   [[ $tag_value != "$artist" ]] && artist_err=$tag_value ;;
-      TYER)   [[ $tag_value != "$year"   ]] && year_err=$tag_value ;;
-      TALB)   [[ $tag_value != "$album"  ]] && album_err=$tag_value ;;
-      TRCK)   [[ $tag_value != "$number" ]] && number_err=$tag_value ;;
-      TIT2)   [[ $tag_value != "$title"  ]] && title_err=$tag_value ;;
-      *)      unexpected_tags+=("$tag_name") ;;
+      "$artist_tag") [[ $tag_value != "$artist" ]] && artist_err=$tag_value ;;
+      "$year_tag")   [[ $years_enabled == true
+                     && $tag_value != "$year"   ]] && year_err=$tag_value ;;
+      "$album_tag")  [[ $tag_value != "$album"  ]] && album_err=$tag_value ;;
+      "$number_tag") [[ $album_dirs_enabled == true
+                     && $tag_value != "$number" ]] && number_err=$tag_value ;;
+      "$title_tag")  [[ $tag_value != "$title"  ]] && title_err=$tag_value ;;
+       *)            unexpected_tags+=("$tag_name") ;;
     esac
   done < <(read_tags "$path")
 
@@ -123,11 +169,11 @@ check_tags() {
     if [[ $verbose == true ]]; then
       echo
       echo "$path"
-      [[ $artist_err ]] && echo " Artist (TPE1) is '$artist_err' but should be '$artist'"
-      [[ $year_err ]]   && echo " Year (TYER) is '$year_err' but should be '$year'"
-      [[ $album_err ]]  && echo " Album (TYER) is '$album_err' but should be '$album'"
-      [[ $number_err ]] && echo " Track (TRCK) is '$number_err' but should be '$number'"
-      [[ $title_err ]]  && echo " Title (TIT2) is '$title_err' but should be '$title'"
+      [[ $artist_err ]] && echo "  Artist ($artist_tag tag) is '$artist_err' but should be '$artist'"
+      [[ $year_err ]]   && echo "  Year ($year_tag tag) is '$year_err' but should be '$year'"
+      [[ $album_err ]]  && echo "  Album ($album_tag tag) is '$album_err' but should be '$album'"
+      [[ $number_err ]] && echo "  Track ($number_tag tag) is '$number_err' but should be '$number'"
+      [[ $title_err ]]  && echo "  Title ($title_tag tag) is '$title_err' but should be '$title'"
       [[ ${#unexpected_tags[@]} -gt 0 ]] && echo "  Unexpected tags: ${unexpected_tags[*]}"
     else
       echo "Invalid tag: $path"
@@ -136,30 +182,81 @@ check_tags() {
   fi
 }
 
-rewrite_tags() {
-  id3 --delete "$path"
-  id3 -2 \
-      --artist "$artist" \
-      --year "$year" \
-      --album "$album" \
-      --track "$number" \
-      --title "$title" \
-      "$path"
+update_tags() {
+  if [[ $path == *.m4a ]]; then
+    update_tags_m4a
+  else
+    update_tags_id3
+  fi
 
   if [[ $verbose == true ]]; then
     echo
     echo "$path"
-    echo "  Artist (TPE1): $artist"
-    echo "  Year   (TYER): $year"
-    echo "  Album  (TALB): $album"
-    echo "  Track  (TRCK): $number"
-    echo "  Title  (TIT2): $title"
+    {
+      printf "  Artist\t(%s tag):\t%s\n" "$artist_tag" "$artist"
+      if [[ $years_enabled == true ]]; then
+        printf "  Year\t(%s tag):\t%s\n" "$year_tag" "$year"
+      fi
+      printf "  Album\t(%s tag):\t%s\n" "$album_tag" "$album"
+      if [[ $album_dirs_enabled == true ]]; then
+        printf "  Track\t(%s tag):\t%s\n" "$number_tag" "$number"
+      fi
+      printf "  Title\t(%s tag):\t%s\n" "$title_tag" "$title"
+    } | column --table --separator=$'\t'
   else
-    echo "Updated tag: $path"
+    echo "Updated tags: $path"
   fi
 }
 
+update_tags_id3() {
+  id3 --delete "$path"
+
+  local opts=(
+    --artist "$artist"
+    --album "$album"
+    --title "$title"
+  )
+
+  if [[ $album_dirs_enabled == true ]]; then
+    opts+=(--track "$number")
+  fi
+
+  if [[ $years_enabled == true ]]; then
+    opts+=(--year "$year")
+  fi
+
+  id3 -2 "${opts[@]}" "$path"
+}
+
+update_tags_m4a() {
+  tagutil clear: "$path" &>/dev/null
+
+  local opts=(
+    "set=artist:$artist"
+    "set=album:$album"
+    "set=title:$title"
+  )
+
+  if [[ $album_dirs_enabled == true ]]; then
+    opts+=("set:track=$number")
+  fi
+
+  if [[ $years_enabled == true ]]; then
+    opts+=("set:year=$year")
+  fi
+
+  tagutil "${opts[@]}" "$path" &>/dev/null
+}
+
 read_tags() {
+  if [[ $path == *.m4a ]]; then
+    read_tags_m4a
+  else
+    read_tags_id3
+  fi
+}
+
+read_tags_id3() {
   local line
   local name=
   local value=
@@ -177,6 +274,18 @@ read_tags() {
       value=
     fi
   done < <(id3 -v "$path")
+}
+
+read_tags_m4a() {
+  local prefix
+  local name
+  local value
+
+  while read -r prefix name value; do
+    if [[ $prefix == - && $name == *: ]]; then
+      echo "${name%:} $value"
+    fi
+  done < <(tagutil "$path")
 }
 
 main "$@"
