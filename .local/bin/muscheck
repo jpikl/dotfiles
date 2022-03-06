@@ -11,7 +11,7 @@ readonly COVER_ART=cover.jpg
 
 help() {
   cat <<-EOT
-		Check structure of music directory.
+		Check music directory structure and repair audio tags.
 
 		Usage:
 		  $(self) [<options>] [<directory>]
@@ -26,6 +26,8 @@ help() {
 		  -Y  Do not use album years.
 		  -A  Allow single-track albums without parent directory.
 		  -C  Allow missing cover arts.
+		  -u  Update broken audio tag.
+		  -U  Force update of all audio tags.
 		  -v  Verbose error reporting.
 		  -h  Print this help.
 
@@ -70,10 +72,12 @@ main() {
   local years_enabled=true
   local album_dirs_required=true
   local cover_art_required=true
+  local update_tags=false
+  local force_update_tags=false
   local verbose=false
   local opt
 
-  while getopts ":sRYACvh" opt; do
+  while getopts ":sRYACuUvh" opt; do
     case "$opt" in
       s) roots_enabled=false
          years_enabled=false
@@ -83,6 +87,8 @@ main() {
       Y) years_enabled=false ;;
       A) album_dirs_required=false ;;
       C) cover_art_required=false ;;
+      u) update_tags=true ;;
+      U) force_update_tags=true ;;
       v) verbose=true ;;
       h) help; exit ;;
       *) die_invalid_opt "$opt" ;;
@@ -106,7 +112,11 @@ main() {
   local last_error_path
   local error_count
 
-  check_roots && check_artists && check_albums && check_tracks
+  check_roots &&
+  check_artists &&
+  check_albums &&
+  check_tracks &&
+  check_tags
 }
 
 list_at_depth() {
@@ -376,6 +386,44 @@ check_uniq_name() {
   else
     uniq_names[$key]=$1
   fi
+}
+
+check_tags() {
+  begin_check "tags"
+
+  if [[ $verbose == false ]]; then
+    echo
+  fi
+
+  if [[ $album_dirs_required == false ]]; then
+    check_tags_at_depth 3
+  fi
+
+  check_tags_at_depth 4
+
+  end_check
+}
+
+check_tags_at_depth() {
+  local depth=$1
+  local opts=()
+
+  [[ $years_enabled == false ]] && opts+=(-Y)
+  [[ $depth == 3 ]] && opts+=(-A)
+  [[ $verbose == true ]] && opts+=(-v)
+
+  while IFS= read -r path; do
+    if ! is_audio_file "$path"; then
+      continue
+    fi
+    if [[ $force_update_tags == true ]]; then
+      audiotag "${opts[@]}" "$path"
+    elif [[ $update_tags == true ]]; then
+      audiotag -c "$path" &>/dev/null || audiotag "${opts[@]}" "$path"
+    else
+      audiotag -c "${opts[@]}" "$path" || ((++error_count))
+    fi
+  done < <(list_at_depth "$depth")
 }
 
 begin_check() {
