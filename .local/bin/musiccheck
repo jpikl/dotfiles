@@ -4,6 +4,7 @@ set -euo pipefail
 shopt -s extglob
 
 source ~/.local/lib/bash/core.sh
+source ~/.local/lib/bash/format.sh
 source ~/.local/lib/bash/path.sh
 
 readonly COVER_ART=cover.jpg
@@ -315,23 +316,15 @@ check_tracks_of_album() {
     path_error "Missing $COVER_ART"
   fi
 
-  local all_numbers_used=true
-
+  local missing_numbers=()
   for ((number = 1; number <= track_count; number++)); do
     if [[ ${used_numbers[$number]} == false ]]; then
-      all_numbers_used=false
-      break;
+      missing_numbers+=("$number")
     fi
   done
 
-  if [[ $all_numbers_used == false ]]; then
-    local missing_numbers=
-    for ((number = 1; number <= track_count; number++)); do
-      if [[ ${used_numbers[$number]} == false ]]; then
-        missing_numbers+=", $number"
-      fi
-    done
-    path_error "Missing track numbers: ${missing_numbers:2}"
+  if [[ ${#missing_numbers[@]} -gt 0 ]]; then
+    path_error "Missing track numbers: $(list_args "${missing_numbers[@]}")"
   fi
 }
 

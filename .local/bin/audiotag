@@ -4,6 +4,7 @@ set -euo pipefail
 shopt -s extglob
 
 source ~/.local/lib/bash/core.sh
+source ~/.local/lib/bash/format.sh
 source ~/.local/lib/bash/path.sh
 
 help() {
@@ -33,6 +34,7 @@ help() {
 		For example:
 
 		  Iron Maiden/1984 - Powerslave/01 - Aces High.mp3
+
 		  Iron Maiden/1984 - Powerslave/02 - 2 Minutes to Midnight.mp3
 		  ...
 
@@ -148,13 +150,24 @@ check_tags() {
   while read -r tag_name tag_value; do
     case "$tag_name" in
       "$artist_tag") [[ $tag_value != "$artist" ]] && artist_err=$tag_value ;;
-      "$year_tag")   [[ $years_enabled == true
-                     && $tag_value != "$year"   ]] && year_err=$tag_value ;;
       "$album_tag")  [[ $tag_value != "$album"  ]] && album_err=$tag_value ;;
-      "$number_tag") [[ $album_dirs_enabled == true
-                     && $tag_value != "$number" ]] && number_err=$tag_value ;;
       "$title_tag")  [[ $tag_value != "$title"  ]] && title_err=$tag_value ;;
-       *)            unexpected_tags+=("$tag_name") ;;
+
+      "$year_tag")
+        if [[ $years_enabled == true ]]; then
+          [[ $tag_value != "$year" ]] && year_err=$tag_value
+        else
+          unexpected_tags+=("$tag_name")
+        fi ;;
+
+      "$number_tag")
+        if [[ $album_dirs_enabled == true ]]; then
+          [[ $tag_value != "$number" ]] && number_err=$tag_value
+        else
+          unexpected_tags+=("$tag_name")
+        fi ;;
+
+       *) unexpected_tags+=("$tag_name") ;;
     esac
   done < <(read_tags "$path")
 
@@ -174,7 +187,7 @@ check_tags() {
       [[ $album_err ]]  && echo "  Album ($album_tag tag) is '$album_err' but should be '$album'"
       [[ $number_err ]] && echo "  Track ($number_tag tag) is '$number_err' but should be '$number'"
       [[ $title_err ]]  && echo "  Title ($title_tag tag) is '$title_err' but should be '$title'"
-      [[ ${#unexpected_tags[@]} -gt 0 ]] && echo "  Unexpected tags: ${unexpected_tags[*]}"
+      [[ ${#unexpected_tags[@]} -gt 0 ]] && echo "  Unexpected tags: $(list_args "${unexpected_tags[@]}")"
     else
       echo "Invalid tag: $path"
     fi >&2
@@ -229,12 +242,12 @@ update_tags_id3() {
 }
 
 update_tags_m4a() {
-  tagutil clear: "$path" &>/dev/null
+  tagutil clear: "$path"
 
   local opts=(
-    "set=artist:$artist"
-    "set=album:$album"
-    "set=title:$title"
+    "set:artist=$artist"
+    "set:album=$album"
+    "set:title=$title"
   )
 
   if [[ $album_dirs_enabled == true ]]; then
@@ -245,7 +258,7 @@ update_tags_m4a() {
     opts+=("set:year=$year")
   fi
 
-  tagutil "${opts[@]}" "$path" &>/dev/null
+  tagutil "${opts[@]}" "$path"
 }
 
 read_tags() {
