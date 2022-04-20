@@ -12,7 +12,7 @@ help() {
 		  $(self) [<options>]
 
 		Options:
-      -l  Include local tags (-L to exclude).
+		  -l  Include local tags (-L to exclude).
 		  -r  Include remote tags (-R to exclude).
 		  -h  Print this help.
 

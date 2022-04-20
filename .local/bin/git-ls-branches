@@ -15,11 +15,11 @@ help() {
 
 		Options:
 		  -c  Include current branch (-C to exclude).
-      -l  Include local branches (-L to exclude).
-      -a  Include local branches that are ahead of remote (-A to exclude).
+		  -l  Include local branches (-L to exclude).
+		  -a  Include local branches that are ahead of remote (-A to exclude).
 		  -b  Include local branches that are behind remote (-B to exclude).
 		  -r  Include remote branches (-R to exclude).
-      -s  Print short branch names without remote prefix.
+		  -s  Print short branch names without remote prefix.
 		  -h  Print this help.
 
 		Local branches are listed by default unless one of -clabgr is passed.
