@@ -55,7 +55,7 @@ alias cdfzf='cd "$(find -type d | fzfls)"'
 alias cdfzfsrc='cd "$(findsrc -type d | fzfls)"'
 
 ## Change directory to a workspace project search result
-alias cdprj='cdwork && cd "$(findprj -vZ -d2 -D4 | sed -z "s;^\./;;" | choose -izp "Project:" -d "$OLDPWD")" #'
+alias cdprj='cdwork && cd "$(findprj -vZ -d2 -D3 | sed -z "s;^\./;;" | choose -izp "Project:" -d "$OLDPWD")" #'
 
 ## Change directory to a Maven project search result
 alias cdmvndir='cd "$(findprj -mZ | choose -izp "Directory:")"'
