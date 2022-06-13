@@ -139,30 +139,36 @@ check_tags() {
   local tag_name
   local tag_value
 
-  local artist_err=
-  local year_err=
-  local album_err=
-  local number_err=
-  local title_err=
+  local artist_val=
+  local year_val=
+  local album_val=
+  local number_val=
+  local title_val=
+
+  local artist_err=false
+  local year_err=false
+  local album_err=false
+  local number_err=false
+  local title_err=false
 
   local unexpected_tags=()
 
   while read -r tag_name tag_value; do
     case "$tag_name" in
-      "$artist_tag") [[ $tag_value != "$artist" ]] && artist_err=$tag_value ;;
-      "$album_tag")  [[ $tag_value != "$album"  ]] && album_err=$tag_value ;;
-      "$title_tag")  [[ $tag_value != "$title"  ]] && title_err=$tag_value ;;
+      "$artist_tag") artist_val=$tag_value ;;
+      "$album_tag")  album_val=$tag_value ;;
+      "$title_tag")  title_val=$tag_value ;;
 
       "$year_tag")
         if [[ $years_enabled == true ]]; then
-          [[ $tag_value != "$year" ]] && year_err=$tag_value
+          year_val=$tag_value
         else
           unexpected_tags+=("$tag_name")
         fi ;;
 
       "$number_tag")
         if [[ $album_dirs_enabled == true ]]; then
-          [[ $tag_value != "$number" ]] && number_err=$tag_value
+          number_val=$tag_value
         else
           unexpected_tags+=("$tag_name")
         fi ;;
@@ -171,22 +177,29 @@ check_tags() {
     esac
   done < <(read_tags "$path")
 
+  [[ $artist_val != "$artist" ]] && artist_err=true
+  [[ $album_val  != "$album"  ]] && album_err=true
+  [[ $title_val  != "$title"  ]] && title_err=true
+
+  [[ $years_enabled      == true && $year_val   != "$year"   ]] && year_err=true
+  [[ $album_dirs_enabled == true && $number_val != "$number" ]] && number_err=true
+
   if [[
-    $artist_err ||
-    $year_err   ||
-    $album_err  ||
-    $number_err ||
-    $title_err  ||
+    $artist_err == true ||
+    $year_err   == true ||
+    $album_err  == true ||
+    $number_err == true ||
+    $title_err  == true ||
     ${#unexpected_tags[@]} -gt 0
   ]]; then
     if [[ $verbose == true ]]; then
       echo
       echo "$path"
-      [[ $artist_err ]] && echo "  Artist ($artist_tag tag) is '$artist_err' but should be '$artist'"
-      [[ $year_err ]]   && echo "  Year ($year_tag tag) is '$year_err' but should be '$year'"
-      [[ $album_err ]]  && echo "  Album ($album_tag tag) is '$album_err' but should be '$album'"
-      [[ $number_err ]] && echo "  Track ($number_tag tag) is '$number_err' but should be '$number'"
-      [[ $title_err ]]  && echo "  Title ($title_tag tag) is '$title_err' but should be '$title'"
+      [[ $artist_err == true ]] && echo "  Artist ($artist_tag tag) is '$artist_val' but should be '$artist'"
+      [[ $year_err   == true ]] && echo "  Year ($year_tag tag) is '$year_val' but should be '$year'"
+      [[ $album_err  == true ]] && echo "  Album ($album_tag tag) is '$album_val' but should be '$album'"
+      [[ $number_err == true ]] && echo "  Track ($number_tag tag) is '$number_val' but should be '$number'"
+      [[ $title_err  == true ]] && echo "  Title ($title_tag tag) is '$title_val' but should be '$title'"
       [[ ${#unexpected_tags[@]} -gt 0 ]] && echo "  Unexpected tags: $(list_args "${unexpected_tags[@]}")"
     else
       echo "Invalid tag: $path"
