@@ -4,8 +4,6 @@ set -euo pipefail
 
 source ~/.local/lib/bash/core.sh
 
-# TODO rename to xpipe
-
 help() {
   cat <<-EOT
 		Execute command on a file constructed from standard input.

@@ -7,7 +7,7 @@
 ## Open file with $EDITOR
 alias edit='${EDITOR/ *}'
 
-## Read pipe with $EDITOR
+## Read pipe and open the result with $EDITOR
 editpipe() {
   if [[ $# -gt 0 ]]; then
     xpipe -e "$1" "${EDITOR/ *}"

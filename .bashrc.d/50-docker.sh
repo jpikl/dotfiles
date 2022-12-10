@@ -17,6 +17,6 @@ dosh() {
   if [[ $1 ]]; then
     docker exec -it "$1" sh -li
   else
-    echo "Usage: doba <container>"
+    echo "Usage: doba <container>" >&2
   fi
 }
