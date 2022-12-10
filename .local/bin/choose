@@ -15,20 +15,22 @@ help() {
 		  <value>...  Values to select from.
 
 		Options:
-		  -p <prompt>  Message to print as a prompt.
-		  -d <value>   Default value to print if nothing was chosen.
-		  -m           Enable selection of multiple values.
-		  -i           Read values as lines from stdin.
-		  -z           Read values delimited by NUL, not newline.
-		  -Z           Print values delimited by NUL, not newline.
-		  -b           Force pure Bash interface instead of fzf.
-		  -h           Print this help.
+		  -p <msg>    Message to print as a prompt.
+		  -d <value>  Default value to print if nothing was chosen.
+		  -a          Automatically select the only match.
+		  -m          Enable selection of multiple values.
+		  -i          Read values as lines from stdin.
+		  -z          Read values delimited by NUL, not newline.
+		  -Z          Print values delimited by NUL, not newline.
+		  -b          Force pure Bash interface instead of fzf.
+		  -h          Print this help.
 	EOT
 }
 
 main() {
   local prompt=
   local default=
+  local auto=false
   local multi=false
   local stdin=false
   local null_in=false
@@ -36,10 +38,11 @@ main() {
   local basic=false
   local opt
 
-  while getopts ":p:d:mizZbh" opt; do
+  while getopts ":p:d:amizZbh" opt; do
     case "$opt" in
       p) prompt=$OPTARG ;;
       d) default=$OPTARG ;;
+      a) auto=true ;;
       m) multi=true ;;
       i) stdin=true ;;
       z) null_in=true ;;
@@ -91,10 +94,12 @@ fzf_mode() {
     exec </dev/null # To fail fast using the --exit-0 option
   fi
 
-  if [[ $multi = true ]]; then
-    opts+=("--multi")
-  else
+  if [[ $auto == true ]]; then
     opts+=("--select-1")
+  fi
+
+  if [[ $multi == true ]]; then
+    opts+=("--multi")
   fi
 
   if [[ $prompt ]]; then
@@ -114,9 +119,9 @@ basic_mode() {
     exec < "/dev/tty"
   fi
 
-  if [[ ${#values[@]} -eq 1 && $multi == false ]]; then
+  if [[ ${#values[@]} -eq 1 && $auto == true ]]; then
     results=("${values[0]}")
-  elif [[ ${#values[@]} -ge 1 ]]; then
+  elif [[ ${#values[@]} -ge 1 || $multi == true ]]; then
     local choice
     while true; do
       if [[ $prompt ]]; then
@@ -131,7 +136,7 @@ basic_mode() {
           break
         fi
       done || break
-      if [[ $multi = false || ${#values[@]} -eq 0 ]]; then
+      if [[ $multi == false || ${#values[@]} -eq 0 ]]; then
         break
       fi
     done
