@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source ~/.local/lib/bash/core.sh
+
+help() {
+  cat <<-EOT
+		Rename files or directories using \$EDITOR.
+
+		Usage:
+		  $(self) [<options>] <path>...
+
+		Args:
+		  <path>...  Paths to rename..
+
+		Options:
+		  -h  Print this help.
+	EOT
+}
+
+main() {
+  local opt
+
+  while getopts ":h" opt; do
+    case "$opt" in
+      h) help; exit ;;
+      *) die_invalid_opt "$opt" ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+  [[ $# -eq 0 ]] && die_missing_arg
+
+  local src_paths=("$@")
+  local dst_paths=()
+
+  TMP_FILE=$(mktemp)
+  trap 'rm -f -- "$TMP_FILE"' EXIT
+
+  printf "%s\n" "${src_paths[@]}" >"$TMP_FILE"
+  $EDITOR "$TMP_FILE"
+  mapfile -t dst_paths <"$TMP_FILE";
+
+  local src_len=${#src_paths[@]}
+  local dst_len=${#dst_paths[@]}
+  local max_len=$(( src_len > dst_len ? src_len : dst_len ))
+
+  local i
+  for (( i=0; i < max_len; i++ )); do
+    local src_path=${src_paths[$i]-};
+    local dst_path=${dst_paths[$i]-};
+    local dst_dir=${dst_path%/*}
+
+    if [[ $src_path && $dst_path && $src_path != "$dst_path" ]]; then
+      if [[ $dst_dir && ! -e "$dst_dir" ]]; then
+        mkdir --parent --verbose "$dst_dir"
+      fi
+      mv --verbose "$src_path" "$dst_path"
+    fi
+  done
+}
+
+main "$@"
