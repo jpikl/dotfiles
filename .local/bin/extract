@@ -93,6 +93,7 @@ extract() {
     tar+lzop)  extract_tar "$1" "lzop" ;;
     tar+xz)    extract_tar "$1" "xz" ;;
     tar+zstd)  extract_tar "$1" "zst" ;;
+    rpm)       extract_tar "$1" "rpm" ;;
     bzip2)     extract_compression "$1" "bzip2";;
     gzip)      extract_compression "$1" "gzip";;
     lrzip)     extract_compression "$1" "lrzip" ;;
@@ -129,6 +130,7 @@ detect_type_from_data() {
     application/x-lzip)          type=lzip;  archive=false ;;
     application/x-lzma)          type=lzma;  archive=false ;;
     application/x-rar)           type=rar;   archive=true ;;
+    application/x-rpm)           type=rpm;   archive=true ;;
     application/x-tar)           type=tar;   archive=true ;;
     application/x-xz)            type=xz;    archive=false ;;
     application/zip)             type=zip;   archive=true ;;
@@ -210,6 +212,7 @@ detect_type_from_ext() {
 
     *.7z)  echo 7z ;;
     *.rar) echo rar ;;
+    *.rpm) echo x-rpm ;;
 
     *.aar) ;&
     *.apk) ;&
@@ -229,17 +232,22 @@ extract_tar() {
     return
   fi
 
+  local binary
+  binary=$(get_tar_binary "${2-}")
+
   local opts=(
-    "--extract" # Do extraction.
+    "-x"        # Do extraction.
     "--file=$1" # Use the input file.
   )
 
-  if [[ $# -ge 2 ]]; then
+  if [[ $binary == tar && $# -ge 2 ]]; then
     opts+=("$(get_tar_compressor "$2")")
   fi
 
   if [[ $force = true ]]; then
-    opts+=("--overwrite") # Overwrite existing files.
+    if [[ $binary == tar ]]; then
+      opts+=("--overwrite") # Overwrite existing files.
+    fi
   else
     opts+=("--keep-old-files") # Don't replace existing files, treat them as errors.
   fi
@@ -258,20 +266,35 @@ extract_tar() {
     opts+=("--directory=$output") # Output directory.
   fi
 
-  tar "${opts[@]}" || handle_error
+  "$binary" "${opts[@]}" || handle_error
 }
 
 list_tar() {
+  local binary
+  binary=$(get_tar_binary "${2-}")
+
   local opts=(
-    "--list"    # Do listing.
+    "-t"        # Do listing.
     "--file=$1" # Use the input file.
   )
 
-  if [[ $# -ge 2 ]]; then
+  if [[ $binary == tar && $# -ge 2 ]]; then
     opts+=("$(get_tar_compressor "$2" --quiet)")
   fi
 
-  tar "${opts[@]}"
+  if [[ $binary == bsdtar ]]; then
+    "$binary" "${opts[@]}" | sed 's/^.\///' # Remove './' prefix
+  else
+    "$binary" "${opts[@]}"
+  fi
+}
+
+get_tar_binary() {
+  if [[ $1 == rpm ]]; then
+    echo "bsdtar"
+  else
+    echo "tar"
+  fi
 }
 
 get_tar_compressor() {
