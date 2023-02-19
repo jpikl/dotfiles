@@ -287,7 +287,7 @@ check_tracks_of_album() {
   local number
 
   for ((number = 0; number <= track_count; number++)); do
-    used_numbers[$number]=false
+    used_numbers["$number"]=false
   done
 
   for path; do
@@ -310,7 +310,7 @@ check_tracks_of_album() {
         elif [[ ${used_numbers[$number]} == true ]]; then
           path_error "Duplicit track number $number"
         else
-          used_numbers[$number]=true
+          used_numbers["$number"]=true
         fi
 
         local title=${file#* - }
