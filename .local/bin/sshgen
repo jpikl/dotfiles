@@ -36,13 +36,13 @@ main() {
   local remote_hostname=${1-}
   read -rep "Remote hostname: " -i "$remote_hostname" remote_hostname
 
-  local key_name="id_$key_type"
+  local key_name="id"
   [[ $remote_hostname ]] && key_name+="_$remote_hostname"
 
   local key_file="$HOME/.ssh/$key_name"
-  local key_file_pub="$HOME/.ssh/$key_name.pub"
+  local pub_file="$HOME/.ssh/$key_name.pub"
 
-  if [[ -e $key_file || -e $key_file_pub ]] && ! confirm "Overwrite existing $key_name.{key,pub}?"; then
+  if [[ -e $key_file || -e $pub_file ]] && ! confirm "Overwrite existing $key_name.{key,pub}?"; then
     return
   fi
 
@@ -68,22 +68,8 @@ main() {
     fi
   done
 
-  local local_hostname
-  local local_username
-  local local_organization
-
-  read -rep "Local username: " -i "$(whoami)" local_username
-  read -rep "Local hostname: " -i "$(hostname)" local_hostname
-  read -rep "Local organization: " local_organization
-
   local comment
-
-  comment+=$local_username
-  [[ $local_username && ( $local_hostname || $local_organization ) ]] && comment+=@
-  comment+=$local_organization
-  [[ $local_hostname && $local_organization ]] && comment+=/
-  comment+=$local_hostname
-
+  comment="$(whoami)@$(hostname)"
   read -rep "Comment: " -i "$comment" comment
 
   echo
@@ -91,34 +77,24 @@ main() {
   echo "Key type:    $key_type"
   echo "Passphrase:  $passphrase_set"
   echo "Private key: $key_file"
-  echo "Public key:  $key_file_pub"
+  echo "Public key:  $pub_file"
   echo "Comment:     $comment"
   echo
 
   confirm "Generate key files?" || return 0
 
-  local tmp_key_file
-  local tmp_key_file_pub
-
-  tmp_key_file=$(mktemp --dry-run)
-  tmp_key_file_pub="$tmp_key_file.pub"
-
   local opts=(
     "-q"
     "-t" "$key_type"
-    "-f" "$tmp_key_file"
+    "-f" "$key_file"
     "-N" "$passphrase" # Must be passed even when it is empty, otherwise it would be requested
   )
 
   [[ $key_type = rsa ]] && opts+=("-b" 4096)
   [[ $comment ]] && opts+=("-C" "$comment")
 
+  rm -f "$key_file" "$pub_file"
   ssh-keygen "${opts[@]}"
-
-  mv "$tmp_key_file" "$key_file" || true
-  mv "$tmp_key_file_pub" "$key_file_pub" || true
-
-  rm -f "$tmp_key_file" "$tmp_key_file_pub"
 }
 
 main "$@"
