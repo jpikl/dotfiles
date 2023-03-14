@@ -3,12 +3,14 @@
     name = Jan Pikl
     email = pikl.jan@gmail.com
 
+[core]
+    # Force this line ending for all text files.
+    # Exceptions are to be specified in `attributes` file.
+    eol = lf
+
 [merge]
     tool = vimdiff
-[pull]
-    rebase = true
-[push]
-    default = simple
+
 [http]
     postBuffer = 134217728 # 128 MiB
 

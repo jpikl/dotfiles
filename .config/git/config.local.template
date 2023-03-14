@@ -7,11 +7,6 @@
     name = Jan Pikl
     email = pikl.jan@gmail.com
 
-[include]
-    # Windows-specific Git configuration
-    # Keep this inclusion only if you are on Windows.
-    path = ~/.config/git/config.windows
-
 [includeIf "gitdir:~/Workspace/<scope>/"]
     # Scoped Git configuration
     # See ~/.config/git/config.scope.template for an example.

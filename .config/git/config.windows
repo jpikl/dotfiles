@@ -1,8 +1,0 @@
-# Windows-specific Git configuration
-# Inclusion of this file should be enabled in ~/.config/git/config.local.
-# See ~/.config/git/config.local.template for more details.
-
-[core]
-    autocrlf = true
-    fscache = true
-    preloadIndex = true
