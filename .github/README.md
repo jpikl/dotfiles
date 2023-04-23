@@ -192,6 +192,7 @@ See generated list of [available commands](commands.md).
 
 - [bat][bat] - A cat(1) clone with wings.
 - [exa][exa] - A modern version of ‘ls’.
+- [erdtree][erdtree] - A modern, multi-threaded file-tree visualization and disk usage analysis tool.
 - [fd][fd] - A simple, fast and user-friendly alternative to 'find'.
 - [fzf][fzf] - A command-line fuzzy finder.
 - [hexyl][hexyl] - A command-line hex viewer.
@@ -209,13 +210,13 @@ See generated list of [available commands](commands.md).
 pacman -Sy bat exa fd fzf hexyl httpie mkcert sd ripgrep
 
 # Using pacaur (ArchLinux AUR)
-pacaur -Sy starship tealdeer
+pacaur -Sy erdtree starship tealdeer
 
 # Using chocolatey (Windows)
-choco install bat fd fzf httpie mkcert ripgrep starship
+choco install bat et fd fzf httpie mkcert ripgrep starship
 
 # Using cargo
-cargo install bat fd-find hexyl rew ripgrep sd starship tealdeer
+cargo install bat erdtree exa fd-find hexyl rew ripgrep sd starship tealdeer
 
 # Using go
 go get github.com/junegunn/fzf filippo.io/mkcert
@@ -334,6 +335,7 @@ Everything in this repository is licensed under the [MIT license](LICENSE.md).
 [color-f]: https://via.placeholder.com/16/A1B0B8/000000?text=+
 [coreutils]: https://www.gnu.org/software/coreutils
 [exa]: https://github.com/ogham/exa
+[erdtree]: https://github.com/solidiquis/erdtree
 [fd]: https://github.com/sharkdp/fd
 [fzf-charset-issue]: https://github.com/junegunn/fzf/issues/963
 [fzf]: https://github.com/junegunn/fzf
