@@ -54,10 +54,10 @@ main() {
 }
 
 list_disks() {
-  local kname pkname name type vendor model label size moutpoint
+  local kname pkname name type vendor model label size used moutpoint
   local disk_kname disk_vendor disk_model
 
-  while IFS=';' read -r kname pkname name type vendor model label size moutpoint; do
+  while IFS=';' read -r kname pkname name type vendor model label size used moutpoint; do
     if [[ $type == disk ]]; then
       disk_kname=$kname
       disk_vendor=$vendor
@@ -70,7 +70,7 @@ list_disks() {
       if [[ $moutpoint ]]; then
         status="x"
       else
-        status=" "
+        status=""
       fi
 
       # We expect partions to follow after their parent disk
@@ -79,15 +79,15 @@ list_disks() {
         model=$disk_model
       fi
 
-      echo -e "[$status];$name;$(format_vendor_model "$vendor" "$model");$size;$label;$moutpoint"
+      echo -e "$status;$name;$(format_vendor_model "$vendor" "$model");$size;$used;$label;$moutpoint"
     fi
-  done < <(list_disks_raw) | column --table --separator=';'
+  done < <(list_disks_raw) | column --table --table-columns='M,Dev,Name,Size,Used,Label,Mount' --separator=';' --output-separator=' | '
 }
 
 list_disks_raw() {
   lsblk --raw \
         --noheadings \
-        --output KNAME,PKNAME,NAME,TYPE,VENDOR,MODEL,LABEL,SIZE,MOUNTPOINT \
+        --output KNAME,PKNAME,NAME,TYPE,VENDOR,MODEL,LABEL,SIZE,FSUSE%,MOUNTPOINT \
         --sort PATH \
     | tr --delete ';' \
     | tr ' ' ';'
