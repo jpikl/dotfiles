@@ -12,7 +12,7 @@ help() {
 		  $(self) [<options>] <path>...
 
 		Args:
-		  <path>...  Paths to rename..
+		  <path>...  Paths to rename.
 
 		Options:
 		  -h  Print this help.
@@ -44,19 +44,28 @@ main() {
 
   local src_len=${#src_paths[@]}
   local dst_len=${#dst_paths[@]}
-  local max_len=$(( src_len > dst_len ? src_len : dst_len ))
+
+  if [[ $src_len != "$dst_len" ]]; then
+    die "Original list length $src_len changed to $dst_len"
+  fi
 
   local i
-  for (( i=0; i < max_len; i++ )); do
+  for (( i=0; i < src_len; i++ )); do
     local src_path=${src_paths[$i]-};
     local dst_path=${dst_paths[$i]-};
-    local dst_dir=${dst_path%/*}
 
-    if [[ $src_path && $dst_path && $src_path != "$dst_path" ]]; then
-      if [[ $dst_dir && ! -e "$dst_dir" ]]; then
-        mkdir --parent --verbose "$dst_dir"
+    if [[ $src_path && $src_path != "$dst_path" ]]; then
+      if [[ $dst_path ]]; then
+        local dst_dir=${dst_path%/*}
+
+        if [[ $dst_dir && ! -e "$dst_dir" ]]; then
+          mkdir --parent --verbose "$dst_dir"
+        fi
+
+        mv --verbose "$src_path" "$dst_path"
+      else
+        rm --verbose "$src_path"
       fi
-      mv --verbose "$src_path" "$dst_path"
     fi
   done
 }
