@@ -7,6 +7,8 @@
     # Force this line ending for all text files.
     # Exceptions are to be specified in `attributes` file.
     eol = lf
+    # Explicitely disable this, in case Widowns Git has it enabled in system configs
+    autocrlf = false
 
 [merge]
     tool = vimdiff
