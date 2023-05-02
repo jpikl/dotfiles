@@ -60,6 +60,11 @@
     ## Diff with character resolution
     diffc = diff --word-diff-regex=.
 
+    ## Submodule update
+    su = submodule update
+    ## Submodule update with initialization
+    sui = submodule update --init
+
     ## Commits from the current branch
     logm  = log  --oneline --decorate
     ## Commits from the current branch (without merges)
