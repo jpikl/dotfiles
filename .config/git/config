@@ -13,6 +13,9 @@
 [merge]
     tool = vimdiff
 
+[push]
+    autoSetupRemote = true
+
 [http]
     postBuffer = 134217728 # 128 MiB
 
