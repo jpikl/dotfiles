@@ -10,13 +10,23 @@
     # Explicitely disable this, in case Widowns Git has it enabled in system configs
     autocrlf = false
 
-[merge]
-    tool = vimdiff
-
 [push]
+    # Automatically apply `--set-upstream`
     autoSetupRemote = true
 
+[merge]
+    tool = vimdiff
+    # Automatically stash/unstash changes before/after merge
+	autoStash = true
+
+[rebase]
+    # Automatically stash/unstash changes before/after rebase
+	autoStash = true
+    # Automatically apply `--autosquash`
+	autoSquash = true
+
 [http]
+    # Allows to push bigger changes (for example, large data files)
     postBuffer = 134217728 # 128 MiB
 
 [alias]
