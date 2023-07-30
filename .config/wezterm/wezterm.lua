@@ -2,12 +2,10 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
-if wezterm.executable_dir:sub(1, 1) == '/' then
-    -- Linux
-    config.default_prog = { '/usr/bin/bash', '-i' }
-else
-    -- Windows
+if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
     config.default_prog = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-i', '-l' }
+else
+    config.default_prog = { '/usr/bin/bash', '-i' }
 end
 
 config.hide_tab_bar_if_only_one_tab = true
@@ -83,22 +81,22 @@ config.colors = {
         background = colors.background,
         inactive_tab_edge = colors.foreground,
 
-    
+
         active_tab = {
            bg_color = colors.background,
            fg_color = colors.foreground,
         },
-    
+
         inactive_tab = {
            bg_color = colors.black,
            fg_color = colors.foreground,
         },
-    
+
         inactive_tab_hover = {
             bg_color = colors.background,
             fg_color = colors.foreground,
         },
-    
+
         new_tab = {
             bg_color = colors.black,
             fg_color = colors.foreground,
