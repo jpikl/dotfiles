@@ -111,19 +111,29 @@ config.colors = {
 
 config.keys = {
     {
-        key = 'v',
-        mods = 'CTRL|SHIFT',
-        action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
-    },
-    {
-        key = 'h',
+        key = '|',
         mods = 'CTRL|SHIFT',
         action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
     },
     {
-        key = 'x',
+        key = '-',
+        mods =  'CTRL|SHIFT',
+        action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+    },
+    {
+        key = '_',
+        mods =  'CTRL|SHIFT',
+        action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+    },
+    {
+        key = '<',
         mods = 'CTRL|SHIFT',
-        action = wezterm.action.CloseCurrentPane { confirm = false },
+        action = wezterm.action.AdjustPaneSize { "Left", 1 },
+    },
+    {
+        key = '>',
+        mods = 'CTRL|SHIFT',
+        action = wezterm.action.AdjustPaneSize { "Right", 1 },
     },
 }
 
