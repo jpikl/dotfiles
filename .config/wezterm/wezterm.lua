@@ -56,15 +56,16 @@ config.window_padding = {
     bottom = 0,
 }
 
+-- Base on Dark Material Theme (https://materialshell.carloscuesta.me)
 local colors = {
-    background = '#263238',
     foreground = '#A1B0B8',
-    black = '#000000',
-    red = '#FF5252',
+    background = '#151515',
+    black = '#505050', -- Original #252525 did not have much contrast in combination with `background`
+    red = '#FF443E',
     green = '#C3D82C',
     yellow = '#FFC135',
     blue = '#42A5F5',
-    magneta = '#D81B60',
+    magenta = '#D81B60',
     cyan = '#00ACC1',
     white = '#F5F5F5',
 }
@@ -85,7 +86,7 @@ config.colors = {
         colors.green,
         colors.yellow,
         colors.blue,
-        colors.magneta,
+        colors.magenta,
         colors.cyan,
         colors.white,
     },
@@ -96,7 +97,7 @@ config.colors = {
         colors.green,
         colors.yellow,
         colors.blue,
-        colors.magneta,
+        colors.magenta,
         colors.cyan,
         colors.white,
     },
