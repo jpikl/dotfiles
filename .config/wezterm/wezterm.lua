@@ -3,7 +3,36 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-    config.default_prog = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-i', '-l' }
+    local git_bash_launcher = {
+        label = "Git Bash",
+        args = { "C:\\Program Files\\Git\\bin\\bash.exe", "-li" },
+    }
+
+    local msys2_launcher = {
+        label = "MSYS2",
+        args = {
+            'C:\\tools\\msys64\\msys2_shell.cmd',
+            '-defterm',
+            '-here',
+            '-no-start',
+            '-ucrt64',
+            '-shell', 'bash',
+            '-use-full-path'
+        },
+    }
+
+    local wsl_launcher = {
+        label = "WSL",
+        args = { "wsl.exe" },
+    }
+
+    local powershell_launcher = {
+        label = 'PowerShell',
+        args = { 'powershell.exe', '-NoLogo' },
+    }
+
+    config.launch_menu = { git_bash_launcher, msys2_launcher, wsl_launcher, powershell_launcher }
+    config.default_prog = git_bash_launcher.args
 else
     config.default_prog = { '/usr/bin/bash', '-i' }
 end
