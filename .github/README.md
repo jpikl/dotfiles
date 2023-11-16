@@ -190,8 +190,9 @@ See generated list of [available commands](commands.md).
 
 ### Recommended to install
 
+- [atuin][atuin] - Magical shell history.
 - [bat][bat] - A cat(1) clone with wings.
-- [exa][exa] - A modern version of ‘ls’.
+- [exa][exa] - A modern version of 'ls'.
 - [erdtree][erdtree] - A modern, multi-threaded file-tree visualization and disk usage analysis tool.
 - [fd][fd] - A simple, fast and user-friendly alternative to 'find'.
 - [fzf][fzf] - A command-line fuzzy finder.
@@ -207,16 +208,13 @@ See generated list of [available commands](commands.md).
 
 ```bash
 # Using pacman (ArchLinux)
-pacman -Sy bat exa fd fzf hexyl httpie mkcert sd ripgrep
-
-# Using pacaur (ArchLinux AUR)
-pacaur -Sy erdtree starship tealdeer
+pacman -Sy atuin bat erdtree exa fd fzf hexyl httpie mkcert ripgrep sd starship tealdeer
 
 # Using chocolatey (Windows)
 choco install bat et fd fzf httpie mkcert ripgrep starship
 
 # Using cargo
-cargo install bat erdtree exa fd-find hexyl rew ripgrep sd starship tealdeer
+cargo install atuin bat erdtree exa fd-find hexyl rew ripgrep sd starship tealdeer
 
 # Using go
 go get github.com/junegunn/fzf filippo.io/mkcert
@@ -321,6 +319,7 @@ Workarounds using [winpty][winpty]:
 
 Everything in this repository is licensed under the [MIT license](LICENSE.md).
 
+[atuin]: https://atuin.sh/
 [bash]: https://www.gnu.org/software/bash
 [bat]: https://github.com/sharkdp/bat
 [color-0]: https://via.placeholder.com/16/252525/000000?text=+
