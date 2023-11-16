@@ -16,6 +16,9 @@ fi
 # 7x - Local overrides
 # 9x - Cleanup
 
+# Preexec comes from atuin installation
+source ~/.bash_preexec
+
 for rc in ~/.bashrc.d/*.sh; do
   source "$rc"
 done

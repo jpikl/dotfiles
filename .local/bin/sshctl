@@ -19,6 +19,8 @@ help() {
 		  start    Start ssh-agent if needed.
 		  stop     Stop ssh-agent if needed.
 		  restart  Restart ssh-agent.
+      add      Add key to ssh-agent.
+      list     List keys loaded ssh-agent.
 
 		Options:
 		  -h  Print this help.
@@ -43,7 +45,7 @@ main() {
 
   if [[ $# -eq 0 ]]; then
     command=status
-  elif [[ $1 =~ ^(status|start|stop|restart)$ ]]; then
+  elif [[ $1 =~ ^(status|start|stop|restart|add|list)$ ]]; then
     command=$1
   else
     die_help "invalid command"
@@ -62,10 +64,11 @@ main() {
 }
 
 exec_command() {
-  if [[ $command == status ]]; then
-    check_env
-    exit
-  fi
+  case "$command" in
+    status) check_env; exit ;;
+    add)    add_key;   exit ;;
+    list)   list_keys; exit ;;
+  esac
 
   local vars_file
   local lock_file
@@ -99,7 +102,7 @@ exec_command() {
 }
 
 check_env() {
-  echo "Checking environment"
+  log "Checking environment"
 
   pid_state=$(check_pid)
   sock_state=$(check_sock)
@@ -108,14 +111,14 @@ check_env() {
 check_pid() {
   if [[ ${SSH_AGENT_PID-} ]]; then
     if kill -0 "$SSH_AGENT_PID" &>/dev/null; then
-      echo "[ok] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
+      log "Valid agend pid $SSH_AGENT_PID" >&2
       echo "valid"
     else
-      echo "[invalid] SSH_AGENT_PID: $SSH_AGENT_PID" >&2
+      log "Invalid agend pid $SSH_AGENT_PID" >&2
       echo "invalid"
     fi
   else
-    echo "[unset] SSH_AGENT_PID" >&2
+    log "Missing agend pid" >&2
     echo "unset"
   fi
 }
@@ -123,14 +126,14 @@ check_pid() {
 check_sock() {
   if [[ ${SSH_AUTH_SOCK-} ]]; then
     if [[ -S $SSH_AUTH_SOCK ]]; then
-      echo "[ok] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
+      log "Valid auth socket $SSH_AUTH_SOCK" >&2
       echo "valid"
     else
-      echo "[invalid] SSH_AUTH_SOCK: $SSH_AUTH_SOCK" >&2
+      log "Invalid auth socket $SSH_AUTH_SOCK" >&2
       echo "invalid"
     fi
   else
-    echo "[unset] SSH_AUTH_SOCK" >&2
+    log "Missing auth socket" >&2
     echo "unset"
   fi
 }
@@ -150,7 +153,7 @@ detect_paths() {
 
 load_vars() {
   if [[ -f $vars_file ]]; then
-    echo "Loading $vars_file"
+    log "Loading $vars_file"
     source "$vars_file" || true
 
     pid_state=$(check_pid)
@@ -169,35 +172,57 @@ unset_vars() {
 }
 
 start_agent() {
-  echo "Starting agent"
+  log "Starting agent"
   eval "$(ssh-agent)" >/dev/null
 
   pid_state=$(check_pid)
   sock_state=$(check_sock)
 
   if [[ $pid_state == valid && $sock_state == valid ]]; then
-    echo "Generating $vars_file"
+    log "Generating $vars_file"
     export_vars >"$vars_file"
   fi
 }
 
 kill_agent() {
   if [[ -f $vars_file ]]; then
-    echo "Deleting $vars_file"
+    log "Deleting $vars_file"
     rm "$vars_file"
   fi
 
   if [[ $pid_state == valid ]]; then
-    echo "Killing agent pid $SSH_AGENT_PID"
+    log "Killing agent pid $SSH_AGENT_PID"
     kill "$SSH_AGENT_PID"
     pid_state=invalid
   fi
 
   if [[ $sock_state == valid ]]; then
-    echo "Deleting agent socket $SSH_AUTH_SOCK"
+    log "Deleting agent socket $SSH_AUTH_SOCK"
     rm -f "$SSH_AUTH_SOCK"
     sock_state=invalid
   fi
+}
+
+add_key() (
+  if cd ~/.ssh; then
+    local key
+    key=$(find . -name "id_*" -not -name "*.pub" -printf "%P\0" | choose -izap "SSH key:")
+    if [[ $key ]]; then
+      ssh-add "$key"
+      return
+    fi
+  fi
+  die "No SSH key found. Run ssh-keygen to generate one."
+)
+
+list_keys() (
+  if cd ~/.ssh; then
+    grep -rHFf <(ssh-add -L | cut -d" " -f2) | cut -d: -f1
+  fi
+)
+
+log() {
+  echo "[$(self)] $1"
 }
 
 main "$@"

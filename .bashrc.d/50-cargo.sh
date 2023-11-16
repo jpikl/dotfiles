@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-## rustup and cargo autocomplete
+# rustup and cargo autocomplete
 if [[ -x $(command -v rustup) ]]; then
     source <(rustup completions bash)
     #source <(rustup completions bash cargo)
