@@ -57,28 +57,36 @@ main() {
 
 process_branches() {
   local branch
+  local ok=true
+
   while IFS= read -r branch; do
     if [[ $delete = true ]]; then
       if [[ $force = true ]]; then
-        git branch --delete --force "$branch"
+        git branch --delete --force "$branch" || ok=false
       else
-        git branch --delete "$branch"
+        git branch --delete "$branch" || ok=false
       fi
     else
       echo "$branch"
     fi
   done
+
+  [[ $ok == true ]]
 }
 
 process_tags() {
   local tag
+  local ok=true
+
   while IFS= read -r tag; do
     if [[ $delete = true ]]; then
-      git tag --delete "$tag"
+      git tag --delete "$tag" || ok=false
     else
       echo "$tag"
     fi
   done
+
+  [[ $ok == true ]]
 }
 
 main "$@"
