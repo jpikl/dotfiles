@@ -4,5 +4,64 @@ alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
 # Git for dotfiles
 alias dotfiles='dotenv git'
 
+# Grep with colors
+alias grep='grep --color=auto'
+
+## Grep with extend regex pattern
+alias egrep='grep -E'
+
+## Grep with fixed string pattern
+alias fgrep='grep -F'
+
+## Grep with Perl regex patern
+alias pgrep='grep -P'
+
+# List files with colors
+alias ls='ls --color=auto'
+
+# List files including hidden ones
+alias la='ls -a'
+
+# List files in long format
+alias ll='ls -lh'
+
+# List files in long format, including hidden ones
+alias lla='ls -lha'
+
+# Make directory including its parent
+alias mkdirp='mkdir -p'
+
+## Remove files with recursion and force
+alias rmrf='rm -rf'
+
+## Sort lines, output unique results
+alias sortu='sort -u'
+
+## Sort lines, output unique results with their count
+sortuc() {
+  sort | uniq -c | sort -nr
+}
+
+# Count input bytes
+alias wcb='wc --bytes'
+
+# Count input characters
+alias wcc='wc --chars'
+
+# Count input words
+alias wcw='wc --words'
+
+# Count input lines
+alias wcl='wc --lines'
+
+# Prefer nvim over vim/vi
+if [ -x "$(command -v nvim)" ]; then
+    alias vim=nvim
+    alias vi=nvim
+fi
+
+# Helix editor shortcut
+alias hx=helix
+
 # Local overrides
 [ -f ~/shrc.local ] && . ~/shrc.local

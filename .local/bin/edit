@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+set -eu
+
+for COMMAND in helix nvim vim vi nano; do
+    if [ -x "$(command -v "$COMMAND")" ]; then
+        "$COMMAND" "$@"
+        break
+    fi
+done
