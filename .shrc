@@ -1,0 +1,8 @@
+# Execute command with dotfiles environment
+alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
+
+# Git for dotfiles
+alias dotfiles='dotenv git'
+
+# Local overrides
+[ -f ~/shrc.local ] && . ~/shrc.local

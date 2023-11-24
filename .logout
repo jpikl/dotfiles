@@ -1,0 +1,5 @@
+# Clear terminal
+clear
+
+# Local overrides
+[ -f ~/logout.local ] && . ~/logout.local

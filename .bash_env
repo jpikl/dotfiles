@@ -1,0 +1,5 @@
+# Shell independent
+[[ -f ~/.shenv ]] && source ~/.shenv
+
+# Local overrides
+[[ -f ~/.bash_env.local ]] && source ~/.bash_env.local

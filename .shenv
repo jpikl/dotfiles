@@ -1,0 +1,2 @@
+# Local overrides
+[ -f ~/.shenv.local ] && . ~/.shenv.local
