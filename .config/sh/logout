@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
-# Clear terminal
+# Clear terminal and reset state
 clear
+tput reset
