@@ -10,14 +10,14 @@ try_editor() {
         exit
     fi
 }
-# Try entries in from the config file
+# Try entries from the config file
 if [ -f "$CONFIG" ]; then
     while IFS="" read -r COMMAND; do
         try_editor "$COMMAND" "$@"
     done <"$CONFIG"
 fi
 
-# Fallback
+# Fallbacks
 try_editor vim "$@"
 try_editor vi "$@"
 try_editor nano "$@"
