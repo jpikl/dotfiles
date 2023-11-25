@@ -5,7 +5,5 @@
 export PATH=$PATH:~/.local/bin
 
 # Configure our wrapper as the default editor
-if [ -x ~/.local/bin/edit ]; then
-    export EDITOR=~/.local/bin/edit
-    export VISUAL=~/.local/bin/edit
-fi
+export EDITOR=~/.local/bin/edit
+export VISUAL=~/.local/bin/edit

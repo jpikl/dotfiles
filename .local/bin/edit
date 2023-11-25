@@ -2,9 +2,25 @@
 
 set -eu
 
-for COMMAND in helix nvim vim vi nano; do
-    if [ -x "$(command -v "$COMMAND")" ]; then
-        "$COMMAND" "$@"
-        break
+CONFIG=~/.config/editor
+
+try_editor() {
+    if [ -x "$(command -v "$1")" ]; then
+        "$@"
+        exit
     fi
-done
+}
+# Try entries in from the config file
+if [ -f "$CONFIG" ]; then
+    while IFS="" read -r COMMAND; do
+        try_editor "$COMMAND" "$@"
+    done <"$CONFIG"
+fi
+
+# Fallback
+try_editor vim "$@"
+try_editor vi "$@"
+try_editor nano "$@"
+
+echo >&2 "error: could not find any editor"
+exit 1
