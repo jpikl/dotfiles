@@ -1,0 +1,118 @@
+[core]
+    # Force this line ending for all text files.
+    # Exceptions are to be specified in `attributes` file.
+    eol = lf
+    # Explicitely disable this, in case Git for Windows has it enabled in system configs.
+    autocrlf = false
+
+[push]
+    # Automatically apply `--set-upstream`.
+    autoSetupRemote = true
+
+[merge]
+    # Automatically stash/unstash changes before/after merge.
+    autoStash = true
+
+[rebase]
+    # Automatically stash/unstash changes before/after rebase.
+    autoStash = true
+    # Automatically apply `--autoSquash` to interactive rebase.
+    # This makes all commits created with `--fixup` flag to be marked as `fixup`.
+    autoSquash = true
+
+[alias]
+    # Interactive mode
+    i = interactive
+
+    # Status
+    s = status
+
+    # List branches
+    lsb = ls-branches
+    # List tags
+    lst = ls-tags
+    # List changes
+    lsc = ls-changes
+
+    # Commit
+    c   = commit
+    # Commit with message
+    cm  = commit --message
+    # Commit all changes
+    ca  = commit --all
+    # Commit all changes with message
+    cam = commit --all --message
+
+    # Fetch
+    f  = fetch
+    # Fetch all branches and tags, prune invalid remote-tracking references
+    fa = fetch --all --tags --prune
+
+    # Fast-forward
+    ff  = fast-forward
+    # Fast-forward all branches
+    ffa = fast-forward -a
+
+    # Pull
+    p = pull
+
+    # List local branches that are gone on remote
+    gb = gone -b
+    # List local tags that are gone on remote
+    gt = gone -t
+
+    # Diff with word resolution
+    diffw = diff --word-diff
+    # Diff with character resolution
+    diffc = diff --word-diff-regex=.
+
+    # Submodule update
+    su = submodule update
+    # Submodule update with initialization
+    sui = submodule update --init
+
+    # Commits from the current branch
+    logo  = log  --oneline --decorate
+    # Commits from the current branch (exclude merges)
+    logox = logm --no-merges
+    # Commits from all branches
+    loga  = log  --oneline --decorate --graph --all
+    # Commits from all branches (exclude merges)
+    logax = loga --no-merges
+    # New commits from remote
+    logd  = log  --oneline --no-decorate @{upstream} --not HEAD
+    # New commits from remote (exclude merges)
+    logdx = logd --no-merges
+    # New Commits to remote
+    logu  = log  --oneline --no-decorate HEAD --not @{upstream}
+    # New Commits to remote (exclude merges)
+    logux = logu --no-merges
+
+    # Tag version
+    tag-version = !"f() { [ $1 ] && git tag -am \"Version $1\" \"v$1\"; }; f"
+    # Set executable modifier on a file
+    chmodx = add --chmod=+x --
+    # Fix broken HEAD
+    fix-head = !git remote set-head origin "$(git branch --show-current)"
+    # Print last rev
+    last-rev = rev-list -n 1 HEAD --
+
+[include]
+    # Apply personal config by default.
+    path = config.personal
+    # Local config override
+    # See `config.local.template` for an example.
+    path = config.local
+
+[includeIf "gitdir:~/.dotfiles.git"]
+    # Apply personal config for dotfiles.
+    path = config.personal
+
+[includeIf "gitdir/i:personal/"]
+    # Apply personal config within `personal` directory (case insensitive)
+    path = config.personal
+
+[includeIf "gitdir/i:work/"]
+    # Apply work config within `work` directory (case insensitive)
+    # See `config.work.template` for an example.
+    path = config.work

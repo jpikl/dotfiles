@@ -1,0 +1,7 @@
+# Work configuration template
+# Copy this file as `config.work` to activate it.
+
+[user]
+    # Work credentials
+    name = Jan Pikl
+    email = example@mail.com

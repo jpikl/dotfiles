@@ -1,0 +1,46 @@
+# Git will try to automatically detect text files.
+# Line endings for text files will be converted using `core.eol` config option.
+* text=auto
+
+# These files are binary and should be left untouched
+# (binary is a macro for -text -diff).
+*.7z    binary
+*.bz2   binary
+*.bz2   binary
+*.cur   binary
+*.doc   binary
+*.docx  binary
+*.eot   binary
+*.exe   binary
+*.ez    binary
+*.fla   binary
+*.flv   binary
+*.gif   binary
+*.gz    binary
+*.ico   binary
+*.jar   binary
+*.jpeg  binary
+*.jpg   binary
+*.mov   binary
+*.mp3   binary
+*.mp4   binary
+*.odt   binary
+*.pcap  binary
+*.pdf   binary
+*.phar  binary
+*.png   binary
+*.pyc   binary
+*.rtf   binary
+*.snap  binary
+*.swf   binary
+*.swp   binary
+*.tar   binary
+*.ttf   binary
+*.war   binary
+*.wasm  binary
+*.wav   binary
+*.webp  binary
+*.woff  binary
+*.woff2 binary
+*.xz    binary
+*.zip   binary
