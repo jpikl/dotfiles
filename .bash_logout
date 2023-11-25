@@ -1,5 +1,5 @@
-# Shell independent
-[[ -f ~/.logout ]] && source ~/.logout
+[[ -f ~/.config/sh/logout ]] && source ~/.config/sh/logout
+[[ -f ~/.config/sh/logout.local ]] && source ~/.config/sh/logout.local
 
-# Local overrides
-[[ -f ~/.bash_logout.local ]] && source ~/.bash_logout.local
+[[ -f ~/.config/bash/logout ]] && source ~/.config/bash/logout
+[[ -f ~/.config/bash/logout.local ]] && source ~/.config/bash/logout.local

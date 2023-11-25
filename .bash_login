@@ -1,5 +1,0 @@
-# Shell independent
-[[ -f ~/.login ]] && source ~/.login
-
-# Local overrides
-[[ -f ~/.bash_login.local ]] && source ~/.bash_login.local

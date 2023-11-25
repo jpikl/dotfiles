@@ -1,5 +1,5 @@
-# Shell independent
-[[ -f ~/.shrc ]] && source ~/.shrc
+[[ -f ~/.config/sh/rc ]] && source ~/.config/sh/rc
+[[ -f ~/.config/sh/rc.local ]] && source ~/.config/sh/rc.local
 
-# Local overrides
-[[ -f ~/zshrc.local ]] && source ~/zshrc.local
+[[ -f ~/.config/zsh/rc ]] && source ~/.config/zsh/rc
+[[ -f ~/.config/zsh/rc.local ]] && source ~/.config/zsh/rc.local

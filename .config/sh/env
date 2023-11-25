@@ -1,5 +1,4 @@
-# Local overrides
-[ -f ~/.shenv.local ] && . ~/.shenv.local
+#!/usr/bin/env sh
 
 # Add local binaries to the PATH
 export PATH=$PATH:~/.local/bin

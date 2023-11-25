@@ -1,14 +1,27 @@
-# Mimic .zshenv behavior
-[[ -f ~/.bash_env ]] && source ~/.bash_env
+# Mimic zsh behaviour
 
-# Shell independent
-[[ -f ~/.profile ]] && source ~/.profile
+[[ -f ~/.config/sh/env ]] && source ~/.config/sh/env
+[[ -f ~/.config/sh/env.local ]] && source ~/.config/sh/env.local
 
-# Local overrides
-[[ -f ~/.bash_profile.local ]] && source ~/.bash_profile.local
+[[ -f ~/.config/bash/env ]] && source ~/.config/bash/env
+[[ -f ~/.config/bash/env ]] && source ~/.config/bash/env.local
 
-# Interactive shell
-[[ -f ~/.bashrc && $- == *i* ]] && source ~/.bashrc
+[[ -f ~/.config/sh/profile ]] && source ~/.config/sh/profile
+[[ -f ~/.config/sh/profile.local ]] && source ~/.config/sh/profile.local
 
-# Mimic .zlogin behavior
-[[ -f ~/.bash_login ]] && source ~/.bash_login
+[[ -f ~/.config/bash/profile ]] && source ~/.config/bash/profile
+[[ -f ~/.config/bash/profile.local ]] && source ~/.config/bash/profile.local
+
+if [[ $- == *i* ]]; then
+  [[ -f ~/.config/sh/rc ]] && source ~/.config/sh/rc
+  [[ -f ~/.config/sh/rc.local ]] && source ~/.config/sh/rc.local
+
+  [[ -f ~/.config/bash/rc ]] && source ~/.config/bash/rc
+  [[ -f ~/.config/bash/rc.local ]] && source ~/.config/bash/rc.local
+fi
+
+[[ -f ~/.config/sh/login ]] && source ~/.config/sh/login
+[[ -f ~/.config/sh/login.local ]] && source ~/.config/sh/login.local
+
+[[ -f ~/.config/bash/login ]] && source ~/.config/bash/login
+[[ -f ~/.config/bash/login.local ]] && source ~/.config/bash/login.local

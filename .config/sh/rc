@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 # Execute command with dotfiles environment
 alias dotenv='env GIT_DIR=$HOME/.dotfiles.git GIT_WORK_TREE=$HOME'
 
@@ -62,6 +64,3 @@ fi
 
 # Helix editor shortcut
 alias hx=helix
-
-# Local overrides
-[ -f ~/shrc.local ] && . ~/shrc.local

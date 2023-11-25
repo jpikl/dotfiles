@@ -1,5 +1,2 @@
-# Clear terminal
-clear
-
-# Local overrides
-[ -f ~/logout.local ] && . ~/logout.local
+[ -f ~/.config/sh/logout ] && . ~/.config/sh/logout
+[ -f ~/.config/sh/logout.local ] && . ~/.config/sh/logout.local
