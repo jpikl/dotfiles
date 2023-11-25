@@ -112,5 +112,3 @@
     # Local Git configuration
     # See config.local.template for an example.
     path = ~/.config/git/config.local
-[credential "https://kendo.git.progress.com"]
-	provider = generic
