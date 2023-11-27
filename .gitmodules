@@ -1,0 +1,3 @@
+[submodule ".dotfiles.d/pm"]
+	path = .dotfiles.d/pm
+	url = git@github.com:jpikl/pm.git
