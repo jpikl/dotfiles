@@ -1,0 +1,17 @@
+# Initialize prompt
+if [[ -x "$(command -v starship)" ]]; then
+    eval "$(starship init zsh)"
+fi
+
+# Arch Linux "command not found" support provided by pgkfile package
+if [[ -f /usr/share/doc/pkgfile/command-not-found.zsh ]]; then
+    source /usr/share/doc/pkgfile/command-not-found.zsh
+fi
+
+if [[ -x "$(command -v atuin)" ]]; then
+  eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
+if [[ -x $(command -v rustup) ]]; then
+  source <(rustup completions zsh cargo)
+fi

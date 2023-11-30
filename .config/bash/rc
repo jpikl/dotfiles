@@ -1,0 +1,31 @@
+# shellcheck shell=bash
+
+# Shell options
+shopt -s histappend # Append entries to history file
+shopt -s globstar   # Enable recursive "**" glob pattern
+
+# Do not add commands starting with space to history + erase duplicates.
+export HISTCONTROL=ignorespace:erasedups
+
+# Initialize starship prompt or use fallback
+if [[ -x "$(command -v starship)" ]]; then
+    eval "$(starship init bash)"
+else
+     # '<newline><cyan><workdir><reset><newline>at <yellow><time><reset> err <red><last-exit-code><reset> ❭ '
+     PS1="\n\[\e[36m\]\w\[\e[0m\]\nat \[\e[33m\]\t\[\e[0m\] err \[\e[31m\]\$?\[\e[0m\] ❭ "
+fi
+
+# Arch Linux "command not found" support provided by pgkfile package
+if [[ -f /usr/share/doc/pkgfile/command-not-found.bash ]]; then
+  source /usr/share/doc/pkgfile/command-not-found.bash
+fi
+
+
+if [[ -x "$(command -v atuin)" ]]; then
+  [[ -f ~/.config/bash/preexec ]] && source ~/.config/bash/preexec
+  eval "$(atuin init bash --disable-up-arrow)"
+fi
+
+if [[ -x $(command -v rustup) ]]; then
+  source <(rustup completions bash cargo)
+fi
