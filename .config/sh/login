@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+# shellcheck shell=sh
 
 # Switch to home
 cd

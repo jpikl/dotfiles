@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+# shellcheck shell=sh
 
 # Clear terminal and reset state
 clear

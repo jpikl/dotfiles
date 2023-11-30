@@ -1,8 +1,74 @@
-#!/usr/bin/env sh
+# shellcheck shell=sh
+
+# ==============================[ Base ]==============================
 
 # Add local binaries to the PATH
-export PATH=$PATH:~/.local/bin
+export PATH="$PATH":~/.local/bin
 
 # Configure our wrapper as the default editor
 export EDITOR=~/.local/bin/edit
 export VISUAL=~/.local/bin/edit
+
+# ==============================[ Node ]==============================
+
+if [ "${MSYSTEM-}" = MINGW32 ] || [ "${MSYSTEM-}" = MINGW64 ]; then
+  # NPM on Windows uses different directory layout where binaries are stored
+  # directly  in the `{prefix}` directory, not in `{prefix}/bin`.
+  # We could detect these by calling `npm prefix -g` and `$(yarn global bin)`
+  # but they are slow as hell and block shell initialization.
+  export PATH="$PATH:$APPDATA\\npm"
+  export PATH="$PATH:$LOCALAPPDATA\\Yarn\\bin"
+else
+  # Change from the default /usr/local
+  # Make `npm install -g` and `yarn global install` output to ~/.local/bin
+  export NPM_CONFIG_PREFIX=~/.local
+  # Change from the default ~/.npm
+  export NPM_CONFIG_CACHE=~/.cache/npm
+  # Change from the default ~/.yarn/berry/global
+  export YARN_GLOBAL_FOLDER=~/.cache/yarn
+fi
+
+# ==============================[ Rust ]==============================
+
+# Keep CARGO_HOME as ~/.cargo, until https://internals.rust-lang.org/t/pre-rfc-split-cargo-home/19747 is resolved.
+# Make `cargo install` output here
+export CARGO_INSTALL_ROOT=~/.local/bin
+
+# ==============================[ Go ]==============================
+
+# Change from the default ~/go
+export GOPATH=~/.go
+# Make `go install` output here
+export GOBIN=~/.local/bin
+
+# ==============================[ Lua ]==============================
+
+# The default config file uses version suffix (e.g.: config-5.4.lua),
+# we want, however, a single configuration file for all lua versions.
+export LUAROCKS_CONFIG=~/.config/luarocks/config.lua
+
+# Update paths for Lua
+if [ -x "$(command -v luarocks)" ]; then
+  eval "$(luarocks path --append)"
+fi
+
+# ==============================[ Brew ]==============================
+
+# Brew environment might be already initialized in some toolbox/distrobox containers
+if [ -x /home/linuxbrew/.linuxbrew/bin/brew ] && [ ! -x "$(command -v brew)" ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# ==============================[ Utilities ]==============================
+
+export FZF_DEFAULT_OPTS="--layout=reverse --exact --cycle"
+
+# ==============================[ Windows ]==============================
+
+if [ "${MSYSTEM-}" = MINGW32 ] || [ "${MSYSTEM-}" = MINGW64 ]; then
+  # Allow `ln -s` to create native symbolic links.
+  # Requires Windows developer mode to be enabled.
+  # See https://stackoverflow.com/a/59761201
+  # See https://github.com/orgs/community/discussions/23591#discussioncomment-3241027
+  export MSYS=winsymlinks:nativestrict
+fi
