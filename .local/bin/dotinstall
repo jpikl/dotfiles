@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+install_all() {
+    install_system
+    [ -x "$(command -v npm)" ] && install_npm
+}
+
+install_system() {
+    pm install <~/.config/pkgs/system
+}
+
+install_npm() {
+    echo TODO
+}
+
+"install_${1-all}"

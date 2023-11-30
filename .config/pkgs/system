@@ -1,0 +1,52 @@
+# AUR helpers
+paru-bin
+
+# Shell
+bash
+zsh
+starship
+direnv
+atuin
+
+# Utilities
+bat
+choose
+erdtree
+eza
+fd
+fzf
+hexyl
+jq
+mc
+neofetch
+ripgrep
+tldr
+tree
+yq
+
+# Editors
+vim
+neovim
+helix
+
+# Monitors
+btop
+htop
+
+# Git
+git
+github-cli
+glab
+lazygit
+
+# Network
+httpie
+xh
+gping
+
+# Development
+nodejs
+npm
+rustup
+hyperfine
+mkcert
