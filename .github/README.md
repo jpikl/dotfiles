@@ -2,5 +2,6 @@
 
 ## Installation
 
-git clone --bare git@github.com:jpikl/dotfiles.git     ~/.local/share/dotfiles # SSH
-git clone --bare https://github.com/jpikl/dotfiles.git ~/.local/share/dotfiles # HTTPS
+```shell
+curl https://raw.githubusercontent.com/jpikl/dotfiles/new/.github/install.sh | sh
+```
