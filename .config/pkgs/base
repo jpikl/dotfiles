@@ -41,13 +41,12 @@ glab
 lazygit
 
 # Network
+curl
+gping
 httpie
 xh
-gping
+wget
 
 # Development
-nodejs
-npm
-rustup
 hyperfine
 mkcert

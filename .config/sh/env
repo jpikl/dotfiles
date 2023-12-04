@@ -1,19 +1,28 @@
-# shellcheck shell=sh
+#!/usr/bin/env sh
 
 # ==============================[ Base ]==============================
 
-# Add local binaries to the PATH
+# Make local binaries available
 export PATH="$PATH":~/.local/bin
 
 # Configure our wrapper as the default editor
 export EDITOR=~/.local/bin/edit
 export VISUAL=~/.local/bin/edit
 
-# ==============================[ Node ]==============================
+# ==============================[ Node.js ]==============================
+
+# Make "Fast Nome Manager" binary available
+export PATH="$PATH:$HOME/.local/share/fnm"
+
+# Make binaries provided by FNM (node, npm, ...) available
+if [ -x "$(command -v fnm)" ]; then
+  eval "$(fnm env)"
+fi
+
 
 if [ "${MSYSTEM-}" = MINGW32 ] || [ "${MSYSTEM-}" = MINGW64 ]; then
   # NPM on Windows uses different directory layout where binaries are stored
-  # directly  in the `{prefix}` directory, not in `{prefix}/bin`.
+  # directly  in the `${prefix}` directory, not in `${prefix}/bin`.
   # We could detect these by calling `npm prefix -g` and `$(yarn global bin)`
   # but they are slow as hell and block shell initialization.
   export PATH="$PATH:$APPDATA\\npm"
@@ -22,32 +31,46 @@ else
   # Change from the default /usr/local
   # Make `npm install -g` and `yarn global install` output to ~/.local/bin
   export NPM_CONFIG_PREFIX=~/.local
+
   # Change from the default ~/.npm
   export NPM_CONFIG_CACHE=~/.cache/npm
+
+  # Yarn classic uses automatically ~/.cache/yarn
+  # Yarn modern needs the following configuration
   # Change from the default ~/.yarn/berry/global
-  export YARN_GLOBAL_FOLDER=~/.cache/yarn
+  export YARN_GLOBAL_FOLDER=~/.cache/yarn/berry
 fi
 
 # ==============================[ Rust ]==============================
 
-# Keep CARGO_HOME as ~/.cargo, until https://internals.rust-lang.org/t/pre-rfc-split-cargo-home/19747 is resolved.
+# Change from the default ~/.rustup
+export RUSTUP_HOME=~/.local/share/rustup
+
+# Change from the default ~/.rust
+# Until https://internals.rust-lang.org/t/pre-rfc-split-cargo-home/19747 is resolved.
+export CARGO_HOME=~/.local/share/cargo
+
 # Make `cargo install` output here
 export CARGO_INSTALL_ROOT=~/.local/bin
+
+# Rustup will install the main binaries here (cargo, rust, rustup, ...)
+export PATH="$PATH:$CARGO_HOME/bin"
 
 # ==============================[ Go ]==============================
 
 # Change from the default ~/go
-export GOPATH=~/.go
+export GOPATH=~/.local/share/go
+
 # Make `go install` output here
 export GOBIN=~/.local/bin
 
 # ==============================[ Lua ]==============================
 
-# The default config file uses version suffix (e.g.: config-5.4.lua),
-# we want, however, a single configuration file for all lua versions.
+# The default config file uses version suffix (e.g.: config-5.4.lua)
+# but we want a single configuration file for all lua versions.
 export LUAROCKS_CONFIG=~/.config/luarocks/config.lua
 
-# Update paths for Lua
+# Update environment for Lua (including PATH)
 if [ -x "$(command -v luarocks)" ]; then
   eval "$(luarocks path --append)"
 fi

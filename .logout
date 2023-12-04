@@ -1,2 +1,0 @@
-[ -f ~/.config/sh/logout ] && . ~/.config/sh/logout
-[ -f ~/.config/sh/logout.local ] && . ~/.config/sh/logout.local
