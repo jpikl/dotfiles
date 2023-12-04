@@ -19,9 +19,11 @@ setup_nodejs() {
     fnm install --lts
     fnm default lts-latest
     fnm use lts-latest
-    
     corepack enable
-    xargs npm -g install <~/.config/pkgs/npm
+
+    if [ -f ~/.config/pkgs/npm ]; then
+        xargs -r npm -g install <~/.config/pkgs/npm
+    fi
 }
 
 setup_rust() {
@@ -31,6 +33,10 @@ setup_rust() {
 
     rustup install stable
     rustup install nightly
+
+    if [ -f ~/.config/pkgs/cargo ]; then
+        xargs -r cargo install <~/.config/pkgs/cargo
+    fi
 }
 
 list_actions() {
