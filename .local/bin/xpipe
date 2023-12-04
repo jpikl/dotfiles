@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+if [ $# -eq 0 ]; then
+    echo >&2 "Usage: ${0##*/} <command> [<extension>]"
+    exit 1
+fi
+
+TMP=$(mktemp).${2:-txt}
+cat >"$TMP"
+"$1" "$TMP"

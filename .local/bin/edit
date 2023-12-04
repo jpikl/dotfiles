@@ -22,5 +22,5 @@ try_editor vim "$@"
 try_editor vi "$@"
 try_editor nano "$@"
 
-echo >&2 "error: could not find any editor"
+echo >&2 "${0##*/}: could not find any editor"
 exit 1
