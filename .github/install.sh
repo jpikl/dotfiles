@@ -48,6 +48,12 @@ do_checkout_files() {
     git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout "$@"
 }
 
+update_submodules() {
+    # Switch from SSH to HTTPS for now (we do not have SSH configured yet)
+    dotfiles submodule set-url .local/share/pm https://github.com/jpikl/pm.git
+    dotfiles submodule update --init
+}
+
 update_env() {
     . ~/.config/sh/env
 }
@@ -58,6 +64,7 @@ post_install() {
 
 task "Cloning repository" clone_repo
 task "Checking out files" checkout_files
+task "Updating submodules" update_submodules
 task "Updating environment" update_env
 task "Post-install steps" post_install
 

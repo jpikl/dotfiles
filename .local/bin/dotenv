@@ -1,0 +1,6 @@
+#!/usr/bin/env sh 
+
+export GIT_DIR="$HOME/.local/share/dotfiles" 
+export GIT_WORK_TREE="$HOME" 
+
+"$@"

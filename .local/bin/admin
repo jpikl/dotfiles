@@ -39,10 +39,21 @@ setup_rust() {
     fi
 }
 
+setup_ssh_key() {
+    echo "TODO"
+}
+
+switch_dotfiles_to_ssh() {
+    dotenv git remote set-url origin git@github.com:jpikl/dotfiles.git
+    dotenv git submodule set-url .local/share/pm git@github.com:jpikl/pm.git
+}
+
 list_actions() {
     echo "1) Install packages"
     echo "2) Setup Node.js"
     echo "3) Setup Rust"
+    echo "4) Setup SSH key"
+    echo "5) Switch dotfiles to SSH"
 }
 
 get_action() {
@@ -50,6 +61,8 @@ get_action() {
         1) echo install_packages ;;
         2) echo setup_nodejs ;;
         3) echo setup_rust ;;
+        4) echo setup_ssh_key ;;
+        5) echo switch_dotfiles_to_ssh ;;
     esac
 }
 

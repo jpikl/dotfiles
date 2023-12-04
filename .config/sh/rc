@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 
-# Execute command with dotfiles environment
-alias dotenv='env GIT_DIR=$HOME/.local/share/dotfiles GIT_WORK_TREE=$HOME'
-
 # Git for dotfiles
 alias dotfiles='dotenv git'
 
