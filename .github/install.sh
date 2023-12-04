@@ -21,8 +21,8 @@ task() {
 
 confirm() {
     printf "\n%s [y/n]: " "$1"
-    read -r ANSWER
-    
+    read -r ANSWER </dev/tty
+
     if [ "$ANSWER" != y ] && [ "$ANSWER" != Y ]; then
         echo >&2 "Installation canceled!"
         exit 1
@@ -48,10 +48,18 @@ do_checkout_files() {
     git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout "$@"
 }
 
-task "Cloning repository"   clone_repo
-task "Checking out files"   checkout_files
-task "Updating environment" . ~/.config/sh/env
-task "Post-install steps"   admin
+update_env() {
+    . ~/.config/sh/env
+}
+
+post_install() {
+    admin </dev/tty
+}
+
+task "Cloning repository" clone_repo
+task "Checking out files" checkout_files
+task "Updating environment" update_env
+task "Post-install steps" post_install
 
 heading "Success"
 echo "Logout and login for all changes to take effect!"
