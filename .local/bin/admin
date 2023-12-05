@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 install_packages() {
-    pm udate
+    pm upgrade
     [  -x "$(command -v fzf)" ] || pm install fzf
     pm install <~/.config/pkgs/base
 }
