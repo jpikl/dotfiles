@@ -37,7 +37,14 @@ install_rust() {
 }
 
 generate_ssh_key() {
-    echo "TODO"
+    DEFAULT_COMMENT=$USER@$(hostname)
+    printf "Enter comment (empty for %s): " "$DEFAULT_COMMENT"
+    read -r COMMENT
+    ssh-keygen -t ed25519 -f ~/.ssh/"id_$1" -a 100 -C "${COMMENT:-$DEFAULT_COMMENT}"
+    echo
+    echo "Copy the following public key to a remote server:"
+    echo
+    cat ~/.ssh/"id_$1.pub"
 }
 
 switch_dotfiles_to_ssh() {
@@ -49,8 +56,9 @@ list_actions() {
     echo "1) Install packages"
     echo "2) Install Node.js toolchain (or update it)"
     echo "3) Install Rust toolchain (or update it)"
-    echo "4) Generate SSH key"
-    echo "5) Switch dotfiles to SSH"
+    echo "4) Generate SSH key (personal)"
+    echo "5) Generate SSH key (work)"
+    echo "6) Switch dotfiles to SSH"
 }
 
 get_action() {
@@ -58,21 +66,21 @@ get_action() {
         1) echo install_packages ;;
         2) echo install_nodejs ;;
         3) echo install_rust ;;
-        4) echo generate_ssh_key ;;
-        5) echo switch_dotfiles_to_ssh ;;
+        4) echo generate_ssh_key personal ;;
+        5) echo generate_ssh_key work ;;
+        6) echo switch_dotfiles_to_ssh ;;
     esac
 }
 
 while true; do
     list_actions
-    echo "q) Quit"
     echo
     
     while true; do
-        printf "Choose action: "
+        printf "Choose action (Ctrl+D to quit): "
         read -r ANSWER
 
-        if [ "$ANSWER" = q ] || [ "$ANSWER" = Q ]; then
+        if [ "$ANSWER" = "" ] || [ "$ANSWER" = q ] || [ "$ANSWER" = Q ]; then
             exit
         fi
         
@@ -82,7 +90,7 @@ while true; do
             echo 
             echo "====================[ $ACTION :: start ]===================="
             echo 
-            "$ACTION"
+            $ACTION
             echo 
             echo "====================[ $ACTION :: end ]===================="
             echo 
