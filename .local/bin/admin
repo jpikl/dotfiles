@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
 install_packages() {
+    if [ ! -x "$(command -v fzf)" ]; then
+        pm install fzf
+    fi
     pm install <~/.config/pkgs/base
 }
 
