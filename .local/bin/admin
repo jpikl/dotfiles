@@ -1,9 +1,8 @@
 #!/usr/bin/env sh
 
 install_packages() {
-    if [ ! -x "$(command -v fzf)" ]; then
-        pm install fzf
-    fi
+    pm udate
+    [  -x "$(command -v fzf)" ] || pm install fzf
     pm install <~/.config/pkgs/base
 }
 
@@ -56,7 +55,7 @@ switch_dotfiles_to_ssh() {
 }
 
 list_actions() {
-    echo "1) Install packages"
+    echo "1) Install common packages"
     echo "2) Install Node.js toolchain (or update it)"
     echo "3) Install Rust toolchain (or update it)"
     echo "4) Generate SSH key (personal)"
