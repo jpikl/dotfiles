@@ -4,16 +4,12 @@ install_packages() {
     pm install <~/.config/pkgs/base
 }
 
-setup_nodejs() {
+install_nodejs() {
     FNM_INSTALL_DIR=$HOME/.local/share/fnm
 
-    if [ ! -x "$FNM_INSTALL_DIR/fnm" ]; then
-        curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$FNM_INSTALL_DIR" --skip-shell
-    fi
-    
-    if [ ! -x "$(command -v fnm)" ]; then
-        export PATH="$PATH:$FNM_INSTALL_DIR"
-    fi
+    # Always update to the latest fnm version
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$FNM_INSTALL_DIR" --skip-shell
+    export PATH="$PATH:$FNM_INSTALL_DIR"
 
     eval "$(fnm env)"
     fnm install --lts
@@ -26,11 +22,12 @@ setup_nodejs() {
     fi
 }
 
-setup_rust() {
+install_rust() {
     if [ ! -x "$(command -v rustup)" ]; then
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
     fi
 
+    rustup self update
     rustup install stable
     rustup install nightly
 
@@ -39,7 +36,7 @@ setup_rust() {
     fi
 }
 
-setup_ssh_key() {
+generate_ssh_key() {
     echo "TODO"
 }
 
@@ -50,18 +47,18 @@ switch_dotfiles_to_ssh() {
 
 list_actions() {
     echo "1) Install packages"
-    echo "2) Setup Node.js"
-    echo "3) Setup Rust"
-    echo "4) Setup SSH key"
+    echo "2) Install Node.js toolchain (or update it)"
+    echo "3) Install Rust toolchain (or update it)"
+    echo "4) Generate SSH key"
     echo "5) Switch dotfiles to SSH"
 }
 
 get_action() {
     case "$1" in
         1) echo install_packages ;;
-        2) echo setup_nodejs ;;
-        3) echo setup_rust ;;
-        4) echo setup_ssh_key ;;
+        2) echo install_nodejs ;;
+        3) echo install_rust ;;
+        4) echo generate_ssh_key ;;
         5) echo switch_dotfiles_to_ssh ;;
     esac
 }
