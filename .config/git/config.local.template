@@ -1,7 +1,0 @@
-# Local configuration template
-# Copy this file as `config.local` to activate it.
-
-[user]
-    # Local credentials
-    name = Jan Pikl
-    email = example@mail.com

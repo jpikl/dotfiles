@@ -1,7 +1,12 @@
 # Work configuration template
-# Copy this file as `config.work` to activate it.
+# Copy this file as `config.local` to activate as the default one.
+# Copy this file as `config.work` to activate it only within `Work` directory.
 
 [user]
     # Work credentials
     name = Jan Pikl
     email = example@mail.com
+
+[core]
+    # Use work SSH key
+    sshCommand = ssh -i ~/.ssh/id_work

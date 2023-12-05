@@ -74,7 +74,7 @@
     # Commits from the current branch
     logo  = log  --oneline --decorate
     # Commits from the current branch (exclude merges)
-    logox = logm --no-merges
+    logox = logo --no-merges
     # Commits from all branches
     loga  = log  --oneline --decorate --graph --all
     # Commits from all branches (exclude merges)
@@ -98,21 +98,19 @@
     last-rev = rev-list -n 1 HEAD --
 
 [include]
-    # Apply personal config by default.
+    # Use personal config by default.
     path = config.personal
-    # Local config override
-    # See `config.local.template` for an example.
+    # Use local config override next.
     path = config.local
 
-[includeIf "gitdir:~/.dotfiles.git"]
-    # Apply personal config for dotfiles.
+[includeIf "gitdir:~/.local/share/dotfiles"]
+    # Use personal config for dotfiles.
     path = config.personal
 
 [includeIf "gitdir/i:personal/"]
-    # Apply personal config within `personal` directory (case insensitive)
+    # Use personal config within `Personal` directory (case insensitive)
     path = config.personal
 
 [includeIf "gitdir/i:work/"]
-    # Apply work config within `work` directory (case insensitive)
-    # See `config.work.template` for an example.
+    # Use work config within `Work` directory (case insensitive)
     path = config.work
