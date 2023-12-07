@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-install_packages() {
+install_base() {
     pm upgrade
     [  -x "$(command -v fzf)" ] || pm install fzf
     pm install <~/.config/pkgs/base
@@ -32,6 +32,19 @@ install_rust() {
     rustup self update
     rustup install stable
     rustup install nightly
+    echo
+
+    BASH_COMPLETIONS_DIR=~/.local/share/bash-completion/completions
+    echo "Generating bash completions to $BASH_COMPLETIONS_DIR"
+    mkdir -p "$BASH_COMPLETIONS_DIR"
+    rustup completions bash >"$BASH_COMPLETIONS_DIR/rustup"
+    rustup completions bash cargo >"$BASH_COMPLETIONS_DIR/cargo"
+
+    ZSH_COMPLETIONS_DIR=~/.local/share/zsh/site-functions
+    echo "Generating zsh completions to $ZSH_COMPLETIONS_DIR"
+    mkdir -p "ZSH_COMPLETIONS_DIR"
+    rustup completions zsh >"$ZSH_COMPLETIONS_DIR/_rustup"
+    rustup completions zsh cargo >"$ZSH_COMPLETIONS_DIR/_cargo"
 
     if [ -f ~/.config/pkgs/cargo ]; then
         xargs -r cargo install <~/.config/pkgs/cargo
@@ -55,7 +68,7 @@ switch_dotfiles_to_ssh() {
 }
 
 list_actions() {
-    echo "1) Install common packages"
+    echo "1) Install base packages"
     echo "2) Install Node.js toolchain (or update it)"
     echo "3) Install Rust toolchain (or update it)"
     echo "4) Generate SSH key (personal)"
@@ -65,7 +78,7 @@ list_actions() {
 
 get_action() {
     case "$1" in
-        1) echo install_packages ;;
+        1) echo install_base ;;
         2) echo install_nodejs ;;
         3) echo install_rust ;;
         4) echo generate_ssh_key personal ;;
