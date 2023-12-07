@@ -1,19 +1,48 @@
 #!/usr/bin/env zsh
 
+# Shell options
+setopt APPEND_HISTORY       # Append entries to history file instead of overwriting it
+setopt HIST_IGNORE_SPACE    # Do not save commands starting with space to history
+setopt HIST_IGNORE_ALL_DUPS # Erase duplicates in history
+setopt EXTENDED_GLOB        # Enable extended glob matching characters ‘#’, ‘~’, ‘^’
+setopt NOMATCH              # Treat glob patterns with no matches as errors
+setopt NOTIFY               # Report the status of background jobs immediately
+
+# History configuration
+HISTFILE=~/.zsh_history # Save file
+HISTSIZE=1000           # Max records in memory
+SAVEHIST=1000           # Max records saved to file
+
+# Path to local function definitions (auto completions)
+fpath+=~/.local/share/zsh/site-functions
+
+# Auto completer configuration
+# _extensions   - Complete the glob `*.` with the possible file extensions
+# _expand_alias - Expand an alias into the underlying command
+# _complete     - The main completer
+# _approximate  - Try to correct completion if no match is found
+zstyle ':completion:*' completer _extensions _expand_alias _complete _approximate
+
+# Enable auto completions
+autoload -Uz compinit
+compinit
+
 # Initialize prompt
 if [[ -x "$(command -v starship)" ]]; then
-    eval "$(starship init zsh)"
+  eval "$(starship init zsh)"
+else
+  # ''
+  # '<cyan>$WORKDIR</cyan>'
+  # 'at <yellow>$TIME</yellow> err <red>$LAST_EXIT_CODE</red> ❭ '
+  PROMPT=$'\n%F{cyan}%d%f\nat %F{yellow}%*%f err %F{red}%?%f ❭ '
 fi
 
-# Arch Linux "command not found" support provided by pgkfile package
+# Arch Linux "command not found" support provided by `pgkfile` package
 if [[ -f /usr/share/doc/pkgfile/command-not-found.zsh ]]; then
     source /usr/share/doc/pkgfile/command-not-found.zsh
 fi
 
+# Better shell history (Ctrkl+R) with atuin
 if [[ -x "$(command -v atuin)" ]]; then
   eval "$(atuin init zsh --disable-up-arrow)"
-fi
-
-if [[ -x $(command -v rustup) ]]; then
-  source <(rustup completions zsh cargo)
 fi
