@@ -1,5 +1,7 @@
-[[ -f ~/.config/sh/profile ]] && source ~/.config/sh/profile
-[[ -f ~/.config/sh/profile.local ]] && source ~/.config/sh/profile.local
+if [[ -d ~/.config/profile.d ]]; then
+    for SCRIPT in ~/.config/profile.d/*.{sh,zsh}(N); do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/zsh/profile ]] && source ~/.config/zsh/profile
-[[ -f ~/.config/zsh/profile.local ]] && source ~/.config/zsh/profile.local
+unset SCRIPT

@@ -1,5 +1,7 @@
-[[ -f ~/.config/sh/logout ]] && source ~/.config/sh/logout
-[[ -f ~/.config/sh/logout.local ]] && source ~/.config/sh/logout.local
+if [[ -d ~/.config/logout.d ]]; then
+    for SCRIPT in ~/.config/logout.d/*.{sh,zsh}(N); do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/zsh/logout ]] && source ~/.config/zsh/logout
-[[ -f ~/.config/zsh/logout.local ]] && source ~/.config/zsh/logout.local
+unset SCRIPT

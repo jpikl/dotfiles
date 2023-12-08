@@ -1,5 +1,10 @@
-[[ -f ~/.config/sh/logout ]] && source ~/.config/sh/logout
-[[ -f ~/.config/sh/logout.local ]] && source ~/.config/sh/logout.local
+# shellcheck shell=bash
+# shellcheck disable=SC1090
 
-[[ -f ~/.config/bash/logout ]] && source ~/.config/bash/logout
-[[ -f ~/.config/bash/logout.local ]] && source ~/.config/bash/logout.local
+if [[ -d ~/.config/logout.d ]]; then
+    for SCRIPT in ~/.config/logout.d/*.{sh,bash}; do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
+
+unset SCRIPT

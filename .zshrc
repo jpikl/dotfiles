@@ -1,5 +1,7 @@
-[[ -f ~/.config/sh/rc ]] && source ~/.config/sh/rc
-[[ -f ~/.config/sh/rc.local ]] && source ~/.config/sh/rc.local
+if [[ -d ~/.config/rc.d ]]; then
+    for SCRIPT in ~/.config/rc.d/*.{sh,zsh}(N); do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/zsh/rc ]] && source ~/.config/zsh/rc
-[[ -f ~/.config/zsh/rc.local ]] && source ~/.config/zsh/rc.local
+unset SCRIPT

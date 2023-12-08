@@ -1,5 +1,7 @@
-[[ -f ~/.config/sh/env ]] && source ~/.config/sh/env
-[[ -f ~/.config/sh/env.local ]] && source ~/.config/sh/env.local
+if [[ -d ~/.config/env.d ]]; then
+    for SCRIPT in ~/.config/env.d/*.{sh,zsh}(N); do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/zsh/env ]] && source ~/.config/zsh/env
-[[ -f ~/.config/zsh/env.local ]] && source ~/.config/zsh/env.local
+unset SCRIPT

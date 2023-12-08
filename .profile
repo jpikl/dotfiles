@@ -1,10 +1,22 @@
-# Mimic zsh behaviour
+# shellcheck shell=sh
+# shellcheck disable=SC1090
 
-[ -f ~/.config/sh/env ] && . ~/.config/sh/env
-[ -f ~/.config/sh/env.local ] && . ~/.config/sh/env.local
+if [ -d ~/.config/env.d ]; then
+    for SCRIPT in ~/.config/env.d/*.sh; do
+        [ -f "$SCRIPT" ] && . "$SCRIPT"
+    done
+fi
 
-[ -f ~/.config/sh/profile ] && . ~/.config/sh/profile
-[ -f ~/.config/sh/profile.local ] && . ~/.config/sh/profile.local
+if [ -d ~/.config/profile.d ]; then
+    for SCRIPT in ~/.config/profile.d/*.sh; do
+        [ -f "$SCRIPT" ] && . "$SCRIPT"
+    done
+fi
 
-[ -f ~/.config/sh/login ] && . ~/.config/sh/login
-[ -f ~/.config/sh/login.local ] && . ~/.config/sh/login.local
+if [ -d ~/.config/login.d ]; then
+    for SCRIPT in ~/.config/login.d/*.sh; do
+        [ -f "$SCRIPT" ] && . "$SCRIPT"
+    done
+fi
+
+unset SCRIPT

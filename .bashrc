@@ -1,13 +1,16 @@
-# Mimic zsh behaviour
+# shellcheck shell=bash
+# shellcheck disable=SC1090
 
-[[ -f ~/.config/sh/env ]] && source ~/.config/sh/env
-[[ -f ~/.config/sh/env.local ]] && source ~/.config/sh/env.local
+if [[ -d ~/.config/env.d ]]; then
+    for SCRIPT in ~/.config/env.d/*.{sh,bash}; do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/bash/env ]] && source ~/.config/bash/env
-[[ -f ~/.config/bash/env.local ]] && source ~/.config/bash/env.local
+if [[ -d ~/.config/rc.d ]]; then
+    for SCRIPT in ~/.config/rc.d/*.{sh,bash}; do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/sh/rc ]] && source ~/.config/sh/rc
-[[ -f ~/.config/sh/rc.local ]] && source ~/.config/sh/rc.local
-
-[[ -f ~/.config/bash/rc ]] && source ~/.config/bash/rc
-[[ -f ~/.config/bash/rc.local ]] && source ~/.config/bash/rc.local
+unset SCRIPT

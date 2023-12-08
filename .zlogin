@@ -1,5 +1,7 @@
-[[ -f ~/.config/sh/login ]] && source ~/.config/sh/login
-[[ -f ~/.config/sh/login.local ]] && source ~/.config/sh/login.local
+if [[ -d ~/.config/login.d ]]; then
+    for SCRIPT in ~/.config/login.d/*.{sh,zsh}(N); do
+        [[ -f "$SCRIPT" ]] && source "$SCRIPT"
+    done
+fi
 
-[[ -f ~/.config/zsh/login ]] && source ~/.config/zsh/login
-[[ -f ~/.config/zsh/login.local ]] && source ~/.config/zsh/login.local
+unset SCRIPT
