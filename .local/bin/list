@@ -7,12 +7,14 @@ ALL=
 LIST=
 TREE=
 COLOR=
+PAGE=true
 
-while getopts ":ltach" OPT; do
+while getopts ":ltacPh" OPT; do
     case "$OPT" in
     a) ALL=true ;;
     l) LIST=true ;;
     t) TREE=true ;;
+    P) PAGE= ;;
     c) COLOR=true ;;
     h)
         echo "Usage: ${0##*/} [-altch] [path]"
@@ -62,26 +64,34 @@ if [ "$LIST" ]; then
     ERD_OPTS="$ERD_OPTS --long"
 fi
 
+pager() {
+    if [ $PAGE ]; then
+        page -r
+    else
+        cat
+    fi
+}
+
 if [ "$TREE" ]; then
     if [ -x "$(command -v erd)" ]; then
         if [ $# -gt 1 ]; then
             # Erd does not support multiple entry points
-            for ARG; do erd $ERD_OPTS "$ARG"; done | page -r
+            for ARG; do erd $ERD_OPTS "$ARG"; done | pager
         else
-            erd $ERD_OPTS "$@" | page -r
+            erd $ERD_OPTS "$@" | pager
         fi
     elif [ -x "$(command -v eza)" ]; then
-        eza $EZA_OPTS --tree "$@" | page -r
+        eza $EZA_OPTS --tree "$@" | pager
     elif [ -x "$(command -v lsd)" ]; then
-        lsd $LSD_OPTS --tree "$@" | page -r
+        lsd $LSD_OPTS --tree "$@" | pager
     elif [ -x "$(command -v tree)" ]; then
-        tree $TREE_OPTS | page -r
+        tree $TREE_OPTS | pager
     else
         echo >&2 "${0##*/}: no tree command available (erd, eza, lsd, tree)"
         exit 1
     fi
 elif [ -x "$(command -v eza)" ]; then
-    eza $EZA_OPTS --width "$(tput cols)" "$@" | page -r
+    eza $EZA_OPTS --width "$(tput cols)" "$@" | pager
 elif [ -x "$(command -v lsd)" ]; then
     lsd $LSD_OPTS "$@"
 else
