@@ -8,22 +8,24 @@ LIST=
 TREE=
 COLOR=
 
-while getopts ":ltac" OPT; do
+while getopts ":ltach" OPT; do
     case "$OPT" in
     a) ALL=true ;;
     l) LIST=true ;;
     t) TREE=true ;;
     c) COLOR=true ;;
+    h)
+        echo "Usage: ${0##*/} [-altch] [path]"
+        exit
+        ;;
     *)
-        OPTIND=$((OPTIND - 1))
-        break
+        echo >&2 "${0##*/}: invalid option '-$OPTARG'"
+        exit 1
         ;;
     esac
 done
 
-if [ $OPTIND -gt 0 ]; then
-    shift $((OPTIND - 1))
-fi
+shift $((OPTIND - 1))
 
 LS_OPTS="-h"
 LSD_OPTS="--git"
@@ -62,7 +64,12 @@ fi
 
 if [ "$TREE" ]; then
     if [ -x "$(command -v erd)" ]; then
-        erd $ERD_OPTS "$@" | page -r
+        if [ $# -gt 1 ]; then
+            # Erd does not support multiple entry points
+            for ARG; do erd $ERD_OPTS "$ARG"; done | page -r
+        else
+            erd $ERD_OPTS "$@" | page -r
+        fi
     elif [ -x "$(command -v eza)" ]; then
         eza $EZA_OPTS --tree "$@" | page -r
     elif [ -x "$(command -v lsd)" ]; then
