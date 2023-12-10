@@ -3,6 +3,11 @@
 
 set -eu
 
+if [ ! -t 1 ]; then
+    cat
+    exit
+fi
+
 TEMP=$(mktemp)
 trap "rm -f -- '$TEMP'" EXIT
 

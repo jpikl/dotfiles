@@ -1,0 +1,82 @@
+#!/usr/bin/env sh
+# shellcheck disable=SC2086
+
+set -eu
+
+ALL=
+LIST=
+TREE=
+COLOR=
+
+while getopts ":ltac" OPT; do
+    case "$OPT" in
+    a) ALL=true ;;
+    l) LIST=true ;;
+    t) TREE=true ;;
+    c) COLOR=true ;;
+    *)
+        OPTIND=$((OPTIND - 1))
+        break
+        ;;
+    esac
+done
+
+if [ $OPTIND -gt 0 ]; then
+    shift $((OPTIND - 1))
+fi
+
+LS_OPTS="-h"
+LSD_OPTS="--git"
+EZA_OPTS="--git"
+ERD_OPTS="--human --no-ignore --layout inverted"
+TREE_OPTS="-A"
+
+if [ -t 1 ] || [ "$COLOR" ]; then
+    LS_OPTS="$LS_OPTS --color=always"
+    LSD_OPTS="$LSD_OPTS --color=always"
+    EZA_OPTS="$EZA_OPTS --color=always"
+    ERD_OPTS="$ERD_OPTS --color=force"
+    TREE_OPTS="$TREE_OPTS -C"
+
+    if [ "$DISPLAY" ]; then
+        LSD_OPTS="$LSD_OPTS --icon=always"
+        EZA_OPTS="$EZA_OPTS --icons=always"
+        ERD_OPTS="$ERD_OPTS --icons"
+    fi
+fi
+
+if [ "$ALL" ]; then
+    LS_OPTS="$LS_OPTS -A"
+    LSD_OPTS="$LSD_OPTS --almost-all"
+    EZA_OPTS="$EZA_OPTS --almost-all"
+    ERD_OPTS="$ERD_OPTS --hidden"
+    TREE_OPTS="$TREE_OPTS -a"
+fi
+
+if [ "$LIST" ]; then
+    LS_OPTS="$LS_OPTS -l"
+    LSD_OPTS="$LSD_OPTS --long"
+    EZA_OPTS="$EZA_OPTS --long"
+    ERD_OPTS="$ERD_OPTS --long"
+fi
+
+if [ "$TREE" ]; then
+    if [ -x "$(command -v erd)" ]; then
+        erd $ERD_OPTS "$@" | page -r
+    elif [ -x "$(command -v eza)" ]; then
+        eza $EZA_OPTS --tree "$@" | page -r
+    elif [ -x "$(command -v lsd)" ]; then
+        lsd $LSD_OPTS --tree "$@" | page -r
+    elif [ -x "$(command -v tree)" ]; then
+        tree $TREE_OPTS | page -r
+    else
+        echo >&2 "${0##*/}: no tree command available (erd, eza, lsd, tree)"
+        exit 1
+    fi
+elif [ -x "$(command -v eza)" ]; then
+    eza $EZA_OPTS --width "$(tput cols)" "$@" | page -r
+elif [ -x "$(command -v lsd)" ]; then
+    lsd $LSD_OPTS "$@"
+else
+    ls $LS_OPTS "$@"
+fi

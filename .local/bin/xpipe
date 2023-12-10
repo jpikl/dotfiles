@@ -5,6 +5,6 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-TMP=$(mktemp).${2:-txt}
-cat >"$TMP"
-"$1" "$TMP"
+TEMP=$(mktemp).${2:-txt}
+cat >"$TEMP"
+"$1" "$TEMP"
