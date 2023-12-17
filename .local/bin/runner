@@ -9,35 +9,38 @@ fi
 
 cd "$1"
 
-script_id() {
-    echo "${1%%-*}"
-}
-
 script_label() {
-    echo "$1" | sed -E 's/^[^-]+-//;s/.sh$//;s/-/ /g'
+    echo "$1" | sed -E 's/.sh$//;s/-/ /g'
 }
 
 list_scripts() {
+    INDEX=1
     for SCRIPT in *.sh; do
-        echo "$(script_id "$SCRIPT")) $(script_label "$SCRIPT")"
+        echo "$INDEX) $(script_label "$SCRIPT")"
+        INDEX=$((INDEX + 1))
     done
     echo
 }
 
-run_script() {
+get_script() {
+    INDEX=1
     for SCRIPT in *.sh; do
-        if [ "$(script_id "$SCRIPT")" = "$1" ]; then
-            echo
-            echo "====================[ $(script_label "$SCRIPT") :: start ]===================="
-            echo
-            "./$SCRIPT"
-            echo
-            echo "====================[ $(script_label "$SCRIPT") :: end ]===================="
-            echo
-            return 0
+        if [ "$INDEX" = "$1" ]; then
+            echo "$SCRIPT"
+            return
         fi
+        INDEX=$((INDEX + 1))
     done
-    return 1
+}
+
+run_script() {
+    echo
+    echo "====================[ $(script_label "$1") :: start ]===================="
+    echo
+    "./$1" || true
+    echo
+    echo "====================[ $(script_label "$1") :: end ]===================="
+    echo
 }
 
 while true; do
@@ -45,7 +48,11 @@ while true; do
 
     while true; do
         printf "Script to run: "
-        read -r ANSWER
-        run_script "$ANSWER" && break
+        read -r INDEX
+        SCRIPT=$(get_script "$INDEX")
+        if [ "$SCRIPT" ]; then
+            run_script "$SCRIPT"
+            break
+        fi
     done
 done
