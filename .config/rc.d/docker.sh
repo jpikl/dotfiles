@@ -10,7 +10,7 @@ doexsh() {
   if [ "$1" ]; then 
     docker exec -it "$1" sh -li
   else
-    echo >&2 "Usage: dosh <container>"
+    echo >&2 "Usage: doexsh <container>"
     return 1
   fi
 }
