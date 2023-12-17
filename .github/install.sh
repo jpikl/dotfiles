@@ -2,21 +2,15 @@
 
 set -eu
 
-DOTFILES_DIR=$HOME/.local/share/dotfiles
+DOTFILES_DIR=$HOME/.local/share/dotfiles/git
 
-heading() {
+task() {
     echo
     echo "====================[ $1 ]===================="
     echo
-}
-
-task() {
-    NAME=$1
     shift
-
-    heading "$NAME"
     "$@"
-    echo "Done"
+    [ "$1" != echo ] && echo "Done"
 }
 
 confirm() {
@@ -49,7 +43,7 @@ do_checkout_files() {
 }
 
 update_env() {
-    . ~/.config/sh/env
+    . ~/.config/env.d/base.sh
 }
 
 update_submodules() {
@@ -60,7 +54,7 @@ update_submodules() {
 }
 
 post_install() {
-    admin </dev/tty
+    runner ~/.config/admin.d/ </dev/tty
 }
 
 task "Clone repository" clone_repo
@@ -68,6 +62,4 @@ task "Checkout files" checkout_files
 task "Update environment" update_env
 task "Update submodules" update_submodules
 task "Post-install" post_install
-
-heading "Success"
-echo "Logout and login for all changes to take effect!"
+task "Success" echo "Logout and login for all changes to take effect!"

@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+
+set -eu
+
+if [ $# -eq 0 ]; then
+    echo >&2 "Usage: ${0##*/} <scripts-dir>"
+    exit
+fi
+
+cd "$1"
+
+list_scripts() {
+    INDEX=1
+    for SCRIPT in *.sh; do
+        echo "$INDEX) $SCRIPT"
+        INDEX=$((INDEX + 1))
+    done
+    echo
+}
+
+run_script() {
+    INDEX=1
+    for SCRIPT in *.sh; do
+        if [ $INDEX = "$1" ]; then
+            echo 
+            echo "====================[ $SCRIPT :: start ]===================="
+            echo 
+            "./$SCRIPT"
+            echo 
+            echo "====================[ $SCRIPT :: end ]===================="
+            echo 
+            return
+        fi
+        INDEX=$((INDEX + 1))
+    done
+    return 1
+}
+
+while true; do
+    list_scripts
+
+    while true; do
+        printf "Script to run: "
+        read -r ANSWER
+        run_script "$ANSWER" && break
+    done
+done
