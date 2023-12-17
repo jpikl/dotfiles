@@ -7,8 +7,8 @@ export RUSTUP_HOME=~/.local/share/rustup
 # Until https://internals.rust-lang.org/t/pre-rfc-split-cargo-home/19747 is resolved.
 export CARGO_HOME=~/.local/share/cargo
 
-# Make `cargo install` output here
-export CARGO_INSTALL_ROOT=~/.local/bin
+# Make `cargo install` output to `bin` subdirectory here
+export CARGO_INSTALL_ROOT=~/.local
 
 # Rustup will install the main binaries here (cargo, rust, rustup, ...)
 export PATH="$PATH:$CARGO_HOME/bin"
