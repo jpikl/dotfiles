@@ -43,6 +43,7 @@ do_checkout_files() {
 }
 
 update_env() {
+    # shellcheck disable=SC1090
     . ~/.config/env.d/base.sh
 }
 

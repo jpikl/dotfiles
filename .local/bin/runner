@@ -9,29 +9,33 @@ fi
 
 cd "$1"
 
+script_id() {
+    echo "${1%%-*}"
+}
+
+script_label() {
+    echo "$1" | sed -E 's/^[^-]+-//;s/.sh$//;s/-/ /g'
+}
+
 list_scripts() {
-    INDEX=1
     for SCRIPT in *.sh; do
-        echo "$INDEX) $SCRIPT"
-        INDEX=$((INDEX + 1))
+        echo "$(script_id "$SCRIPT")) $(script_label "$SCRIPT")"
     done
     echo
 }
 
 run_script() {
-    INDEX=1
     for SCRIPT in *.sh; do
-        if [ $INDEX = "$1" ]; then
-            echo 
-            echo "====================[ $SCRIPT :: start ]===================="
-            echo 
+        if [ "$(script_id "$SCRIPT")" = "$1" ]; then
+            echo
+            echo "====================[ $(script_label "$SCRIPT") :: start ]===================="
+            echo
             "./$SCRIPT"
-            echo 
-            echo "====================[ $SCRIPT :: end ]===================="
-            echo 
-            return
+            echo
+            echo "====================[ $(script_label "$SCRIPT") :: end ]===================="
+            echo
+            return 0
         fi
-        INDEX=$((INDEX + 1))
     done
     return 1
 }
