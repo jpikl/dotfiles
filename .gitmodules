@@ -1,3 +1,3 @@
 [submodule "pm"]
-	path = .local/share/pm
+	path = .local/share/dotfiles/modules/pm
 	url = git@github.com:jpikl/pm.git
