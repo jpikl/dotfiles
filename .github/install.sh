@@ -28,7 +28,7 @@ clone_repo() {
         confirm "$DOTFILES_DIR already exits! Delete it?"
         rm -rf "$DOTFILES_DIR"
     fi
-    git clone --bare -b new https://github.com/jpikl/dotfiles.git "$DOTFILES_DIR"
+    git clone --bare https://github.com/jpikl/dotfiles.git "$DOTFILES_DIR"
 }
 
 checkout_files() {
