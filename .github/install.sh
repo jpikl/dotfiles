@@ -54,7 +54,8 @@ update_env() {
 
 update_submodules() {
     # Switch from SSH to HTTPS for now (we do not have SSH configured yet)
-    dotenv git submodule set-url .local/share/pm https://github.com/jpikl/pm.git
+    dotenv git submodule set-url .local/share/dotfiles/modules/pm https://github.com/jpikl/pm.git
+    dotenv git submodule set-url .local/share/dotfiles/modules/sshctl https://github.com/jpikl/sshctl.git
     dotenv git submodule update --init
 }
 

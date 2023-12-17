@@ -1,3 +1,6 @@
 [submodule "pm"]
 	path = .local/share/dotfiles/modules/pm
 	url = git@github.com:jpikl/pm.git
+[submodule "sshctl"]
+	path = .local/share/dotfiles/modules/sshctl
+	url = git@github.com:jpikl/sshctl.git
