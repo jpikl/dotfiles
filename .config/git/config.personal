@@ -1,0 +1,8 @@
+[user]
+    # Personal credentials
+    name = Jan Pikl
+    email = pikl.jan@gmail.com
+
+[core]
+    # Personal SSH key
+    sshCommand = ssh -i ~/.ssh/id_personal
