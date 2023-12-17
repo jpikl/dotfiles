@@ -3,5 +3,5 @@
 ## Installation
 
 ```shell
-curl https://raw.githubusercontent.com/jpikl/dotfiles/new/.github/install.sh | sh
+curl https://raw.githubusercontent.com/jpikl/dotfiles/master/.github/install.sh | sh
 ```
