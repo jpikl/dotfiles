@@ -16,7 +16,7 @@
 [rebase]
     # Automatically stash/unstash changes before/after rebase.
     autoStash = true
-    # Automatically apply `--autoSquash` to interactive rebase.
+    # Automatically apply `--autosquash` to interactive rebase.
     # This makes all commits created with `--fixup` flag to be marked as `fixup`.
     autoSquash = true
 
