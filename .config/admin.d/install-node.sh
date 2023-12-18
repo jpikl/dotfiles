@@ -6,9 +6,14 @@ FNM_INSTALL_DIR=$HOME/.local/share/fnm
 BASH_COMPLETIONS_DIR=~/.local/share/bash-completion/completions
 ZSH_COMPLETIONS_DIR=~/.local/share/zsh/site-functions
 
-# Always update to the latest fnm version
-curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$FNM_INSTALL_DIR" --skip-shell
-export PATH="$PATH:$FNM_INSTALL_DIR"
+# On windows use scoop, because the installer does not support mingw yet
+if [ -x "$(command -v scoop)" ]; then
+  scoop install fnm
+else
+  # Always update to the latest fnm versio
+  curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$FNM_INSTALL_DIR" --skip-shell
+  export PATH="$PATH:$FNM_INSTALL_DIR"
+fi
 
 eval "$(fnm env)"
 fnm install --lts
