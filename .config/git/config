@@ -4,6 +4,8 @@
     eol = lf
     # Explicitely disable this, in case Git for Windows has it enabled in system configs.
     autocrlf = false
+    # Use native symlinks on windows (requires Developer mode to be enabled).
+    symlinks = true
 
 [push]
     # Automatically apply `--set-upstream`.
