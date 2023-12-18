@@ -9,7 +9,7 @@ fi
 
 if [ -x "$(command -v xdg-open)" ]; then
     OPENER=xdg-open
-elif { [ "${MSYSTEM-}" = MIGW32 ] || [ "${MSYSTEM-}" = MIGW64 ]; } && [ -x "$(command -v start)" ]; then
+elif { [ "${MSYSTEM-}" = MINGW32 ] || [ "${MSYSTEM-}" = MINGW64 ]; } && [ -x "$(command -v start)" ]; then
     OPENER=start
 else
     echo >&2 "${0##*/}: could not find any opener"
