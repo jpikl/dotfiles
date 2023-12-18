@@ -32,14 +32,17 @@ clone_repo() {
 }
 
 checkout_files() {
-    if ! do_checkout_files; then
+    # Use native symlinks on windows (requires Developer mode to be enabled).
+    dotfiles config core.symlinks true
+
+    if ! dotfiles checkout; then
         confirm "Git checkout failed! Try again with '--force'?"
-        do_checkout_files --force
+        dotfiles checkout --force
     fi
 }
 
-do_checkout_files() {
-    git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout "$@"
+dotfiles() {
+    git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"
 }
 
 update_env() {
@@ -49,9 +52,9 @@ update_env() {
 
 update_submodules() {
     # Switch from SSH to HTTPS for now (we do not have SSH configured yet)
-    dotenv git submodule set-url .local/share/dotfiles/modules/pm https://github.com/jpikl/pm.git
-    dotenv git submodule set-url .local/share/dotfiles/modules/sshctl https://github.com/jpikl/sshctl.git
-    dotenv git submodule update --init
+    dotfiles submodule set-url .local/share/dotfiles/modules/pm https://github.com/jpikl/pm.git
+    dotfiles submodule set-url .local/share/dotfiles/modules/sshctl https://github.com/jpikl/sshctl.git
+    dotfiles submodule update --init
 }
 
 post_install() {
