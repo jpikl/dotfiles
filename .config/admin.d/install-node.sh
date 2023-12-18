@@ -10,7 +10,7 @@ ZSH_COMPLETIONS_DIR=~/.local/share/zsh/site-functions
 if [ -x "$(command -v scoop)" ]; then
   scoop install fnm
 else
-  # Always update to the latest fnm versio
+  # Always update to the latest fnm version
   curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$FNM_INSTALL_DIR" --skip-shell
   export PATH="$PATH:$FNM_INSTALL_DIR"
 fi
