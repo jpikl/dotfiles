@@ -2,15 +2,27 @@
 
 set -eu
 
+# =============================================================================
+# Utils
+# =============================================================================
+
 DOTFILES_DIR=$HOME/.local/share/dotfiles/git
 
-task() {
+dotfiles() {
+    git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"
+}
+
+heading() {
     echo
     echo "====================[ $1 ]===================="
     echo
+}
+
+task() {
+    heading "$1"
     shift
     "$@"
-    [ "$1" != echo ] && echo "Done"
+    echo "Done"
 }
 
 confirm() {
@@ -23,6 +35,10 @@ confirm() {
     fi
 }
 
+# =============================================================================
+# Tasks
+# =============================================================================
+
 clone_repo() {
     if [ -d "$DOTFILES_DIR" ]; then
         confirm "$DOTFILES_DIR already exits! Delete it?"
@@ -32,7 +48,7 @@ clone_repo() {
 }
 
 checkout_files() {
-    # Use native symlinks on windows (requires Developer mode to be enabled).
+    # Force native symlinks on windows (requires developer mode to be enabled).
     dotfiles config core.symlinks true
 
     if ! dotfiles checkout; then
@@ -41,13 +57,8 @@ checkout_files() {
     fi
 }
 
-dotfiles() {
-    git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" "$@"
-}
-
 update_env() {
-    # shellcheck disable=SC1090
-    . ~/.config/env.d/base.sh
+    export PATH="$PATH:$HOME/.local/bin"
 }
 
 update_submodules() {
@@ -61,9 +72,14 @@ post_install() {
     runner ~/.config/admin.d/ </dev/tty
 }
 
+# =============================================================================
+# Run
+# =============================================================================
+
 task "Clone repository" clone_repo
 task "Checkout files" checkout_files
 task "Update environment" update_env
 task "Update submodules" update_submodules
 task "Post-install" post_install
-task "Success" echo "Logout and login for all changes to take effect!"
+heading "Success"
+echo "Logout and login for all changes to take effect!"
