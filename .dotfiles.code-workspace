@@ -1,0 +1,43 @@
+{
+    "folders": [
+        {
+            "path": ".config/admin.d"
+        },
+        {
+            "path": ".config/env.d"
+        },
+        {
+            "path": ".config/git"
+        },
+        {
+            "path": ".config/login.d"
+        },
+        {
+            "path": ".config/logout.d"
+        },
+        {
+            "path": ".config/pkgs"
+        },
+        {
+            "path": ".config/rc.d"
+        },
+        {
+            "path": ".github"
+        },
+        {
+            "path": ".local/bin"
+        },
+        {
+            "path": ".local/share/dotfiles"
+        },
+        {
+            "path": ".ssh"
+        },
+    ],
+    "settings": {
+        "shellcheck.enableQuickFix": true,
+        "shellcheck.exclude": [
+            "SC1090"
+        ],
+    }
+}
