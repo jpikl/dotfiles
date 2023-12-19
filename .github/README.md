@@ -14,7 +14,7 @@ in order for symbolic links to work properly.
 
 ## Installation
 
-Run this script (which will definitely not install any malware or delete all of your files):
+Run [this script](.github/install.sh) (which will definitely not install any malware or delete all of your files):
 
 ```shell
 curl https://raw.githubusercontent.com/jpikl/dotfiles/master/.github/install.sh | sh
