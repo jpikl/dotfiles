@@ -4,23 +4,23 @@ set -eu
 
 CONFIG=~/.config/editor
 
-try_editor() {
+try_exec() {
     if [ -x "$(command -v "$1")" ]; then
-        "$@"
-        exit
+        # Must redirect tty as stdin for `vim` and `nano` to work
+        exec "$@" </dev/tty
     fi
 }
 # Try entries from the config file
 if [ -f "$CONFIG" ]; then
     while IFS="" read -r COMMAND; do
-        try_editor "$COMMAND" "$@"
+        try_exec "$COMMAND" "$@"
     done <"$CONFIG"
 fi
 
 # Fallbacks
-try_editor vim "$@"
-try_editor vi "$@"
-try_editor nano "$@"
+try_exec vim "$@"
+try_exec vi "$@"
+try_exec nano "$@"
 
 echo >&2 "${0##*/}: could not find any editor"
 exit 1
