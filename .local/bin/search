@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+
+# source: https://github.com/junegunn/fzf/blob/master/ADVANCED.md#using-fzf-as-interactive-ripgrep-launcher
+
+BAT_OPTS='--color=always {1} --highlight-line {2}'
+
+if [ -x "$(command -v bat)" ]; then
+    PREVIEW="bat $BAT_OPTS"
+elif [ -x "$(command -v batcat)" ]; then
+    PREVIEW="batcat $BAT_OPTS" # Debian/Ubuntu use different bat binary name
+else
+    PREVIEW='cat {1}'
+fi
+
+if [ -x "$(command -v rg)" ]; then
+    SEARCH='rg --line-number --column --no-heading --color=always --smart-case {q}'
+else
+    SEARCH='grep --line-number --with-filename --recursive --color=always {q} .'
+fi
+
+: | fzf --ansi --disabled --query "${1:-}" \
+    --bind "start:reload:$SEARCH" \
+    --bind "change:reload:sleep 0.1; $SEARCH || true" \
+    --delimiter : \
+    --preview "$PREVIEW" \
+    --preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
+    --bind 'enter:become(edit {1} +{2})'
