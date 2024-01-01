@@ -7,7 +7,7 @@ BASH_COMPLETIONS_DIR=~/.local/share/bash-completion/completions
 ZSH_COMPLETIONS_DIR=~/.local/share/zsh/site-functions
 
 # On windows use scoop, because the installer does not support mingw yet
-if [ -x "$(command -v scoop)" ]; then
+if [ "${MSYSTEM-}" -x "$(command -v scoop)" ]; then
   scoop install fnm
 else
   # Always update to the latest fnm version
