@@ -9,12 +9,11 @@ TREE=
 COLOR=
 PAGE=true
 
-while getopts ":ltacPh" OPT; do
+while getopts ":ltach" OPT; do
     case "$OPT" in
     a) ALL=true ;;
     l) LIST=true ;;
     t) TREE=true ;;
-    P) PAGE= ;;
     c) COLOR=true ;;
     h)
         echo "Usage: ${0##*/} [-altch] [path]"
@@ -65,11 +64,7 @@ if [ "$LIST" ]; then
 fi
 
 pager() {
-    if [ $PAGE ]; then
-        page -r
-    else
-        cat
-    fi
+    less -FIrX
 }
 
 if [ "$TREE" ]; then
